@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Lowongan</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .job-header-detail {
+            background: white;
+            padding: 24px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .company-logo-lg {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: #f3f4f6;
+            object-fit: cover;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .job-title-lg {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .company-name-lg {
+            font-size: 14px;
+            color: var(--text-grey);
+            margin-bottom: 16px;
+        }
+
+        .tag-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .detail-section {
+            padding: 24px;
+            background: white;
+            margin-top: 12px;
+        }
+
+        .section-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .detail-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4B5563;
+            text-align: justify;
+        }
+
+        .detail-text ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .detail-text li {
+            margin-bottom: 6px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-item {
+            background: var(--bg-grey);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--text-grey);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .poster-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #EEFBF6;
+            border-radius: 12px;
+            margin-top: 24px;
+        }
+
+        .poster-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .bottom-action {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 16px 24px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        /* Mobile fix */
+        @media (max-width: 480px) {
+            .app-container {
+                padding-bottom: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header"
+            style="padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; background: white; position: sticky; top: 0; z-index: 10;">
+            <div class="back-btn" onclick="window.history.back()" style="cursor: pointer; font-size: 20px;">←</div>
+            <div class="header-title" style="font-size: 16px; font-weight: 600;">Detail Lowongan</div>
+            <div style="width: 24px;">
+                <!-- Share Icon placeholder -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+            </div>
+        </div>
+
+        <div class="fade-in" style="padding-bottom: 100px;">
+
+            <!-- Job Header -->
+            <div class="job-header-detail">
+                <img src="https://ui-avatars.com/api/?name=T&background=0D8ABC&color=fff&size=128"
+                    class="company-logo-lg">
+                <div class="job-title-lg">Senior Accounting Staff</div>
+                <div class="company-name-lg">PT. Telkom Indonesia (Persero)</div>
+                <div class="tag-container">
+                    <span class="job-badge badge-fulltime">Fulltime</span>
+                    <span class="job-badge" style="background: #f3f4f6; color: #666;">On Site</span>
+                </div>
+            </div>
+
+            <!-- Key Info -->
+            <div class="detail-section">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Lokasi</div>
+                        <div class="info-value">Jakarta Selatan</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Gaji</div>
+                        <div class="info-value">IDR 8jt - 12jt</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Pengalaman</div>
+                        <div class="info-value">Min. 3 Tahun</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Deadline</div>
+                        <div class="info-value">30 Nov 2023</div>
+                    </div>
+                </div>
+
+                <div class="section-label">Deskripsi Pekerjaan</div>
+                <div class="detail-text">
+                    <p>Kami mencari Senior Accounting Staff yang berpengalaman untuk bergabung dengan tim keuangan kami.
+                        Kandidat ideal harus memiliki pemahaman mendalam tentang prinsip akuntansi, perpajakan, dan
+                        pelaporan keuangan perusahaan.</p>
+                    <br>
+                    <strong>Tanggung Jawab:</strong>
+                    <ul>
+                        <li>Menyusun laporan keuangan bulanan dan tahunan.</li>
+                        <li>Mengelola perpajakan perusahaan (PPh, PPN).</li>
+                        <li>Melakukan rekonsiliasi bank dan akun lainnya.</li>
+                        <li>Berkoordinasi dengan auditor eksternal.</li>
+                    </ul>
+                </div>
+
+                <br>
+
+                <div class="section-label">Kualifikasi</div>
+                <div class="detail-text">
+                    <ul>
+                        <li>S1 Akuntansi dari universitas terkemuka.</li>
+                        <li>Memiliki sertifikasi Brevet A & B lebih disukai.</li>
+                        <li>Pengalaman minimal 3 tahun di posisi sejenis.</li>
+                        <li>Mahir menggunakan software akuntansi (SAP/Oracle/Accurate).</li>
+                        <li>Teliti, jujur, dan mampu bekerja di bawah tekanan.</li>
+                    </ul>
+                </div>
+
+                <!-- Posted By -->
+                <div class="poster-card">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100" class="poster-avatar">
+                    <div>
+                        <div style="font-size: 10px; color: var(--primary);">Diposting oleh Alumni</div>
+                        <div style="font-weight: 600; font-size: 14px;">Budi Santoso '98</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Bottom Action -->
+        <div class="bottom-action">
+            <button class="btn-outline" style="flex: 1;" onclick="alert('Fitur simpan lowongan')">Simpan</button>
+            <button class="btn-primary" style="flex: 2;"
+                onclick="window.location.href='mailto:hr@telkom.co.id?subject=Lamaran Senior Accounting Staff'">Lamar
+                Sekarang</button>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

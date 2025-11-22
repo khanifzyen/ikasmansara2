@@ -212,7 +212,7 @@
             </div>
 
             <!-- Post 1 (Text Only) -->
-            <div class="feed-card">
+            <div class="feed-card" data-category="Bisnis" onclick="navigateTo('forum-detail.html')">
                 <div class="feed-header">
                     <div class="poster-info">
                         <img src="https://ui-avatars.com/api/?name=Dimas+Setiawan" class="poster-img">
@@ -228,7 +228,7 @@
                     infonya ya terima kasih.
                 </div>
                 <div class="feed-actions">
-                    <div class="action-btn" onclick="toggleLike(this)">
+                    <div class="action-btn" onclick="event.stopPropagation(); toggleLike(this)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path
                                 d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
@@ -248,7 +248,7 @@
             </div>
 
             <!-- Post 2 (With Image) -->
-            <div class="feed-card">
+            <div class="feed-card" data-category="Nostalgia" onclick="navigateTo('forum-detail.html')">
                 <div class="feed-header">
                     <div class="poster-info">
                         <img src="https://ui-avatars.com/api/?name=Rina+Mulyani" class="poster-img">
@@ -263,7 +263,7 @@
                 </div>
                 <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500" class="feed-image">
                 <div class="feed-actions">
-                    <div class="action-btn liked" onclick="toggleLike(this)">
+                    <div class="action-btn liked" onclick="event.stopPropagation(); toggleLike(this)">
                         <svg viewBox="0 0 24 24" fill="#E0245E" stroke="#E0245E" stroke-width="2">
                             <path
                                 d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
@@ -377,6 +377,31 @@
     <script src="script.js"></script>
     <script>
         // JS Khusus Forum
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-item');
+            const cards = document.querySelectorAll('.feed-card');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+
+                    const category = this.textContent.trim();
+
+                    cards.forEach(card => {
+                        const cardCategory = card.getAttribute('data-category');
+                        if (category === 'Semua' || cardCategory === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+
         function toggleLike(btn) {
             btn.classList.toggle('liked');
             const svg = btn.querySelector('svg');
