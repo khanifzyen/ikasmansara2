@@ -1,8 +1,24 @@
-import PocketBase from 'pocketbase';
+import PocketBase, { AsyncAuthStore } from 'pocketbase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Replace with your actual PocketBase URL
-// For Android Emulator use 10.0.2.2 instead of localhost
-export const pb = new PocketBase('http://127.0.0.1:8090');
+const store = new AsyncAuthStore({
+    save: async (serialized) => {
+        try {
+            await AsyncStorage.setItem('pb_auth', serialized);
+        } catch (e) {
+            console.error('PocketBase auth save failed:', e);
+        }
+    },
+    initial: AsyncStorage.getItem('pb_auth'),
+    clear: async () => {
+        try {
+            await AsyncStorage.removeItem('pb_auth');
+        } catch (e) {
+            console.error('PocketBase auth clear failed:', e);
+        }
+    }
+});
 
-// Optional: Disable auto-cancellation
-pb.autoCancellation(false);
+const pb = new PocketBase(process.env.EXPO_PUBLIC_POCKETBASE_URL, store);
+
+export default pb;

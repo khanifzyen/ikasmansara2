@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { pb } from '../lib/pocketbase';
+import pb from '../lib/pocketbase';
 import { AuthModel } from 'pocketbase';
 
 interface AuthContextType {
     user: AuthModel | null;
     isLoading: boolean;
-    login: (email: string, pass: string) => Promise<void>;
+    login: () => void; // Refreshes state
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
     isLoading: true,
-    login: async () => { },
+    login: () => { },
     logout: () => { },
 });
 
@@ -24,10 +24,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         // Check initial auth state
-        setUser(pb.authStore.model);
-        setIsLoading(false);
+        const checkAuth = async () => {
+            try {
+                // Validate current token if it exists
+                if (pb.authStore.isValid) {
+                    await pb.collection('users').authRefresh();
+                }
+            } catch (error) {
+                console.log('Auth refresh failed', error);
+                pb.authStore.clear();
+            } finally {
+                setUser(pb.authStore.model);
+                setIsLoading(false);
+            }
+        };
 
-        // Listen to auth changes
+        checkAuth();
+
+        // Subscribe to auth changes
         const unsubscribe = pb.authStore.onChange((token, model) => {
             setUser(model);
         });
@@ -37,8 +51,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, []);
 
-    const login = async (email: string, pass: string) => {
-        await pb.collection('users').authWithPassword(email, pass);
+    const login = () => {
+        setUser(pb.authStore.model);
     };
 
     const logout = () => {
