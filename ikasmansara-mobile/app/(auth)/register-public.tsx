@@ -4,8 +4,11 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import pb from '../../lib/pocketbase';
 
+import { useToast } from '../../context/ToastContext';
+
 export default function RegisterPublic() {
     const router = useRouter();
+    const { showToast } = useToast();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -16,13 +19,25 @@ export default function RegisterPublic() {
     });
 
     const handleRegister = async () => {
-        if (!formData.name || !formData.email || !formData.password) {
-            Alert.alert('Error', 'Mohon lengkapi semua data');
+        const missing = [];
+        if (!formData.name) missing.push('Nama Lengkap');
+        if (!formData.email) missing.push('Email');
+        if (!formData.password) missing.push('Password');
+        if (!formData.passwordConfirm) missing.push('Konfirmasi Password');
+
+        if (missing.length > 0) {
+            showToast(`Mohon isi: ${missing.join(', ')}`, 'warning');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            showToast('Format email tidak valid', 'warning');
             return;
         }
 
         if (formData.password !== formData.passwordConfirm) {
-            Alert.alert('Error', 'Password tidak sama');
+            showToast('Password dan Konfirmasi Password tidak sama', 'error');
             return;
         }
 
@@ -40,17 +55,45 @@ export default function RegisterPublic() {
                 category: formData.category,
             };
 
-            await pb.collection('users').create(data);
+            const timeout = (ms: number) => new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), ms));
 
-            // Login automatically
-            await pb.collection('users').authWithPassword(formData.email, formData.password);
-
-            Alert.alert('Sukses', 'Akun berhasil dibuat', [
-                { text: 'OK', onPress: () => router.replace('/(app)/home') }
+            // Create user with timeout
+            await Promise.race([
+                pb.collection('users').create(data),
+                timeout(5000)
             ]);
+
+            // Login automatically with timeout
+            await Promise.race([
+                pb.collection('users').authWithPassword(formData.email, formData.password),
+                timeout(5000)
+            ]);
+
+            showToast('Akun berhasil dibuat', 'success');
+            setTimeout(() => {
+                router.replace('/(app)/home');
+            }, 1500);
         } catch (error: any) {
             console.error(error);
-            Alert.alert('Gagal', error.message || 'Terjadi kesalahan saat mendaftar');
+            let errorMessage = 'Terjadi kesalahan saat mendaftar';
+
+            // Check for timeout
+            if (error.message === 'Request timed out') {
+                errorMessage = 'Koneksi lambat. Gagal menghubungi server dalam 5 detik.';
+            }
+            // Check for network error
+            else if (error.status === 0) {
+                errorMessage = 'Gagal terhubung ke server. Periksa koneksi internet Anda.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+
+            // Specific check for "Failed to fetch"
+            if (error.toString().includes('Failed to fetch') || error.toString().includes('Network request failed')) {
+                errorMessage = 'Koneksi internet bermasalah atau server tidak dapat dijangkau.';
+            }
+
+            showToast(errorMessage, 'error');
         } finally {
             setLoading(false);
         }

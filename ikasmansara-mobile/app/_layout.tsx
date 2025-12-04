@@ -4,12 +4,16 @@ import { AuthProvider } from '../context/AuthContext';
 import "../global.css";
 import { StatusBar } from 'expo-status-bar';
 
+import { ToastProvider } from '../context/ToastContext';
+
 export default function RootLayout() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <AuthProvider>
-                <StatusBar style="dark" />
-                <Slot />
+                <ToastProvider>
+                    <StatusBar style="dark" />
+                    <Slot />
+                </ToastProvider>
             </AuthProvider>
         </GestureHandlerRootView>
     );
