@@ -1,0 +1,36 @@
+import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+
+class LoadingShimmer extends StatelessWidget {
+  final Widget child;
+
+  const LoadingShimmer({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: child,
+    );
+  }
+
+  // Preset: Card List Shimmer
+  static Widget list({int itemCount = 5}) {
+    return ListView.builder(
+      itemCount: itemCount,
+      padding: const EdgeInsets.all(16),
+      itemBuilder: (context, index) {
+        return const Padding(
+          padding: EdgeInsets.only(bottom: 16.0),
+          child: LoadingShimmer(
+            child: Card(
+              elevation: 0,
+              child: SizedBox(height: 80, width: double.infinity),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
