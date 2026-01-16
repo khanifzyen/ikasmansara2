@@ -52,8 +52,94 @@ Lokasi aset statis yang akan digunakan dalam aplikasi (ditaruh di `assets/images
 Hal-hal yang harus di-handle di background:
 
 1.  **Session Management**: Auto-login jika token masih valid (Persist Token).
-2.  **Image Compression**: Foto profil & produk harus dikoempress max 500KB sebelum upload ke server (agar hemat kuota user).
-3.  **Debouce Search**: Pencarian direktori harus menunggu 500ms setelah user berhenti mengetik, baru request ke server (Hemat API Call).
+2.  **Debounce Search**: Pencarian direktori harus menunggu 500ms setelah user berhenti mengetik, baru request ke server (Hemat API Call).
+
+## 5. Image Upload & Compression Flow
+
+**Use Case**: Upload foto profil, foto produk, foto dokumentasi donasi.
+
+### A. Library yang Digunakan
+
+```yaml
+# pubspec.yaml
+dependencies:
+  image_picker: ^1.0.0 # Pick image dari galeri/kamera
+  flutter_image_compress: ^2.0.0 # Compress gambar
+```
+
+### B. Flow Upload (Step-by-step)
+
+```dart
+// 1. Pick Image
+final ImagePicker picker = ImagePicker();
+final XFile? image = await picker.pickImage(
+  source: ImageSource.gallery,
+  maxWidth: 1080, // Pre-resize
+);
+
+// 2. Compress (Max 500KB)
+final compressedBytes = await FlutterImageCompress.compressWithFile(
+  image.path,
+  quality: 70,       // 0-100 (70 = balance antara ukuran & kualitas)
+  minWidth: 1080,
+  minHeight: 1080,
+);
+
+// 3. Convert to MultipartFile (untuk PocketBase)
+final multipartFile = MultipartFile.fromBytes(
+  compressedBytes,
+  filename: 'upload_${DateTime.now().millisecondsSinceEpoch}.jpg',
+);
+
+// 4. Upload ke PocketBase
+final formData = {
+  'name': productName,
+  'price': price,
+  'image': multipartFile, // Field name sesuai PocketBase schema
+};
+
+await pb.collection('products').create(body: formData);
+```
+
+### C. Progress Indicator (Optional)
+
+Jika ukuran file besar (>1MB after compress), tampilkan progress:
+
+```dart
+float uploadProgress = 0.0;
+
+await pb.collection('products').create(
+  body: formData,
+  onProgress: (sent, total) {
+    setState(() {
+      uploadProgress = sent / total;
+    });
+  },
+);
+```
+
+### D. Validasi Ukuran File
+
+```dart
+if (compressedBytes.length > 500 * 1024) { // 500KB
+  throw Exception('Ukuran gambar terlalu besar. Maksimal 500KB.');
+}
+```
+
+### E. Error Handling
+
+```dart
+try {
+  await uploadImage();
+} on PlatformException catch (e) {
+  if (e.code == 'photo_access_denied') {
+    // User menolak akses galeri
+    showDialog('Izinkan akses galeri di pengaturan');
+  }
+} catch (e) {
+  showSnackbar('Upload gagal: ${e.toString()}');
+}
+```
 
 ---
 

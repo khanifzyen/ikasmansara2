@@ -93,7 +93,53 @@ lib/
 
 - API Key / Base URL masuk ke `.env`.
 - Akses `.env` via `flutter_dotenv`.
-- **Jangan commit** file `.env` ke git.
+- **Jangan commit** file `.env` ke git (tambahkan `.env` di `.gitignore`).
+
+### Security Best Practices (WAJIB)
+
+1. **Environment Variables**:
+
+   ```dart
+   // .env file
+   POCKETBASE_URL=https://your-server.com
+
+   // Usage in code
+   final baseUrl = dotenv.get('POCKETBASE_URL');
+   ```
+
+2. **Token Storage**:
+
+   - Gunakan `flutter_secure_storage` untuk simpan Auth Token (BUKAN `shared_preferences`).
+
+   ```dart
+   final storage = FlutterSecureStorage();
+   await storage.write(key: 'auth_token', value: token);
+   ```
+
+3. **HTTPS Only**:
+
+   - Semua request ke backend WAJIB HTTPS (kecuali localhost development).
+   - Reject HTTP connection di production:
+
+   ```dart
+   if (!kDebugMode && !baseUrl.startsWith('https')) {
+     throw Exception('Production must use HTTPS!');
+   }
+   ```
+
+4. **Sensitive Data**:
+
+   - JANGAN log Token, Password, atau PII (Personally Identifiable Information) ke console.
+   - Gunakan `kDebugMode` untuk log development-only.
+
+5. **Input Sanitization**:
+
+   - Semua input wajib divalidasi sebelum kirim ke server.
+   - Gunakan `validator` di `CustomTextField`.
+
+6. **Hardcoded Secrets**:
+   - ❌ DILARANG: `final apiKey = 'abc123';`
+   - ✅ WAJIB: `final apiKey = dotenv.get('API_KEY');`
 
 ---
 
