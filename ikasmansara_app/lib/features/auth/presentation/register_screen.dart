@@ -13,12 +13,19 @@ class RegisterScreen extends ConsumerWidget {
   const RegisterScreen({super.key});
 
   @override
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(registerControllerProvider);
+    // Optimization: Only rebuild when step or loading changes, not when text changes.
+    final currentStep = ref.watch(
+      registerControllerProvider.select((state) => state.currentStep),
+    );
+    final isLoading = ref.watch(
+      registerControllerProvider.select((state) => state.isLoading),
+    );
     final controller = ref.read(registerControllerProvider.notifier);
 
-    // Listen for error/success handling
-    // Implementing custom listener inside build for simplicity or use ref.listen in StatefulWidget
+    // Initial state for app bar back button logic (need to know if step > 0)
+    // currentStep covers this.
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -26,7 +33,7 @@ class RegisterScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            if (state.currentStep > 0) {
+            if (currentStep > 0) {
               controller.previousStep();
             } else {
               context.pop();
@@ -40,7 +47,7 @@ class RegisterScreen extends ConsumerWidget {
           children: [
             // Progress Indicator
             LinearProgressIndicator(
-              value: (state.currentStep + 1) / 3,
+              value: (currentStep + 1) / 3,
               backgroundColor: AppColors.background,
               color: AppColors.primary,
               minHeight: 4,
@@ -52,20 +59,17 @@ class RegisterScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _getStepTitle(state.currentStep),
-                      style: AppTextStyles.h2,
-                    ),
+                    Text(_getStepTitle(currentStep), style: AppTextStyles.h2),
                     const SizedBox(height: 8),
                     Text(
-                      _getStepDescription(state.currentStep),
+                      _getStepDescription(currentStep),
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textGrey,
                       ),
                     ),
                     const SizedBox(height: 32),
 
-                    _RegisterForm(step: state.currentStep),
+                    _RegisterForm(step: currentStep),
                   ],
                 ),
               ),
@@ -76,7 +80,7 @@ class RegisterScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(24.0),
               child: Row(
                 children: [
-                  if (state.currentStep > 0) ...[
+                  if (currentStep > 0) ...[
                     Expanded(
                       flex: 1,
                       child: OutlineButton(
@@ -90,12 +94,10 @@ class RegisterScreen extends ConsumerWidget {
                   Expanded(
                     flex: 2,
                     child: PrimaryButton(
-                      text: state.currentStep == 2
-                          ? 'DAFTAR SEKARANG'
-                          : 'LANJUT',
-                      isLoading: state.isLoading,
+                      text: currentStep == 2 ? 'DAFTAR SEKARANG' : 'LANJUT',
+                      isLoading: isLoading,
                       onPressed: () async {
-                        if (state.currentStep < 2) {
+                        if (currentStep < 2) {
                           // TODO: Validate current step form
                           // For now we assume valid or logic inside Form widget
                           // Ideally use a GlobalKey<FormState> for each step or a single one

@@ -7,6 +7,6 @@ abstract class JobRepository {
     int page = 1,
     int perPage = 20,
   });
-
   Future<JobEntity> getJobDetail(String id);
+  Future<void> createJob(Map<String, dynamic> jobData);
 }

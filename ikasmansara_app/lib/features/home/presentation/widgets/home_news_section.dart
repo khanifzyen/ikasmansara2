@@ -16,23 +16,32 @@ class HomeNewsSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Berita & Info', style: AppTextStyles.h3),
-              Text(
-                'Lihat Semua',
-                style: AppTextStyles.caption.copyWith(color: AppColors.primary),
+              InkWell(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Fitur Berita & Info akan segera hadir!'),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Lihat Semua',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.primary,
+                  ),
+                ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 3,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            return _NewsTile(index: index);
-          },
+        Column(
+          children: List.generate(3, (index) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: index != 2 ? 16 : 0),
+              child: _NewsTile(index: index),
+            );
+          }),
         ),
       ],
     );

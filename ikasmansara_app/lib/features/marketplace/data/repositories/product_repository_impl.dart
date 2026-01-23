@@ -29,7 +29,23 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> createProduct(ProductEntity product, dynamic imageFile) async {
-    // TODO: Implement create product logic in data source
-    throw UnimplementedError();
+    final body = {
+      'name': product.name,
+      'description': product.description,
+      'price': product.price,
+      'category': product.category,
+      'seller_id': product.sellerId,
+      'whatsapp': product.whatsapp,
+      // 'images' are handled by files argument
+    };
+
+    List<dynamic> images = [];
+    if (imageFile is List) {
+      images = imageFile;
+    } else if (imageFile != null) {
+      images = [imageFile];
+    }
+
+    await remoteDataSource.createProduct(body, images);
   }
 }

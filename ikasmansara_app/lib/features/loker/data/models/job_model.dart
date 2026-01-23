@@ -26,21 +26,21 @@ class JobModel extends JobEntity {
       id: record.id,
       collectionId: record.collectionId,
       collectionName: record.collectionName,
-      company: record.data['company'] ?? '',
-      title: record.data['title'] ?? '',
-      description: record.data['description'] ?? '',
-      location: record.data['location'] ?? '',
-      type: record.data['type'] ?? 'Fulltime',
-      salaryRange: record.data['salary_range'],
-      link: record.data['link'],
-      isActive: record.data['is_active'] ?? true,
+      company: record.getStringValue('company'),
+      title: record.getStringValue('title'),
+      description: record.getStringValue('description'),
+      location: record.getStringValue('location'),
+      type: record.getStringValue('type', 'Fulltime'), // Default value
+      salaryRange: record.getStringValue('salary_range'),
+      link: record.getStringValue('link'),
+      isActive: record.getBoolValue('is_active', true),
       postedBy:
-          record.expand['posted_by'] != null &&
-              record.expand['posted_by']!.isNotEmpty
-          ? UserModel.fromRecord(record.expand['posted_by']!.first)
+          record.expand['author_id'] != null &&
+              record.expand['author_id']!.isNotEmpty
+          ? UserModel.fromRecord(record.expand['author_id']!.first)
           : null,
-      created: DateTime.parse(record.created),
-      updated: DateTime.parse(record.updated),
+      created: DateTime.tryParse(record.created) ?? DateTime.now(),
+      updated: DateTime.tryParse(record.updated) ?? DateTime.now(),
     );
   }
 

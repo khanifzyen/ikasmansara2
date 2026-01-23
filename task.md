@@ -16,24 +16,24 @@
 
 ### 1.2 Project Initialization
 
-- [ ] Run `flutter create --org com.ikasmansara --project-name ikasmansara_mobile ikasmansara_app`
-- [ ] Add all dependencies ke `pubspec.yaml` (ref: `docs/02_tech_stack.md`)
-  - [ ] `flutter_riverpod`, `riverpod_annotation`
-  - [ ] `go_router`
-  - [ ] `pocketbase`, `dio`
-  - [ ] `google_fonts`, `lucide_icons`
-  - [ ] `flutter_dotenv`, `shared_preferences`, `flutter_secure_storage`
-  - [ ] `image_picker`, `flutter_image_compress`
-  - [ ] `cached_network_image`, `shimmer`
-  - [ ] `intl`
-  - [ ] Dev: `riverpod_generator`, `build_runner`, `custom_lint`, `riverpod_lint`
-- [ ] Run `flutter pub get`
-- [ ] Create `.env` file dengan `POCKETBASE_URL=http://127.0.0.1:8090`
-- [ ] Add `.env` ke `.gitignore`
+- [x] Run `flutter create --org com.ikasmansara --project-name ikasmansara_mobile ikasmansara_app`
+- [x] Add all dependencies ke `pubspec.yaml` (ref: `docs/02_tech_stack.md`)
+  - [x] `flutter_riverpod`, `riverpod_annotation`
+  - [x] `go_router`
+  - [x] `pocketbase`, `dio`
+  - [x] `google_fonts`, `lucide_icons`
+  - [x] `flutter_dotenv`, `shared_preferences`, `flutter_secure_storage`
+  - [x] `image_picker`, `flutter_image_compress`
+  - [x] `cached_network_image`, `shimmer`
+  - [x] `intl`
+  - [x] Dev: `riverpod_generator`, `build_runner`, `custom_lint`, `riverpod_lint`
+- [x] Run `flutter pub get`
+- [x] Create `.env` file dengan `POCKETBASE_URL=http://127.0.0.1:8090`
+- [x] Add `.env` ke `.gitignore`
 
 ### 1.3 Folder Structure Setup
 
-- [ ] Create folder structure sesuai `docs/05_project_rules.md`:
+- [x] Create folder structure sesuai `docs/05_project_rules.md`:
   ```
   lib/
   ├── core/
@@ -66,36 +66,36 @@
 
 ### 2.1 Network Layer (PocketBase Service)
 
-- [ ] Create `core/network/pocketbase_service.dart` (ref: `docs/10_service_layer.md`)
-- [ ] Create `core/network/api_endpoints.dart` (collection names)
-- [ ] Create `core/network/network_exceptions.dart` (error mapper)
-- [ ] Create provider `pocketBaseServiceProvider`
-- [ ] Initialize PocketBase di `main.dart`
+- [x] Create `core/network/pocketbase_service.dart` (ref: `docs/10_service_layer.md`)
+- [x] Create `core/network/api_endpoints.dart` (collection names)
+- [x] Create `core/network/network_exceptions.dart` (error mapper)
+- [x] Create provider `pocketBaseServiceProvider`
+- [x] Initialize PocketBase di `main.dart`
 
 ### 2.2 Error Handling
 
-- [ ] Create `core/errors/app_error_type.dart` (enum)
-- [ ] Create `core/errors/app_exception.dart` (ref: `docs/11_error_handling.md`)
-- [ ] Create `core/errors/error_logger.dart`
+- [x] Create `core/errors/app_error_type.dart` (enum)
+- [x] Create `core/errors/app_exception.dart` (ref: `docs/11_error_handling.md`)
+- [x] Create `core/errors/error_logger.dart`
 
 ### 2.3 Design System (Theme)
 
-- [ ] Create `core/theme/app_colors.dart` (ref: `docs/03_design_system.md`)
-- [ ] Create `core/theme/app_text_styles.dart` (Poppins & Inter)
-- [ ] Create `core/theme/app_theme.dart` (ThemeData config)
-- [ ] Update `app.dart` untuk pakai `AppTheme.lightTheme`
+- [x] Create `core/theme/app_colors.dart` (ref: `docs/03_design_system.md`)
+- [x] Create `core/theme/app_text_styles.dart` (Poppins & Inter)
+- [x] Create `core/theme/app_theme.dart` (ThemeData config)
+- [x] Update `app.dart` untuk pakai `AppTheme.lightTheme`
 
 ### 2.4 Routing
 
-- [ ] Create `core/router/router.dart` dengan GoRouter
-- [ ] Define initial routes: `/splash`, `/login`, `/home`
-- [ ] Wire up router ke `app.dart`
+- [x] Create `core/router/router.dart` dengan GoRouter
+- [x] Define initial routes: `/splash`, `/login`, `/home`
+- [x] Wire up router ke `app.dart`
 
 ### 2.5 Constants & Utilities
 
-- [ ] Create `core/constants/assets_path.dart` (paths gambar)
-- [ ] Create `core/utils/validators.dart` (email, password, phone - ref: `docs/09`)
-- [ ] Create `core/utils/formatters.dart` (currency, date)
+- [x] Create `core/constants/assets_path.dart` (paths gambar)
+- [x] Create `core/utils/validators.dart` (email, password, phone - ref: `docs/09`)
+- [x] Create `core/utils/formatters.dart` (currency, date)
 
 ---
 
@@ -103,31 +103,31 @@
 
 ### 3.1 Buttons
 
-- [ ] Create `common_widgets/buttons/primary_button.dart`
-- [ ] Create `common_widgets/buttons/outline_button.dart`
+- [x] Create `common_widgets/buttons/primary_button.dart`
+- [x] Create `common_widgets/buttons/outline_button.dart`
 - [ ] Create `common_widgets/buttons/scale_button.dart` (interaction effect)
 
 ### 3.2 Inputs
 
-- [ ] Create `common_widgets/inputs/custom_text_field.dart`
-- [ ] Create `common_widgets/inputs/search_bar.dart`
+- [x] Create `common_widgets/inputs/custom_text_field.dart`
+- [x] Create `common_widgets/inputs/search_bar.dart`
 - [ ] Create `common_widgets/inputs/dropdown_field.dart`
 
 ### 3.3 Cards
 
-- [ ] Create `common_widgets/cards/standard_card.dart`
-- [ ] Create `common_widgets/cards/member_card.dart` (untuk Directory)
-- [ ] Create `common_widgets/cards/product_card.dart` (untuk Market)
-- [ ] Create `common_widgets/cards/job_card.dart` (untuk Loker)
-- [ ] Create `common_widgets/cards/campaign_card.dart` (untuk Donation)
-- [ ] Create `common_widgets/cards/post_card.dart` (untuk Forum)
+- [x] Create `common_widgets/cards/standard_card.dart`
+- [x] Create `common_widgets/cards/member_card.dart` (untuk Directory)
+- [x] Create `common_widgets/cards/product_card.dart` (untuk Market)
+- [x] Create `common_widgets/cards/job_card.dart` (untuk Loker)
+- [x] Create `common_widgets/cards/campaign_card.dart` (untuk Donation)
+- [x] Create `common_widgets/cards/post_card.dart` (untuk Forum)
 
 ### 3.4 Layout Components
 
-- [ ] Create `common_widgets/layout/bottom_nav_bar.dart`
-- [ ] Create `common_widgets/layout/filter_chips.dart` (horizontal scroll)
-- [ ] Create `common_widgets/layout/empty_state.dart`
-- [ ] Create `common_widgets/layout/loading_shimmer.dart`
+- [x] Create `common_widgets/layout/bottom_nav_bar.dart`
+- [x] Create `common_widgets/layout/filter_chips.dart` (horizontal scroll)
+- [x] Create `common_widgets/layout/empty_state.dart`
+- [x] Create `common_widgets/layout/loading_shimmer.dart`
 
 ---
 
@@ -135,53 +135,57 @@
 
 ### 4.1 Onboarding & Splash
 
-- [ ] **Domain**: Create `features/onboard/domain/entities/user_role.dart` (enum)
-- [ ] **Presentation**: Create `features/onboard/presentation/splash_screen.dart`
-- [ ] **Presentation**: Create `features/onboard/presentation/role_selection_screen.dart` (ref: `lofi/role-selection.html`)
-- [ ] Add routes: `/splash`, `/role-selection`
+- [x] **Domain**: Create `features/onboard/domain/entities/user_role.dart` (enum)
+- [x] **Presentation**: Create `features/onboard/presentation/splash_screen.dart`
+- [x] **Presentation**: Create `features/onboard/presentation/role_selection_screen.dart` (ref: `lofi/role-selection.html`)
+- [x] Add routes: `/splash`, `/role-selection`
 
 ### 4.2 Authentication (Login & Register)
 
-- [ ] **Domain**: Create `features/auth/domain/entities/user_entity.dart`
-- [ ] **Domain**: Create `features/auth/domain/repositories/auth_repository.dart` (interface)
-- [ ] **Domain**: Create `features/auth/domain/usecases/login_user.dart`
-- [ ] **Domain**: Create `features/auth/domain/usecases/register_alumni.dart`
-- [ ] **Data**: Create `features/auth/data/models/user_model.dart`
-- [ ] **Data**: Create `features/auth/data/datasources/auth_remote_data_source.dart`
-- [ ] **Data**: Create `features/auth/data/repositories/auth_repository_impl.dart`
-- [ ] **Presentation**: Create `features/auth/presentation/login_controller.dart`
-- [ ] **Presentation**: Create `features/auth/presentation/login_screen.dart` (ref: `lofi/login.html`)
-- [ ] **Presentation**: Create `features/auth/presentation/register_controller.dart`
-- [ ] **Presentation**: Create `features/auth/presentation/register_screen.dart` (3-step wizard, ref: `lofi/register-alumni.html`)
-- [ ] Add routes: `/login`, `/register`
-- [ ] Test Login Flow
+- [x] **Domain**: Create `features/auth/domain/entities/user_entity.dart`
+- [x] **Domain**: Create `features/auth/domain/repositories/auth_repository.dart` (interface)
+- [x] **Domain**: Create `features/auth/domain/usecases/login_user.dart`
+- [x] **Domain**: Create `features/auth/domain/usecases/register_alumni.dart`
+- [x] **Data**: Create `features/auth/data/models/user_model.dart`
+- [x] **Data**: Create `features/auth/data/datasources/auth_remote_data_source.dart`
+- [x] **Data**: Create `features/auth/data/repositories/auth_repository_impl.dart`
+- [x] **Presentation**: Create `features/auth/presentation/login_controller.dart`
+- [x] **Presentation**: Create `features/auth/presentation/login_screen.dart` (ref: `lofi/login.html`)
+- [x] **Presentation**: Create `features/auth/presentation/register_controller.dart`
+- [x] **Presentation**: Create `features/auth/presentation/register_screen.dart` (3-step wizard, ref: `lofi/register-alumni.html`)
+- [x] Add routes: `/login`, `/register`
+  - [x] Fix lint errors (unused imports, deprecations, Ref errors) <!-- id: 775 -->
+  - [/] Test Login Flows
+  - [ ] Implement LogoutDashboard
 
 ### 4.3 Home Dashboard
 
-- [ ] **Presentation**: Create `features/home/presentation/home_controller.dart`
-- [ ] **Presentation**: Create `features/home/presentation/home_screen.dart` (ref: `lofi/home.html`)
-  - [ ] E-KTA Card Preview (gradient card)
-  - [ ] Action Grid (2x4: Direktori, Market, Loker, Donasi, Forum, E-KTA, Berita, Tentang)
-  - [ ] Donation Slider (horizontal scroll)
-  - [ ] News Section
-- [ ] **Presentation**: Create `features/home/presentation/widgets/ekta_card_preview.dart`
-- [ ] **Presentation**: Create `features/home/presentation/widgets/action_grid.dart`
-- [ ] Add route: `/home`
-- [ ] Integrate Bottom Navigation Bar (5 items)
+- [x] **Presentation**: Create `features/home/presentation/home_controller.dart`
+- [x] **Presentation**: Create `features/home/presentation/home_screen.dart` (ref: `lofi/home.html`)
+  - [x] E-KTA Card Preview (gradient card)
+  - [x] Action Grid (2x4: Direktori, Market, Loker, Donasi, Forum, E-KTA, Berita, Tentang)
+  - [x] Donation Slider (horizontal scroll)
+  - [x] News Section
+- [x] **Presentation**: Create `features/home/presentation/widgets/ekta_card_preview.dart`
+- [x] **Presentation**: Create `features/home/presentation/widgets/action_grid.dart`
+- [x] Add route: `/home`
+- [x] **UI Polish**: Refactor Bottom Nav to 5 items (Home, Direktori, Donasi, Loker, Lainnya)
+- [x] **UI Polish**: Implement Side Menu Drawer for 'Lainnya'
+- [x] **UI Polish**: Update Home Action Grid to 4 items (Donasi, Berita, Loker, Market)
+- [x] **Refinement**: Connect HomeHeader to User Data (Real Name/Angkatan/ID) & Profile Link
+- [x] **Refinement**: Make Home Links (Donation, News, E-KTA) interactive
 
-### 4.4 Directory (Alumni Search)
-
-- [ ] **Domain**: Create `features/directory/domain/entities/alumni_entity.dart`
-- [ ] **Domain**: Create `features/directory/domain/repositories/directory_repository.dart`
-- [ ] **Domain**: Create `features/directory/domain/usecases/search_alumni.dart`
-- [ ] **Data**: Create `features/directory/data/models/alumni_model.dart`
-- [ ] **Data**: Create `features/directory/data/datasources/directory_remote_data_source.dart`
-- [ ] **Data**: Create `features/directory/data/repositories/directory_repository_impl.dart`
-- [ ] **Presentation**: Create `features/directory/presentation/directory_controller.dart` (dengan debounce search)
-- [ ] **Presentation**: Create `features/directory/presentation/directory_screen.dart` (ref: `lofi/directory.html`)
-  - [ ] Search Bar
-  - [ ] Filter Chips (Angkatan, Pekerjaan, Domisili)
-  - [ ] Alumni List (member cards)
+- [x] **Domain**: Create `features/directory/domain/entities/alumni_entity.dart`
+- [x] **Domain**: Create `features/directory/domain/repositories/directory_repository.dart`
+- [x] **Domain**: Create `features/directory/domain/usecases/search_alumni.dart`
+- [x] **Data**: Create `features/directory/data/models/alumni_model.dart`
+- [x] **Data**: Create `features/directory/data/datasources/directory_remote_data_source.dart`
+- [x] **Data**: Create `features/directory/data/repositories/directory_repository_impl.dart`
+- [x] **Presentation**: Create `features/directory/presentation/directory_controller.dart` (dengan debounce search)
+- [/] **Presentation**: Create `features/directory/presentation/directory_screen.dart` (ref: `lofi/directory.html`)
+  - [x] Search Bar
+  - [x] Filter Chips (Angkatan, Pekerjaan, Domisili)
+  - [x] Alumni List (member cards)
 - [ ] **Presentation**: Create `features/directory/presentation/alumni_detail_screen.dart`
 - [ ] Add routes: `/directory`, `/directory/:id`
 
@@ -212,14 +216,14 @@
 - [ ] **Data**: Create `features/loker/data/models/job_model.dart`
 - [ ] **Data**: Create `features/loker/data/datasources/job_remote_data_source.dart`
 - [ ] **Data**: Create `features/loker/data/repositories/job_repository_impl.dart`
-- [ ] **Presentation**: Create `features/loker/presentation/loker_list_controller.dart`
-- [ ] **Presentation**: Create `features/loker/presentation/loker_screen.dart` (ref: `lofi/loker.html`)
-  - [ ] Search Bar
-  - [ ] Filter Chips (Fulltime, Internship, Remote)
-  - [ ] Job List
-- [ ] **Presentation**: Create `features/loker/presentation/job_detail_screen.dart` (ref: `lofi/loker-detail.html`)
-- [ ] **Presentation**: Create `features/loker/presentation/post_job_screen.dart`
-- [ ] Add routes: `/loker`, `/loker/:id`, `/loker/post`
+- [/] **Presentation**: Create `features/loker/presentation/loker_list_controller.dart`
+- [x] **Presentation**: Create `features/loker/presentation/loker_screen.dart` (ref: `lofi/loker.html`)
+  - [x] Search Bar
+  - [x] Filter Chips (Fulltime, Internship, Remote)
+  - [x] Job List
+- [x] **Presentation**: Create `features/loker/presentation/job_detail_screen.dart` (ref: `lofi/loker-detail.html`)
+- [x] **Presentation**: Create `features/loker/presentation/post_job_screen.dart`
+- [x] Add routes: `/loker`, `/loker/:id`, `/loker/post`
 
 ### 4.7 Donation Campaigns
 

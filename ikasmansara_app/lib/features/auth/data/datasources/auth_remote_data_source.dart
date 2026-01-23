@@ -52,7 +52,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'name': name,
         'role': 'alumni',
         'phone': phone,
-        'graduation_year': graduationYear,
+        'angkatan': graduationYear,
         'verified': false, // Default false until admin approves
       };
 

@@ -5,7 +5,7 @@ import '../../../auth/data/models/user_model.dart';
 class ProductModel extends ProductEntity {
   const ProductModel({
     required super.id,
-    required super.title,
+    required super.name,
     required super.description,
     required super.price,
     required super.category,
@@ -19,15 +19,10 @@ class ProductModel extends ProductEntity {
   factory ProductModel.fromRecord(RecordModel record) {
     // Check if seller is expanded
     UserModel? sellerModel;
-    // Check if expands exists and contains seller using generic get method or direct map access map
-    // PocketBase v0.20+ uses expand map directly or generic get.
-    // The lint error suggests 'expand' field is deprecated and we should use record.get<T>('expand.something')
-    // But expanding is a bit tricky with the generic get if we want the map.
-    // Let's use get<List<RecordModel>>('expand.seller')
 
     // Attempt to access expanded seller safely
     try {
-      final expandedSeller = record.expand['seller'];
+      final expandedSeller = record.expand['seller_id'];
       if (expandedSeller != null && expandedSeller.isNotEmpty) {
         sellerModel = UserModel.fromRecord(expandedSeller.first);
       }
@@ -37,15 +32,15 @@ class ProductModel extends ProductEntity {
 
     return ProductModel(
       id: record.id,
-      title: record.getStringValue('title'),
+      name: record.getStringValue('name'),
       description: record.getStringValue('description'),
       price: record.getDoubleValue('price'),
       category: record.getStringValue('category'),
       images: record.getListValue<String>('images'),
       whatsapp: record.getStringValue('whatsapp'),
-      sellerId: record.getStringValue('seller'),
+      sellerId: record.getStringValue('seller_id'),
       seller: sellerModel,
-      created: DateTime.parse(record.getStringValue('created')),
+      created: DateTime.tryParse(record.created) ?? DateTime.now(),
     );
   }
 

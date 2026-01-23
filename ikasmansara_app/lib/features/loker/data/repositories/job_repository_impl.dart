@@ -42,4 +42,17 @@ class JobRepositoryImpl implements JobRepository {
       throw AppException.unknown(message: e.toString());
     }
   }
+
+  @override
+  Future<void> createJob(Map<String, dynamic> jobData) async {
+    try {
+      await remoteDataSource.createJob(jobData);
+    } on NetworkException catch (e) {
+      throw AppException.fromNetworkException(e);
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw AppException.unknown(message: e.toString());
+    }
+  }
 }

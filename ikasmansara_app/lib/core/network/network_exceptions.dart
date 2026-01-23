@@ -31,7 +31,7 @@ NetworkException mapPocketBaseError(ClientException e) {
       );
     default:
       return NetworkException(
-        'Koneksi gagal. Periksa internet Anda.',
+        'Koneksi gagal: $e', // Show raw error for debugging
         e.statusCode,
       );
   }

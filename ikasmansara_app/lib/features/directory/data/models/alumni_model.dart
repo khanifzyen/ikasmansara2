@@ -20,9 +20,7 @@ class AlumniModel extends AlumniEntity {
       id: record.id,
       name: record.getStringValue('name'),
       email: record.getStringValue('email'),
-      avatar: record.getStringValue('avatar').isNotEmpty
-          ? record.getStringValue('avatar')
-          : null,
+      avatar: record.getStringValue('avatar'),
       angkatan: record.getIntValue('angkatan'),
       role: record.getStringValue('role'),
       jobType: record.getStringValue('job_type'),

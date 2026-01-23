@@ -35,9 +35,11 @@ class DirectoryRemoteDataSourceImpl implements DirectoryRemoteDataSource {
 
     if (query != null && query.isNotEmpty) {
       // Fuzzy search on name, company, or position
-      filters.add(
-        '(name ~ "$query" || company ~ "$query" || position ~ "$query")',
-      );
+      // Fuzzy search on name only for now (Debugging Schema Issue)
+      filters.add('(name ~ "$query")');
+      // filters.add(
+      //   '(name ~ "$query" || company ~ "$query" || position ~ "$query")',
+      // );
     }
 
     if (angkatan != null) {
@@ -52,17 +54,25 @@ class DirectoryRemoteDataSourceImpl implements DirectoryRemoteDataSource {
       filters.add('domicile ~ "$domicile"');
     }
 
-    final filterString = filters.join(' && ');
+    // final filterString = filters.join(' && ');
 
-    final result = await pb
-        .collection(ApiEndpoints.users)
-        .getList(
-          page: page,
-          perPage: limit,
-          filter: filterString,
-          sort: '-created', // Default sort
-        );
+    try {
+      print("DEBUG DIRECTORY: Auth Valid? ${pb.authStore.isValid}");
+      print("DEBUG DIRECTORY: User ID: ${pb.authStore.model?.id}");
 
-    return result.items.map((r) => AlumniModel.fromRecord(r)).toList();
+      final result = await pb
+          .collection(ApiEndpoints.users)
+          .getList(
+            page: page,
+            perPage: limit,
+            // filter: filterString, // DISABLE FILTER FOR DEBUGGING
+            // sort: '-created', // DISABLE SORT FOR DEBUGGING
+          );
+
+      return result.items.map((r) => AlumniModel.fromRecord(r)).toList();
+    } catch (e) {
+      print("DIRECTORY ERROR: $e"); // PRINT ERROR TO TERMINAL
+      rethrow;
+    }
   }
 }

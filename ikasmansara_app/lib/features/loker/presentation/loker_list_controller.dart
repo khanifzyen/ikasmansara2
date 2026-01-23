@@ -1,22 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ikasmansara_app/features/loker/presentation/providers/loker_providers.dart';
 
-import '../../../core/network/pocketbase_service.dart';
-import '../data/datasources/job_remote_data_source.dart';
-import '../data/repositories/job_repository_impl.dart';
 import '../domain/entities/job_entity.dart';
 import '../domain/usecases/get_jobs.dart';
-
-// --- Providers ---
-
-final jobRepositoryProvider = Provider<JobRepositoryImpl>((ref) {
-  final pb = ref.watch(pocketBaseServiceProvider);
-  return JobRepositoryImpl(JobRemoteDataSourceImpl(pb));
-});
-
-final getJobsUseCaseProvider = Provider<GetJobs>((ref) {
-  return GetJobs(ref.watch(jobRepositoryProvider));
-});
 
 final lokerListControllerProvider =
     NotifierProvider.autoDispose<LokerListController, LokerListState>(
@@ -60,7 +47,8 @@ class LokerListState extends Equatable {
 
 class LokerListController extends AutoDisposeNotifier<LokerListState> {
   // Use a getter to access the dependency lazily
-  GetJobs get _getJobs => ref.read(getJobsUseCaseProvider);
+  GetJobs get _getJobs =>
+      ref.read(getJobsUseCaseProvider as ProviderListenable<GetJobs>);
 
   @override
   LokerListState build() {

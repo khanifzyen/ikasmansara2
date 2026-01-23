@@ -10,6 +10,11 @@ class UserModel extends UserEntity {
     required super.role,
     super.isVerified,
     super.angkatan,
+    super.bio,
+    super.job,
+    super.phone,
+    super.linkedin,
+    super.instagram,
   });
 
   factory UserModel.fromRecord(RecordModel record) {
@@ -27,6 +32,11 @@ class UserModel extends UserEntity {
       role: record.getStringValue('role'),
       isVerified: record.getBoolValue('verified'),
       angkatan: record.getIntValue('angkatan'),
+      bio: record.getStringValue('bio'),
+      job: record.getStringValue('job'),
+      phone: record.getStringValue('phone'),
+      linkedin: record.getStringValue('linkedin'),
+      instagram: record.getStringValue('instagram'),
     );
   }
 
@@ -39,6 +49,11 @@ class UserModel extends UserEntity {
       role: entity.role,
       isVerified: entity.isVerified,
       angkatan: entity.angkatan,
+      bio: entity.bio,
+      job: entity.job,
+      phone: entity.phone,
+      linkedin: entity.linkedin,
+      instagram: entity.instagram,
     );
   }
 }

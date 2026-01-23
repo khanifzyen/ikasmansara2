@@ -58,7 +58,7 @@ class ProfileController extends StateNotifier<AsyncValue<ProfileEntity?>> {
       state = AsyncValue.data(updatedProfile);
 
       // Refresh Auth User Provider because name/avatar might change
-      // ref.refresh(currentUserProvider); // This might be needed if Auth uses a stream or provider
+      ref.invalidate(currentUserProvider);
     } catch (e, st) {
       // Restore old state on error, but wrapped in error to show snackbar
       // Or just set error state

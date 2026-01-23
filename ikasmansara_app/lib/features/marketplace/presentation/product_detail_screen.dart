@@ -133,7 +133,7 @@ class _ProductDetailContent extends StatelessWidget {
 
                 // Title
                 Text(
-                  product.title,
+                  product.name,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -239,7 +239,7 @@ class _ContactSellerButton extends ConsumerWidget {
                 .call(
                   whatsappNumber: product.whatsapp,
                   message:
-                      'Halo, saya tertarik dengan produk ${product.title} di Aplikasi IKA SMANSARA.',
+                      'Halo, saya tertarik dengan produk ${product.name} di Aplikasi IKA SMANSARA.',
                 );
           },
           icon: const Icon(Icons.chat), // WhatsApp icon ideally
