@@ -38,7 +38,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
 
     final records = await _pbService.pb
         .collection('posts')
-        .getList(filter: filter, sort: '-created', expand: 'author');
+        .getList();
 
     final currentUserId = _pbService.pb.authStore.model?.id;
 
