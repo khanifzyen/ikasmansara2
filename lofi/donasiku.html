@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donasiku</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .ticket-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .ticket-card:active {
+            transform: scale(0.98);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .event-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .event-date {
+            font-size: 11px;
+            color: var(--text-grey);
+        }
+
+        .status-badge {
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .status-expired {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .ticket-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #eee;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .total-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .action-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-grey);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: end;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .payment-sheet {
+            background: white;
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div
+            style="padding: 20px 24px; background: white; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #f3f4f6;">
+            <div onclick="history.back()" style="cursor: pointer; font-size: 20px;">←</div>
+            <h2 style="font-size: 18px; margin: 0;">Donasiku</h2>
+        </div>
+
+        <div class="fade-in" style="padding: 24px; padding-bottom: 80px;">
+
+            <!-- Filters -->
+            <div style="margin-bottom: 20px;">
+                <div
+                    style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none;">
+                    <div class="filter-chip active" data-status="all" onclick="setFilter('all', this)">Semua</div>
+                    <div class="filter-chip" data-status="success" onclick="setFilter('success', this)">Berhasil</div>
+                    <div class="filter-chip" data-status="pending" onclick="setFilter('pending', this)">Menunggu</div>
+                    <div class="filter-chip" data-status="expired" onclick="setFilter('expired', this)">Gagal</div>
+                </div>
+                <div
+                    style="display: flex; gap: 12px; align-items: center; background: #F9FAFB; padding: 12px; border-radius: 12px;">
+                    <div style="flex: 1;">
+                        <label
+                            style="font-size: 10px; color: var(--text-grey); display: block; margin-bottom: 4px;">Dari</label>
+                        <input type="date" id="dateStart"
+                            style="width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 4px; font-size: 12px;"
+                            onchange="filterData()">
+                    </div>
+                    <div style="flex: 1;">
+                        <label
+                            style="font-size: 10px; color: var(--text-grey); display: block; margin-bottom: 4px;">Sampai</label>
+                        <input type="date" id="dateEnd"
+                            style="width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 4px; font-size: 12px;"
+                            onchange="filterData()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Content -->
+            <div id="donationList">
+                <!-- Injected via JS -->
+            </div>
+
+        </div>
+
+        <!-- Styles for Filter -->
+        <style>
+            .filter-chip {
+                padding: 6px 16px;
+                border-radius: 20px;
+                background: #F3F4F6;
+                font-size: 12px;
+                color: var(--text-grey);
+                white-space: nowrap;
+                cursor: pointer;
+                font-weight: 600;
+                transition: 0.2s;
+            }
+
+            .filter-chip.active {
+                background: var(--primary-light);
+                color: var(--primary);
+            }
+
+            /* Custom Colors */
+            .filter-chip.active[data-status="all"] {
+                background: #DBEAFE;
+                color: #1E40AF;
+            }
+
+            .filter-chip.active[data-status="success"] {
+                background: #DCFCE7;
+                color: #166534;
+            }
+
+            .filter-chip.active[data-status="pending"] {
+                background: #FEF3C7;
+                color: #D97706;
+            }
+
+            .filter-chip.active[data-status="expired"] {
+                background: #FEE2E2;
+                color: #991B1B;
+            }
+        </style>
+
+        <!-- Bottom Nav (Reused from Tiketku/Home but updated) -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg></div>
+                <span>Home</span>
+            </a>
+            <a href="donasiku.html" class="nav-item active">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg></div>
+                <span>Donasiku</span>
+            </a>
+            <a href="tiketku.html" class="nav-item">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg></div>
+                <span>Tiketku</span>
+            </a>
+            <a href="loker.html" class="nav-item">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg></div>
+                <span>Loker</span>
+            </a>
+            <div class="nav-item" onclick="openMoreMenu()" style="cursor: pointer;">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg></div>
+                <span>Lainnya</span>
+            </div>
+        </nav>
+
+        <!-- Side Drawer Menu -->
+        <div id="moreMenuDrawer" class="side-drawer">
+            <div class="drawer-header">
+                <h3>Menu Lainnya</h3>
+                <span class="close-drawer" onclick="closeMoreMenu()">×</span>
+            </div>
+            <div class="drawer-content">
+                <div class="drawer-menu-list">
+                    <a href="directory.html" class="drawer-menu-item">
+                        <div class="drawer-menu-icon" style="color: var(--primary); background: #EEFBF6;">👥</div>
+                        <span class="drawer-menu-label">Direktori</span>
+                    </a>
+                    <a href="market.html" class="drawer-menu-item">
+                        <div class="drawer-menu-icon">🛍️</div>
+                        <span class="drawer-menu-label">Market</span>
+                    </a>
+                    <a href="forum.html" class="drawer-menu-item">
+                        <div class="drawer-menu-icon">💬</div>
+                        <span class="drawer-menu-label">Forum</span>
+                    </a>
+                    <a href="profile.html" class="drawer-menu-item">
+                        <div class="drawer-menu-icon">👤</div>
+                        <span class="drawer-menu-label">Profil</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="drawerOverlay" class="modal-overlay" onclick="closeMoreMenu()" style="align-items: center;"></div>
+
+        <!-- Payment Popup -->
+        <div id="paymentModal" class="modal-overlay">
+            <div class="payment-sheet">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Midtrans.png/1200px-Midtrans.png"
+                        style="height: 30px; margin-bottom: 12px;">
+                    <h3 style="font-size: 16px;">Selesaikan Donasi</h3>
+                    <p style="font-size: 12px; color: var(--text-grey);">Virtual Account BCA: <b
+                            style="color: black;">8801 8291 0029</b></p>
+                </div>
+
+                <div
+                    style="background: #F9FAFB; padding: 16px; border-radius: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 13px; color: var(--text-grey);">Total Donasi</span>
+                    <span id="payAmount" style="font-weight: 700; font-size: 16px; color: var(--primary);">Rp 0</span>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="completePayment()">Bayar Sekarang</button>
+                <button class="btn btn-outline btn-block"
+                    style="margin-top: 12px; border: none; color: var(--text-grey);"
+                    onclick="closePayment()">Batal</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Drawer Logic
+        function openMoreMenu() {
+            document.getElementById('moreMenuDrawer').classList.add('active');
+            document.getElementById('drawerOverlay').classList.add('active');
+        }
+
+        function closeMoreMenu() {
+            document.getElementById('moreMenuDrawer').classList.remove('active');
+            document.getElementById('drawerOverlay').classList.remove('active');
+        }
+
+        // Mock Data
+        const myDonations = [
+            { id: 1, title: 'Renovasi Masjid Sekolah', date: '2026-01-10', displayDate: '10 Jan 2026', price: 100000, status: 'success', trxId: 'TRX-20260110-001' },
+            { id: 2, title: 'Beasiswa Anak Alumni', date: '2026-02-05', displayDate: '05 Feb 2026', price: 250000, status: 'pending', trxId: 'TRX-20260205-002' },
+            { id: 3, title: 'Bantuan Bencana Alam', date: '2025-11-01', displayDate: '01 Nov 2025', price: 50000, status: 'expired', trxId: 'TRX-20251101-003' }
+        ];
+
+        let currentStatusFilter = 'all';
+
+        function setFilter(status, el) {
+            currentStatusFilter = status;
+
+            // Update UI
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+
+            filterData();
+        }
+
+        function filterData() {
+            const startInput = document.getElementById('dateStart');
+            const endInput = document.getElementById('dateEnd');
+
+            const startStr = startInput.value;
+            const endStr = endInput.value;
+
+            // Date Range Validation (Max 1 Year)
+            if (startStr && endStr) {
+                const startDate = new Date(startStr);
+                const endDate = new Date(endStr);
+                const oneYearLater = new Date(startDate);
+                oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+
+                if (endDate > oneYearLater) {
+                    alert('Rentang waktu maksimal adalah 1 tahun.');
+                    // Reset End Date to 1 Year from Start
+                    endInput.valueAsDate = oneYearLater;
+                    return filterData(); // Re-run filter with corrected date
+                }
+
+                // Allow valid end date (can be same or less than 1 year)
+                if (endDate < startDate) {
+                    alert('Tanggal akhir tidak boleh lebih kecil dari tanggal awal.');
+                    endInput.value = startStr;
+                    return filterData();
+                }
+            }
+
+            const filtered = myDonations.filter(t => {
+                // Status Filter
+                if (currentStatusFilter !== 'all' && t.status !== currentStatusFilter) return false;
+
+                // Date Filter
+                if (startStr && t.date < startStr) return false;
+                if (endStr && t.date > endStr) return false;
+
+                return true;
+            });
+
+            renderDonations(filtered);
+        }
+
+        function renderDonations(data = myDonations) {
+            const container = document.getElementById('donationList');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#ccc; font-size:13px; padding:20px;">Data tidak ditemukan</div>';
+                return;
+            }
+
+            data.forEach(t => {
+                let badgeClass = '';
+                let statusText = '';
+
+                if (t.status === 'success') { badgeClass = 'status-success'; statusText = 'BERHASIL'; }
+                else if (t.status === 'pending') { badgeClass = 'status-pending'; statusText = 'MENUNGGU'; }
+                else { badgeClass = 'status-expired'; statusText = 'GAGAL'; }
+
+                const html = `
+                    <div class="ticket-card" onclick="handleDonationClick('${t.status}', '${t.title}', ${t.price})">
+                        <div class="ticket-header">
+                            <div>
+                                <div style="font-size: 10px; color: var(--text-grey); margin-bottom: 2px;">ID: ${t.trxId}</div>
+                                <div class="event-name">${t.title}</div>
+                                <div class="event-date">${t.displayDate}</div>
+                            </div>
+                            <span class="status-badge ${badgeClass}">${statusText}</span>
+                        </div>
+                        <div class="ticket-footer">
+                            <span class="total-price">Rp ${t.price.toLocaleString('id-ID')}</span>
+                            <span class="action-text">
+                                ${t.status === 'pending' ? 'Bayar Sekarang →' : 'Detail'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function handleDonationClick(status, title, price) {
+            if (status === 'success') {
+                alert('Terima kasih! Donasi Anda telah kami terima.');
+            } else if (status === 'pending') {
+                document.getElementById('payAmount').innerText = 'Rp ' + price.toLocaleString('id-ID');
+                document.getElementById('paymentModal').classList.add('active');
+            } else {
+                alert('Donasi ini telah kadaluarsa.');
+            }
+        }
+
+        function closePayment() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        function completePayment() {
+            alert('Pembayaran Berhasil! Terima kasih atas donasi Anda.');
+            closePayment();
+            // Reload logic mockup
+            window.location.reload();
+        }
+
+        window.onload = function () {
+            // Set Default Dates (Today - 1 Year)
+            const today = new Date();
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+            document.getElementById('dateEnd').valueAsDate = today;
+            document.getElementById('dateStart').valueAsDate = oneYearAgo;
+
+            filterData();
+        }
+    </script>
+</body>
+
+</html>

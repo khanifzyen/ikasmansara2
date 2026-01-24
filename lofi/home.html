@@ -45,47 +45,35 @@
             object-fit: cover;
         }
 
-        /* E-KTA Card */
+        /* E-KTA Card Compact */
         .member-card {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 16px 20px;
             color: white;
             position: relative;
             overflow: hidden;
             margin-bottom: 24px;
-            box-shadow: 0 10px 20px rgba(0, 106, 78, 0.2);
-        }
-
-        .card-chip {
-            width: 40px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-
-        .card-name {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .card-details {
+            box-shadow: 0 4px 12px rgba(0, 106, 78, 0.2);
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-top: 10px;
-            font-size: 12px;
-            opacity: 0.9;
+        }
+
+        .card-content {
+            z-index: 2;
         }
 
         .bg-pattern {
             position: absolute;
-            right: -20px;
-            bottom: -20px;
-            opacity: 0.1;
-            font-size: 100px;
+            right: -10px;
+            bottom: -15px;
+            opacity: 0.15;
+            font-size: 80px;
+            z-index: 1;
         }
+
+
 
         /* Quick Menu Grid */
         .menu-grid {
@@ -196,13 +184,20 @@
             </div>
 
             <!-- 2. E-KTA Preview -->
-            <div class="member-card" onclick="navigateTo('profile.html')">
+            <div class="member-card" onclick="navigateTo('ekta.html')">
                 <div class="bg-pattern">🎓</div>
-                <div class="card-chip"></div> <!-- Mockup Chip -->
-                <div class="card-name">BUDI SANTOSO</div>
-                <div class="card-details">
-                    <span>ANGKATAN 2010</span>
-                    <span>NO: 2010.045.12</span>
+                <div class="card-content">
+                    <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px; text-transform: uppercase;">Angkatan
+                        2010</div>
+                    <div
+                        style="font-size: 16px; font-weight: 700; font-family: 'Courier New', monospace; letter-spacing: 1px;">
+                        1992.2010.045.8821</div>
+                </div>
+                <div style="z-index: 2;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                 </div>
             </div>
 
@@ -223,6 +218,30 @@
                 <div class="menu-item" onclick="navigateTo('market.html')">
                     <div class="menu-icon">🛍️</div>
                     <span class="menu-label">Market</span>
+                </div>
+            </div>
+
+            <!-- 3a. Events Section -->
+            <div class="section-header">
+                <span class="section-title">Agenda Kegiatan</span>
+                <a href="#" class="view-all">Lihat Semua</a>
+            </div>
+
+            <div class="h-scroll" style="margin-bottom: 30px;">
+                <!-- Event 1 -->
+                <div class="news-card" onclick="navigateTo('event-detail.html')">
+                    <div style="position: relative;">
+                        <img src="jalan_sehat_banner.png" class="news-img">
+                        <div
+                            style="position: absolute; top: 8px; left: 8px; background: var(--primary); color: white; font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">
+                            OPEN REGISTRATION</div>
+                    </div>
+                    <div class="news-content">
+                        <div style="font-size: 10px; color: var(--secondary); font-weight: 700; margin-bottom: 4px;">20
+                            AGUSTUS 2026</div>
+                        <div class="news-title" style="font-size: 14px;">Jalan Sehat & Reuni Akbar 2026</div>
+                        <div style="font-size: 11px; color: var(--text-grey); margin-top: 4px;">📍 SMAN 1 Jepara</div>
+                    </div>
                 </div>
             </div>
 
@@ -312,24 +331,22 @@
                     </svg></div>
                 <span>Home</span>
             </a>
-            <a href="directory.html" class="nav-item">
-                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg></div>
-                <span>Direktori</span>
-            </a>
-            <a href="donation.html" class="nav-item">
+            <a href="donasiku.html" class="nav-item">
                 <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path
                             d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
                         </path>
                     </svg></div>
-                <span>Donasi</span>
+                <span>Donasiku</span>
+            </a>
+            <a href="tiketku.html" class="nav-item">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg></div>
+                <span>Tiketku</span>
             </a>
             <a href="loker.html" class="nav-item">
                 <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -358,6 +375,10 @@
             </div>
             <div class="drawer-content">
                 <div class="drawer-menu-list">
+                    <a href="directory.html" class="drawer-menu-item">
+                        <div class="drawer-menu-icon" style="color: var(--primary); background: #EEFBF6;">👥</div>
+                        <span class="drawer-menu-label">Direktori</span>
+                    </a>
                     <a href="market.html" class="drawer-menu-item">
                         <div class="drawer-menu-icon">🛍️</div>
                         <span class="drawer-menu-label">Market</span>

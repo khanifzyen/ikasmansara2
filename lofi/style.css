@@ -115,6 +115,18 @@ h3 {
     cursor: pointer;
 }
 
+.btn-block {
+    width: 100%;
+    display: block;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 12px;
+    width: auto;
+    display: inline-block;
+}
+
 .input-group {
     margin-bottom: 20px;
     text-align: left;

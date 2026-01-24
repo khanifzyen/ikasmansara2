@@ -291,165 +291,128 @@
 
                         </div>
 
-                        <nav class="bottom-nav">
-                            <a href="home.html" class="nav-item active">
-                                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                    </svg></div>
-                                <span>Home</span>
-                            </a>
-                            <a href="directory.html" class="nav-item">
-                                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                    </svg></div>
-                                <span>Direktori</span>
-                            </a>
-                            <a href="donation.html" class="nav-item">
-                                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path
-                                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                                        </path>
-                                    </svg></div>
-                                <span>Donasi</span>
-                            </a>
-                            <a href="loker.html" class="nav-item">
-                                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                    </svg></div>
-                                <span>Loker</span>
-                            </a>
-                            <div class="nav-item" onclick="openMoreMenu()" style="cursor: pointer;">
-                                <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                                </div>
+
+                    </div>
+
+                    <!-- 4. Berita Terbaru -->
+                    <div class="section-header">
+                        <span class="section-title">Kabar SMANSARA</span>
+                        <a href="news-list.html" class="view-all">Lihat Semua</a>
+                    </div>
+
+                    <div class="h-scroll">
+                        <!-- News 1 -->
+                        <div class="news-card" onclick="navigateTo('news-detail.html')">
+                            <img src="https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=400"
+                                class="news-img">
+                            <div class="news-content">
+                                <span class="news-tag">Prestasi</span>
+                                <div class="news-title">Tim Basket SMAN 1 Jepara Juara DBL Central Java</div>
                             </div>
-                    </div>
-                </div>
-
-                <!-- 4. Berita Terbaru -->
-                <div class="section-header">
-                    <span class="section-title">Kabar SMANSARA</span>
-                    <a href="news-list.html" class="view-all">Lihat Semua</a>
-                </div>
-
-                <div class="h-scroll">
-                    <!-- News 1 -->
-                    <div class="news-card" onclick="navigateTo('news-detail.html')">
-                        <img src="https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=400" class="news-img">
-                        <div class="news-content">
-                            <span class="news-tag">Prestasi</span>
-                            <div class="news-title">Tim Basket SMAN 1 Jepara Juara DBL Central Java</div>
+                        </div>
+                        <!-- News 2 -->
+                        <div class="news-card" onclick="navigateTo('news-detail.html')">
+                            <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=400" class="news-img">
+                            <div class="news-content">
+                                <span class="news-tag">Alumni</span>
+                                <div class="news-title">Reuni Perak Angkatan 98 Berlangsung Meriah</div>
+                            </div>
                         </div>
                     </div>
-                    <!-- News 2 -->
-                    <div class="news-card" onclick="navigateTo('news-detail.html')">
-                        <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=400" class="news-img">
-                        <div class="news-content">
-                            <span class="news-tag">Alumni</span>
-                            <div class="news-title">Reuni Perak Angkatan 98 Berlangsung Meriah</div>
+
+                </div>
+
+                <nav class="bottom-nav">
+                    <a href="home.html" class="nav-item active">
+                        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg></div>
+                        <span>Home</span>
+                    </a>
+                    <a href="donasiku.html" class="nav-item">
+                        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg></div>
+                        <span>Donasiku</span>
+                    </a>
+                    <a href="tiketku.html" class="nav-item">
+                        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                <polyline points="13 2 13 9 20 9"></polyline>
+                            </svg></div>
+                        <span>Tiketku</span>
+                    </a>
+                    <a href="loker.html" class="nav-item">
+                        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg></div>
+                        <span>Loker</span>
+                    </a>
+                    <div class="nav-item" onclick="openMoreMenu()" style="cursor: pointer;">
+                        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg></div>
+                        <span>Lainnya</span>
+                    </div>
+                </nav>
+
+                <!-- Side Drawer Menu -->
+                <div id="moreMenuDrawer" class="side-drawer">
+                    <div class="drawer-header">
+                        <h3>Menu Lainnya</h3>
+                        <span class="close-drawer" onclick="closeMoreMenu()">×</span>
+                    </div>
+                    <div class="drawer-content">
+                        <div class="drawer-menu-list">
+                            <a href="donasiku.html" class="drawer-menu-item">
+                                <div class="drawer-menu-icon" style="color: #EC4899; background: #FCE7F3;">💖</div>
+                                <span class="drawer-menu-label" style="color: #BE185D;">Donasiku</span>
+                            </a>
+                            <a href="donasiku.html" class="drawer-menu-item">
+                                <div class="drawer-menu-icon" style="color: #EC4899; background: #FCE7F3;">💖</div>
+                                <span class="drawer-menu-label" style="color: #BE185D;">Donasiku</span>
+                            </a>
+                            <a href="market.html" class="drawer-menu-item">
+                                <div class="drawer-menu-icon">🛍️</div>
+                                <span class="drawer-menu-label">Market</span>
+                            </a>
+                            <a href="forum.html" class="drawer-menu-item">
+                                <div class="drawer-menu-icon">💬</div>
+                                <span class="drawer-menu-label">Forum</span>
+                            </a>
+                            <a href="profile.html" class="drawer-menu-item">
+                                <div class="drawer-menu-icon">👤</div>
+                                <span class="drawer-menu-label">Profil</span>
+                            </a>
                         </div>
                     </div>
                 </div>
+                <div id="drawerOverlay" class="modal-overlay" onclick="closeMoreMenu()"></div>
 
+                <script>
+                    function openMoreMenu() {
+                        document.getElementById('moreMenuDrawer').classList.add('active');
+                        document.getElementById('drawerOverlay').classList.add('active');
+                    }
+
+                    function closeMoreMenu() {
+                        document.getElementById('moreMenuDrawer').classList.remove('active');
+                        document.getElementById('drawerOverlay').classList.remove('active');
+                    }
+                </script>
             </div>
-
-            <nav class="bottom-nav">
-                <a href="home.html" class="nav-item active">
-                    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg></div>
-                    <span>Home</span>
-                </a>
-                <a href="directory.html" class="nav-item">
-                    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg></div>
-                    <span>Direktori</span>
-                </a>
-                <a href="donation.html" class="nav-item">
-                    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                            </path>
-                        </svg></div>
-                    <span>Donasi</span>
-                </a>
-                <a href="loker.html" class="nav-item">
-                    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                        </svg></div>
-                    <span>Loker</span>
-                </a>
-                <div class="nav-item" onclick="openMoreMenu()" style="cursor: pointer;">
-                    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg></div>
-                    <span>Lainnya</span>
-                </div>
-            </nav>
-
-            <!-- Side Drawer Menu -->
-            <div id="moreMenuDrawer" class="side-drawer">
-                <div class="drawer-header">
-                    <h3>Menu Lainnya</h3>
-                    <span class="close-drawer" onclick="closeMoreMenu()">×</span>
-                </div>
-                <div class="drawer-content">
-                    <div class="drawer-menu-list">
-                        <a href="market.html" class="drawer-menu-item">
-                            <div class="drawer-menu-icon">🛍️</div>
-                            <span class="drawer-menu-label">Market</span>
-                        </a>
-                        <a href="forum.html" class="drawer-menu-item">
-                            <div class="drawer-menu-icon">💬</div>
-                            <span class="drawer-menu-label">Forum</span>
-                        </a>
-                        <a href="profile.html" class="drawer-menu-item">
-                            <div class="drawer-menu-icon">👤</div>
-                            <span class="drawer-menu-label">Profil</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div id="drawerOverlay" class="modal-overlay" onclick="closeMoreMenu()"></div>
-
-            <script>
-                function openMoreMenu() {
-                    document.getElementById('moreMenuDrawer').classList.add('active');
-                    document.getElementById('drawerOverlay').classList.add('active');
-                }
-
-                function closeMoreMenu() {
-                    document.getElementById('moreMenuDrawer').classList.remove('active');
-                    document.getElementById('drawerOverlay').classList.remove('active');
-                }
-            </script>
-        </div>
-        <script src="script.js"></script>
+            <script src="script.js"></script>
 </body>
 
 </html>

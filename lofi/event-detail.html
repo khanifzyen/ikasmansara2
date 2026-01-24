@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Event - Jalan Sehat 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific Styles for Event Detail within Mobile Frame */
+        .event-scroll-content {
+            padding-bottom: 20px;
+        }
+
+        .event-header {
+            position: relative;
+            height: 220px;
+        }
+
+        .event-banner {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .back-btn-float {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .content-body {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            margin-top: -30px;
+            position: relative;
+            padding: 24px;
+            min-height: 500px;
+        }
+
+        .event-meta {
+            margin-bottom: 24px;
+        }
+
+        .event-date-badge {
+            display: inline-block;
+            background: #EEFBF6;
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .event-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .event-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-grey);
+            font-size: 13px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            /* Hide scrollbar Firefox */
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+            /* Hide scrollbar Chrome/Safari */
+        }
+
+        .tab-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-grey);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Ticket Form */
+        .ticket-counter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .counter-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .ticket-count {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .shirt-size-group {
+            margin-bottom: 20px;
+        }
+
+        .shirt-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .shirt-label {
+            font-size: 12px;
+            color: var(--text-grey);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .price-summary {
+            background: #EEFBF6;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .price-total {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 16px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Subevent List */
+        .subevent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .subevent-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .subevent-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .subevent-desc {
+            font-size: 12px;
+            color: var(--text-grey);
+        }
+
+        /* Sponsorship */
+        .sponsor-tier {
+            border: 1px solid #eee;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .tier-gold {
+            background: #FFF9E6;
+            color: #B45309;
+        }
+
+        .tier-silver {
+            background: #F3F4F6;
+            color: #4B5563;
+        }
+
+        .tier-platinum {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .tier-price {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+
+        .tier-benefits {
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .benefit-item {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            width: 90%;
+            max-width: 320px;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            animation: zoomIn 0.2s;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="event-scroll-content js-scroll-container">
+            <!-- Header -->
+            <div class="event-header">
+                <div class="back-btn-float" onclick="history.back()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </div>
+                <img src="jalan_sehat_banner.png" class="event-banner">
+            </div>
+
+            <div class="content-body">
+                <div class="event-meta">
+                    <span class="event-date-badge">MINGGU, 20 AGUSTUS 2026</span>
+                    <h1 class="event-title">Jalan Sehat & Reuni Akbar 2026</h1>
+                    <div class="event-location" style="margin-bottom: 12px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Lapangan Utama SMAN 1 Jepara</span>
+                    </div>
+
+                    <p style="color: var(--text-grey); font-size: 14px; line-height: 1.6;">
+                        Mari meriahkan acara tahunan kita! Reuni akbar sekaligus jalan sehat keliling kota Jepara.
+                        Tersedia ratusan doorprize menarik, hiburan musik dari band alumni, dan nostalgia masa sekolah.
+                    </p>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="tabs">
+                    <div class="tab-item" onclick="switchTab('tiket')">Tiket</div>
+                    <div class="tab-item" onclick="switchTab('subevent')">Sub-event</div>
+                    <div class="tab-item" onclick="switchTab('sponsor')">Sponsorship</div>
+                    <div class="tab-item active" onclick="switchTab('donasi')">Donasi</div>
+                </div>
+
+                <!-- Tab Content: Tiket -->
+                <div id="tab-tiket" class="tab-content">
+
+                    <!-- View 0: Riwayat Tiket (History) -->
+                    <div id="ticket-history-view" style="display: block; margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 12px; font-size: 16px;">Riwayat Pemesanan</h3>
+                        <!-- Initial Mock Data -->
+                        <div class="ticket-history-list" id="historyList">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;">
+
+                    <!-- View 1: Form Pemesanan -->
+                    <div id="ticket-form-view">
+                        <h3 style="margin-bottom: 16px;">Pesan Tiket Baru</h3>
+
+                        <div class="ticket-counter">
+                            <div>
+                                <div style="font-weight: 600;">Tiket Jalan Sehat</div>
+                                <div style="font-size: 12px; color: var(--text-grey);">Include: Kaos, Snack, Kupon</div>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <div class="counter-btn" onclick="updateTicket(-1)">-</div>
+                                <span class="ticket-count" id="ticketCount">1</span>
+                                <div class="counter-btn" onclick="updateTicket(1)">+</div>
+                            </div>
+                        </div>
+
+                        <div id="shirtSizeContainer" class="shirt-size-group">
+                            <!-- Shirt size selects will be injected here -->
+                        </div>
+
+                        <div class="price-summary">
+                            <div class="price-row">
+                                <span>Harga Satuan</span>
+                                <span>Rp 50.000</span>
+                            </div>
+                            <div class="price-row">
+                                <span>Jumlah Tiket</span>
+                                <span id="summaryCount">1</span>
+                            </div>
+                            <div class="price-row price-total">
+                                <span>Total Pembayaran</span>
+                                <span id="totalPrice">Rp 50.000</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-block" style="margin-top: 24px;" onclick="buyTicket()">Beli
+                            Tiket Sekarang</button>
+                    </div>
+
+                    <!-- View 2: Detail Tiket / QR (Hidden by default) -->
+                    <div id="ticket-detail-view"
+                        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: rgba(0,0,0,0.5);">
+                        <div
+                            style="position: absolute; bottom: 0; left: 0; width: 100%; height: 90%; background: white; border-radius: 24px 24px 0 0; padding: 24px; box-shadow: 0 -4px 20px rgba(0,0,0,0.2); overflow-y: auto;">
+
+                            <div style="text-align: right; margin-bottom: 12px;">
+                                <span onclick="closeTicketDetail()"
+                                    style="cursor: pointer; background: #eee; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">✕</span>
+                            </div>
+
+                            <div style="text-align: center; margin-bottom: 24px;">
+                                <h3 style="color: var(--primary);">Detail Tiket</h3>
+                                <p style="color: var(--text-grey); font-size: 13px;">Tunjukkan QR Code ini ke panitia.
+                                </p>
+                            </div>
+
+                            <div
+                                style="border: 2px dashed #ddd; border-radius: 16px; padding: 20px; background: #f9fafb; position: relative;">
+                                <!-- Punch holes decoration -->
+                                <div
+                                    style="position: absolute; left: -10px; top: 50%; width: 20px; height: 20px; background: white; border-radius: 50%; margin-top: -10px; border-right: 2px dashed #ddd;">
+                                </div>
+                                <div
+                                    style="position: absolute; right: -10px; top: 50%; width: 20px; height: 20px; background: white; border-radius: 50%; margin-top: -10px; border-left: 2px dashed #ddd;">
+                                </div>
+
+                                <div
+                                    style="text-align: center; padding-bottom: 20px; border-bottom: 1px dashed #ddd; margin-bottom: 20px;">
+                                    <img id="detail-qr" src=""
+                                        style="width: 160px; height: 160px; mix-blend-mode: multiply;">
+                                    <div style="font-size: 12px; color: var(--text-dark); margin-top: 8px;">Kode
+                                        Booking: <b id="detail-code">JS-2026-XXXX</b></div>
+                                    <div style="margin-top: 8px;">
+                                        <span id="detail-status"
+                                            style="background: #FEF3C7; color: #D97706; font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: 700;">BELUM
+                                            DIHITAM</span>
+                                    </div>
+                                </div>
+
+                                <div class="price-row">
+                                    <span style="color: var(--text-grey);">Total Tiket</span>
+                                    <span id="detail-count" style="font-weight: 600;">-</span>
+                                </div>
+                                <div class="price-row">
+                                    <span style="color: var(--text-grey);">Tanggal Beli</span>
+                                    <span id="detail-date" style="font-weight: 600;">-</span>
+                                </div>
+
+                                <div style="margin-top: 16px;">
+                                    <span
+                                        style="font-size: 13px; color: var(--text-grey); display: block; margin-bottom: 8px;">Rincian
+                                        Ukuran Kaos:</span>
+                                    <div id="detail-sizes" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <!-- Injected via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-outline btn-block" style="margin-top: 24px;"
+                                onclick="closeTicketDetail()">Tutup</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Tab Content: Sub-event -->
+                <div id="tab-subevent" class="tab-content">
+                    <h3 style="margin-bottom: 16px;">Kegiatan Pendukung</h3>
+
+                    <!-- Item 1: Health Check -->
+                    <div id="se-health" class="subevent-item">
+                        <div class="subevent-info">
+                            <div class="subevent-title">🩺 Cek Kesehatan Gratis</div>
+                            <div class="subevent-desc">Tensi, Gula Darah, Asam Urat.</div>
+                            <div style="margin-top: 4px;">
+                                <span id="quota-health"
+                                    style="background: #e0f2fe; color: #0284c7; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sisa
+                                    Kuota: 45/200</span>
+                            </div>
+
+                            <!-- Hidden QR Area -->
+                            <div id="qr-health"
+                                style="display: none; margin-top: 12px; background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px dashed #ddd;">
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CheckIn_Health2026"
+                                        style="width: 60px; height: 60px; border-radius: 4px;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; font-size: 12px; color: var(--primary);">TIKET
+                                            TERKONFIRMASI</div>
+                                        <div style="font-size: 10px; color: var(--text-grey); margin-top: 2px;">
+                                            Tunjukkan QR ini ke panitia di lokasi (Meja A).</div>
+                                    </div>
+                                    <div style="margin-left:auto;">
+                                        <button onclick="cancelEvent('health', 45, 200)"
+                                            style="background: #FEF2F2; color: #DC2626; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer;">Batal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="btn-health" class="btn btn-outline btn-sm"
+                            onclick="confirmRegistration('health', 45, 200)" style="margin-top: 0;">Daftar</button>
+                    </div>
+
+                    <!-- Item 2: Eye Check -->
+                    <div id="se-eye" class="subevent-item">
+                        <div class="subevent-info">
+                            <div class="subevent-title">👁️ Pemeriksaan Mata</div>
+                            <div class="subevent-desc">Kerjasama dengan RS Mata lokal.</div>
+                            <div style="margin-top: 4px;">
+                                <span id="quota-eye"
+                                    style="background: #fef3c7; color: #d97706; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Sisa
+                                    Kuota: 12/100</span>
+                            </div>
+
+                            <!-- Hidden QR Area -->
+                            <div id="qr-eye"
+                                style="display: none; margin-top: 12px; background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px dashed #ddd;">
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CheckIn_Eye2026"
+                                        style="width: 60px; height: 60px; border-radius: 4px;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; font-size: 12px; color: var(--primary);">TIKET
+                                            TERKONFIRMASI</div>
+                                        <div style="font-size: 10px; color: var(--text-grey); margin-top: 2px;">
+                                            Tunjukkan QR ini ke panitia di lokasi (Meja B).</div>
+                                    </div>
+                                    <div style="margin-left:auto;">
+                                        <button onclick="cancelEvent('eye', 12, 100)"
+                                            style="background: #FEF2F2; color: #DC2626; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer;">Batal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="btn-eye" class="btn btn-outline btn-sm"
+                            onclick="confirmRegistration('eye', 12, 100)" style="margin-top: 0;">Daftar</button>
+                    </div>
+
+                    <!-- Item 3: Blood Donor (Already Registered) -->
+                    <div id="se-blood" class="subevent-item">
+                        <div class="subevent-info">
+                            <div class="subevent-title">🩸 Donor Darah</div>
+                            <div class="subevent-desc">Setetes darah anda, nyawa bagi sesama.</div>
+                            <div style="margin-top: 4px;">
+                                <span id="quota-blood"
+                                    style="background: #dbeafe; color: #1e40af; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Terdaftar:
+                                    88 Orang</span>
+                            </div>
+
+                            <!-- Visible QR Area -->
+                            <div id="qr-blood"
+                                style="display: block; margin-top: 12px; background: #f0fdf4; padding: 12px; border-radius: 8px; border: 1px dashed #16a34a;">
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=CheckIn_Blood2026"
+                                        style="width: 60px; height: 60px; border-radius: 4px;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; font-size: 12px; color: #16a34a;">SUDAH TERDAFTAR
+                                        </div>
+                                        <div style="font-size: 10px; color: var(--text-grey); margin-top: 2px;">Scan QR
+                                            ini di area PMI.</div>
+                                    </div>
+                                    <div style="margin-left:auto;">
+                                        <button onclick="cancelEvent('blood', 88, null)"
+                                            style="background: #FEF2F2; color: #DC2626; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer;">Batal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="btn-blood" class="btn btn-primary btn-sm"
+                            onclick="confirmRegistration('blood', 88, null)"
+                            style="display: none; opacity: 0.7;">Terdaftar</button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Sponsorship -->
+                <div id="tab-sponsor" class="tab-content">
+                    <h3 style="margin-bottom: 16px;">Paket Sponsorship</h3>
+
+                    <!-- Platinum -->
+                    <div class="sponsor-tier">
+                        <span class="tier-badge tier-platinum">Platinum</span>
+                        <div class="tier-price">Rp 10.000.000</div>
+                        <div class="tier-benefits">
+                            <div class="benefit-item">✅ Logo Besar di Backdrop Utama</div>
+                            <div class="benefit-item">✅ Logo di Punggung Kaos</div>
+                            <div class="benefit-item">✅ Booth Ukuran 3x3m</div>
+                            <div class="benefit-item">✅ Ad-lib oleh MC 10x</div>
+                        </div>
+                        <button class="btn btn-primary btn-block">Pilih Platinum</button>
+                    </div>
+
+                    <!-- Gold -->
+                    <div class="sponsor-tier">
+                        <span class="tier-badge tier-gold">Gold</span>
+                        <div class="tier-price">Rp 5.000.000</div>
+                        <div class="tier-benefits">
+                            <div class="benefit-item">✅ Logo Sedang di Backdrop</div>
+                            <div class="benefit-item">✅ Logo di Lengan Kaos</div>
+                            <div class="benefit-item">✅ Booth Ukuran 2x2m</div>
+                        </div>
+                        <button class="btn btn-outline btn-block">Pilih Gold</button>
+                    </div>
+
+                    <!-- Silver -->
+                    <div class="sponsor-tier">
+                        <span class="tier-badge tier-silver">Silver</span>
+                        <div class="tier-price">Rp 2.500.000</div>
+                        <div class="tier-benefits">
+                            <div class="benefit-item">✅ Logo Kecil di Banner</div>
+                            <div class="benefit-item">✅ X-Banner di area acara</div>
+                        </div>
+                        <button class="btn btn-outline btn-block">Pilih Silver</button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Donasi -->
+                <div id="tab-donasi" class="tab-content active">
+
+                    <!-- Sub Tabs Navigation -->
+                    <div
+                        style="background: #f3f4f6; padding: 4px; border-radius: 12px; display: flex; margin-bottom: 20px;">
+                        <div class="sub-tab-item active" onclick="switchSubTab('donatur')"
+                            style="flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-grey);">
+                            Donatur Terkini
+                        </div>
+                        <div class="sub-tab-item" onclick="switchSubTab('personal')"
+                            style="flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-grey);">
+                            Donasi Personal
+                        </div>
+                    </div>
+
+                    <!-- Sub View: Donatur Terkini -->
+                    <div id="view-donatur" class="sub-tab-content active" style="animation: fadeIn 0.3s;">
+                        <!-- Donation Summary Card -->
+                        <div
+                            style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); padding: 20px; border-radius: 16px; color: white; margin-bottom: 24px;">
+                            <div style="font-size: 13px; opacity: 0.9; margin-bottom: 8px;">Total Donasi Terkumpul</div>
+                            <div style="font-size: 28px; font-weight: 700; margin-bottom: 12px;"
+                                id="totalDonationAmount">Rp 0</div>
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                                <div
+                                    style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span id="totalDonorCount">0 Donatur</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Donor List Section -->
+                        <div id="donorList"
+                            style="margin-bottom: 30px; max-height: 400px; overflow-y: auto; padding-right: 4px;">
+                            <!-- Donors will be injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Sub View: Donasi Personal -->
+                    <div id="view-personal-donation" class="sub-tab-content"
+                        style="display: none; animation: fadeIn 0.3s;">
+                        <h3 style="margin-bottom: 16px;">Donasi Personal</h3>
+                        <p style="font-size: 13px; color: var(--text-grey); margin-bottom: 20px;">
+                            Dukungan sukarela untuk operasional acara.
+                        </p>
+
+                        <form onsubmit="event.preventDefault(); alert('Terima kasih atas donasi Anda!');">
+                            <div class="input-group">
+                                <label>Nominal Donasi</label>
+                                <input type="number" class="input-field" placeholder="Contoh: 100000">
+                            </div>
+                            <div class="input-group">
+                                <label>Pesan / Doa (Opsional)</label>
+                                <textarea class="input-field" rows="3" placeholder="Tulis pesan semangat..."></textarea>
+                            </div>
+                            <div style="margin-bottom: 24px;">
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                                    <input type="checkbox"> Sembunyikan nama saya (Hamba Allah)
+                                </label>
+                            </div>
+                            <button class="btn btn-primary btn-block">Lanjut Pembayaran</button>
+                        </form>
+                    </div>
+                </div>
+
+                <style>
+                    /* Inline styles for sub-tabs active state override */
+                    .sub-tab-item.active {
+                        background: white;
+                        color: var(--primary) !important;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                    }
+                </style>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin-bottom: 12px; font-size: 18px;">Konfirmasi Pendaftaran</h3>
+            <p style="font-size: 13px; color: var(--text-grey); line-height: 1.5; margin-bottom: 24px;">
+                Kuota kegiatan ini sangat terbatas. Mohon pastikan anda <b>serius berkomitmen</b> untuk hadir jika
+                mendaftar, agar tidak mengambil hak kuota alumni lain.
+            </p>
+            <button class="btn btn-primary btn-block" onclick="proceedRegistration()">Ya, Saya Serius</button>
+            <button class="btn btn-outline btn-block" style="margin-top: 12px; border:none; color: var(--text-grey);"
+                onclick="closeModal()">Batal</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Tab Functionality
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            const tabs = ['tiket', 'subevent', 'sponsor', 'donasi'];
+            const index = tabs.indexOf(tabName);
+            document.querySelectorAll('.tab-item')[index].classList.add('active');
+        }
+
+        // Ticket Logic
+        let ticketCount = 1;
+        const ticketPrice = 50000;
+
+        function updateTicket(change) {
+            const newCount = ticketCount + change;
+            if (newCount < 1) return;
+
+            ticketCount = newCount;
+            document.getElementById('ticketCount').innerText = ticketCount;
+            document.getElementById('summaryCount').innerText = ticketCount;
+
+            updateTotalPrice();
+            renderShirtInputs();
+        }
+
+        function updateTotalPrice() {
+            const total = ticketCount * ticketPrice;
+            document.getElementById('totalPrice').innerText = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        function renderShirtInputs() {
+            const container = document.getElementById('shirtSizeContainer');
+
+            // Store current values for existing selects
+            const existingSelects = Array.from(container.querySelectorAll('select')).map(s => s.value);
+
+            container.innerHTML = '';
+
+            for (let i = 1; i <= ticketCount; i++) {
+                const selectedValue = existingSelects[i - 1] || 'L'; // Default L or restore
+
+                const html = `
+                    <div class="shirt-item">
+                        <label class="shirt-label">Ukuran Kaos - Tiket #${i}</label>
+                        <select class="form-select shirt-select">
+                            <option ${selectedValue === 'S' ? 'selected' : ''}>S</option>
+                            <option ${selectedValue === 'M' ? 'selected' : ''}>M</option>
+                            <option ${selectedValue === 'L' ? 'selected' : ''}>L</option>
+                            <option ${selectedValue === 'XL' ? 'selected' : ''}>XL</option>
+                            <option ${selectedValue === 'XXL (+10rb)' ? 'selected' : ''}>XXL (+10rb)</option>
+                            <option ${selectedValue === 'XXXL (+15rb)' ? 'selected' : ''}>XXXL (+15rb)</option>
+                        </select>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            }
+        }
+
+        // Initialize Mock Data
+        let myTickets = [
+            {
+                id: 'JS-2026-A001',
+                date: '20 Jan 2026',
+                count: 1,
+                price: 'Rp 50.000',
+                sizes: ['L'],
+                status: 'sudah', // belum, sudah
+                qrData: 'TIKET_A001'
+            },
+            {
+                id: 'JS-2026-B023',
+                date: '22 Jan 2026',
+                count: 2,
+                price: 'Rp 100.000',
+                sizes: ['M', 'L'],
+                status: 'belum',
+                qrData: 'TIKET_B023'
+            }
+        ];
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if (container) {
+                container.innerHTML = '';
+
+                if (myTickets.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:#ccc; font-size:13px; padding:20px;">Belum ada tiket yang dibeli.</div>';
+                    return;
+                }
+
+                myTickets.forEach(ticket => {
+                    const isTaken = ticket.status === 'sudah';
+                    const badgeColor = isTaken ? '#DCFCE7' : '#FEF3C7'; // Green vs Yellow
+                    const textColor = isTaken ? '#166534' : '#D97706';
+                    const statusText = isTaken ? 'SUDAH DIAMBIL' : 'BELUM DIAMBIL';
+
+                    const html = `
+                        <div style="background: white; border: 1px solid #eee; padding: 12px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px;">Tiket Jalan Sehat (${ticket.count})</div>
+                                <div style="font-size: 11px; color: var(--text-grey); margin-bottom: 4px;">${ticket.date}</div>
+                                <span style="background: ${badgeColor}; color: ${textColor}; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">${statusText}</span>
+                            </div>
+                            <button onclick="openTicketDetail('${ticket.id}')" style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600;">Lihat QR</button>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('afterbegin', html); // Newest first
+                });
+            }
+        }
+
+        function openTicketDetail(id) {
+            const ticket = myTickets.find(t => t.id === id);
+            if (!ticket) return;
+
+            document.getElementById('detail-code').innerText = ticket.id;
+            document.getElementById('detail-count').innerText = ticket.count + ' Tiket';
+            document.getElementById('detail-date').innerText = ticket.date;
+
+            const qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=" + ticket.qrData;
+            document.getElementById('detail-qr').src = qrUrl;
+
+            // Status Styling
+            const statusEl = document.getElementById('detail-status');
+            if (ticket.status === 'sudah') {
+                statusEl.innerText = "SUDAH DIAMBIL";
+                statusEl.style.background = "#DCFCE7";
+                statusEl.style.color = "#166534";
+            } else {
+                statusEl.innerText = "BELUM DIAMBIL";
+                statusEl.style.background = "#FEF3C7";
+                statusEl.style.color = "#D97706";
+            }
+
+            // Sizes
+            const sizeContainer = document.getElementById('detail-sizes');
+            sizeContainer.innerHTML = '';
+            ticket.sizes.forEach(size => {
+                const badge = `<span style="background: white; border: 1px solid #ddd; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 12px;">${size}</span>`;
+                sizeContainer.insertAdjacentHTML('beforeend', badge);
+            });
+
+            document.getElementById('ticket-detail-view').style.display = 'block';
+        }
+
+        // --- DONATION LOGIC START ---
+        let allDonors = [];
+        let displayedDonorsCount = 0;
+        const DONORS_PER_BATCH = 10;
+
+        function initDonations() {
+            // 1. Generate Dummy Data (30 Donors)
+            const names = ["Hamba Allah", "Siti Aminah", "Ahmad Fauzi", "Hamba Allah", "Rudi Hartono", "Lina Marlina", "Hamba Allah", "Eko Prasetyo", "Indah Permatasari", "Hamba Allah", "Rina Wulandari", "Doni Saputra", "Maya Sari", "Hamba Allah", "Fitriani", "Joko Susilo", "Nurul Hidayah", "Bayu Pratama", "Sari Indah", "Adi Nugroho", "Rini Astuti", "Hamba Allah", "Sri Wahyuni", "Dedi Kurniawan", "Ratna Sari", "Hamba Allah", "Slank", "Raisa", "Isyana", "Hamba Allah"];
+
+            for (let i = 0; i < 30; i++) {
+                const nominal = Math.floor(Math.random() * 50) * 10000 + 50000; // Random 50k - 550k
+                const timeAgo = Math.floor(Math.random() * 24) + " jam yang lalu";
+
+                allDonors.push({
+                    name: names[i],
+                    nominal: nominal,
+                    time: timeAgo,
+                    message: "Semoga acaranya lancar dan sukses! Aamiiin."
+                });
+            }
+
+            // 2. Calculate Totals
+            const totalAmount = allDonors.reduce((sum, d) => sum + d.nominal, 0);
+            document.getElementById('totalDonationAmount').innerText = 'Rp ' + totalAmount.toLocaleString('id-ID');
+            document.getElementById('totalDonorCount').innerText = allDonors.length + ' Donatur';
+
+            // 3. Initial Render
+            loadMoreDonors();
+
+            // 4. Infinite Scroll Listener
+            const donorListEl = document.getElementById('donorList');
+            donorListEl.addEventListener('scroll', function () {
+                if (donorListEl.scrollTop + donorListEl.clientHeight >= donorListEl.scrollHeight - 10) {
+                    loadMoreDonors();
+                }
+            });
+        }
+
+        function loadMoreDonors() {
+            if (displayedDonorsCount >= allDonors.length) return;
+
+            const nextBatch = allDonors.slice(displayedDonorsCount, displayedDonorsCount + DONORS_PER_BATCH);
+            const container = document.getElementById('donorList');
+
+            // Simulate loading delay for better UX feel (optional, but requested 'infinite scroll')
+            // For purely synchronous dummy data, we just append directly.
+
+            nextBatch.forEach(donor => {
+                const html = `
+                    <div style="background: #F9FAFB; border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; animation: fadeIn 0.5s;">
+                        <div style="width: 40px; height: 40px; background: #E5E7EB; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            👤
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="font-weight: 600; font-size: 14px; color: var(--text-dark);">${donor.name}</div>
+                                <div style="font-size: 12px; font-weight: 700; color: var(--primary);">Rp ${donor.nominal.toLocaleString('id-ID')}</div>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-grey); margin-bottom: 6px;">${donor.time}</div>
+                            <div style="font-size: 12px; color: #4B5563; background: white; padding: 8px; border-radius: 8px; border: 1px solid #eee;">
+                                "${donor.message}"
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+
+            displayedDonorsCount += nextBatch.length;
+        }
+
+        function switchSubTab(viewName) {
+            // Remove active from all tabs
+            document.querySelectorAll('.sub-tab-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-tab-content').forEach(el => el.style.display = 'none');
+
+            // Activate selected
+            if (viewName === 'donatur') {
+                document.querySelectorAll('.sub-tab-item')[0].classList.add('active');
+                document.getElementById('view-donatur').style.display = 'block';
+            } else {
+                document.querySelectorAll('.sub-tab-item')[1].classList.add('active');
+                document.getElementById('view-personal-donation').style.display = 'block';
+            }
+        }
+
+        // Initialize on load
+        window.onload = function () {
+            renderHistory();
+            initDonations();
+        };
+        // --- DONATION LOGIC END ---
+
+        function closeTicketDetail() {
+            document.getElementById('ticket-detail-view').style.display = 'none';
+        }
+
+        function buyTicket() {
+            // 1. Get Values
+            const count = ticketCount;
+            const priceText = document.getElementById('totalPrice').innerText;
+
+            // Get sizes
+            const sizes = Array.from(document.querySelectorAll('.shirt-select')).map(s => s.value.split(' ')[0]); // Get just the size part S, M, L
+
+            // 2. Add to Mock Data
+            const newId = 'JS-2026-X' + Math.floor(Math.random() * 1000);
+            const now = new Date();
+            const dateStr = now.getDate() + ' ' + now.toLocaleString('default', { month: 'short' }) + ' ' + now.getFullYear();
+
+            const newTicket = {
+                id: newId,
+                date: dateStr,
+                count: count,
+                price: priceText,
+                sizes: sizes,
+                status: 'belum',
+                qrData: 'TIKET_' + newId
+            };
+
+            myTickets.push(newTicket);
+
+            // 3. Update History UI
+            renderHistory();
+
+            // 4. Open Detail directly
+            openTicketDetail(newId);
+        }
+
+        // Initial Render
+        renderHistory();
+        renderShirtInputs();
+
+        // Sub-event Logic (New with Modal)
+        let tempEventId = '';
+        let tempCurrent = 0;
+        let tempMax = 0;
+
+        function confirmRegistration(id, current, max) {
+            tempEventId = id;
+            tempCurrent = current;
+            tempMax = max;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        function proceedRegistration() {
+            const id = tempEventId;
+            const current = tempCurrent;
+            const max = tempMax;
+
+            const btn = document.getElementById('btn-' + id);
+            const qr = document.getElementById('qr-' + id);
+            const quota = document.getElementById('quota-' + id);
+
+            // 1. Decrease Quota
+            if (id === 'blood') {
+                // For blood we assume current = 88. So +1
+                const newCurrent = current + 1;
+                quota.innerText = `Terdaftar: ${newCurrent} Orang`;
+            } else {
+                const newCurrent = current - 1;
+                quota.innerText = `Sisa Kuota: ${newCurrent}/${max}`;
+            }
+
+            // 2. Change Button
+            btn.innerText = "Terdaftar";
+            btn.classList.remove("btn-outline");
+            btn.classList.add("btn-primary");
+            btn.disabled = true;
+            btn.style.opacity = "0.7";
+
+            // Design choice: Hide button after success? Or keep it disabled.
+            // If blood: we hide it because the QR takes space naturally in the design or we keep it consistent.
+            // Let's hide it for cleaner UI as implemented before for consistency, 
+            // BUT wait, in prev implementation I said 'btn.style.display = "block"'...
+            // Let's look at prev impl:
+            // btn.style.display = "block"; // Keep it visible but disabled
+
+            // However, for blood, the initial state had the button there. 
+            // If I click register, I want to show QR.
+            btn.style.display = "block";
+
+            // 3. Show QR
+            qr.style.display = "block";
+
+            closeModal();
+
+            // 4. Scroll to make sure QR is seen
+            setTimeout(() => {
+                qr.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function cancelEvent(id, originalCurrent, max) {
+            const btn = document.getElementById('btn-' + id);
+            const qr = document.getElementById('qr-' + id);
+            const quota = document.getElementById('quota-' + id);
+
+            // 1. Revert Quota
+            if (id === 'blood') {
+                // If we cancel, we assume originalCurrent was the 'started' value before registering ??
+                // Wait, logic check:
+                // Start: 88 Registered. QR Visible.
+                // Cancel: 87 Registered? QR Hidden. Button "Daftar" Visible.
+                // Register again: 88 Registered. QR Visible.
+
+                // So passed 'originalCurrent' should be the value WHEN REGISTERED.
+                // In HTML: onlick="cancelEvent('blood', 88, null)"
+                // So if I cancel, it should go to 87.
+                const newVal = originalCurrent - 1;
+                quota.innerText = `Terdaftar: ${newVal} Orang`;
+            } else {
+                quota.innerText = `Sisa Kuota: ${originalCurrent}/${max}`;
+            }
+
+            // 2. Hide QR
+            qr.style.display = "none";
+
+            // 3. Revert Button
+            btn.innerText = "Daftar";
+            btn.classList.add("btn-outline");
+            btn.classList.remove("btn-primary");
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.style.display = "block";
+
+            // For blood specifically, the ID is btn-blood. I need to make sure the onclick on the REVERTED button is correct.
+            // The HTML hardcoded button has: onclick="confirmRegistration('blood', 88, null)"
+            // When I revert, I just show that button. 
+            // WAIT. The initial button for blood is "Terdaftar" (disabled).
+            // So if I cancel, I need to change that button to "Daftar" and enable it.
+            // AND ensure its onclick calls confirmRegistration.
+            // My cancelEvent does: btn.innerText="Daftar", remove disabled etc.
+            // Does it have the onclick?
+            // The initial button for blood: <button id="btn-blood" ... onclick="confirmRegistration... disabled>Terdaftar</button>
+            // Yes, I added the onclick in the HTML above. So it should work.
+        }
+
+    </script>
+</body>
+
+</html>
