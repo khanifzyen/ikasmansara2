@@ -6,7 +6,7 @@ part of 'post_job_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$postJobControllerHash() => r'9a410d528bacb639c50d3b51edbd9d5c6e915cb1';
+String _$postJobControllerHash() => r'6df3e87e0d8babff2be5a75c2193fba4a5aeb237';
 
 /// See also [PostJobController].
 @ProviderFor(PostJobController)

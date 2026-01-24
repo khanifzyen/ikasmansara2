@@ -24,6 +24,9 @@ import '../../features/forum/presentation/post_detail_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/edit_profile_screen.dart';
 import '../../features/profile/presentation/ekta_screen.dart';
+import '../../features/news/presentation/news_screen.dart';
+import '../../features/news/presentation/news_detail_screen.dart';
+import '../../features/news/data/models/news_model.dart';
 import 'scaffold_with_nav_bar.dart';
 
 part 'router.g.dart';
@@ -216,6 +219,21 @@ GoRouter router(Ref ref) {
         path: '/ekta',
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const EKTAScreen(),
+      ),
+      GoRoute(
+        path: '/news',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const NewsScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            parentNavigatorKey: rootNavigatorKey,
+            builder: (context, state) {
+              final news = state.extra as NewsModel;
+              return NewsDetailScreen(news: news);
+            },
+          ),
+        ],
       ),
     ],
   );

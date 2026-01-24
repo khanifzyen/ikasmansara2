@@ -81,9 +81,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
           .getList(
             page: page,
             perPage: limit,
-            filter: filterString,
-            sort: '-created',
-            // expand: 'seller_id', // Expand seller relation
+            // filter: filterString,
+            // sort: '-created',
           );
 
       return result.items.map((r) => ProductModel.fromRecord(r)).toList();

@@ -59,8 +59,8 @@ class PostModel extends PostEntity {
       category: record.getStringValue('category', 'Umum'),
       likesCount: likes.length,
       isLiked: isLiked,
-      createdAt: DateTime.parse(record.created),
-      updatedAt: DateTime.parse(record.updated),
+      createdAt: DateTime.tryParse(record.created) ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(record.updated) ?? DateTime.now(),
     );
   }
 

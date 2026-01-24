@@ -63,6 +63,7 @@ dependencies:
   url_launcher: ^6.3.2
   equatable: ^2.0.8
   qr_flutter: ^4.1.0
+  flutter_widget_from_html: ^0.17.1
 
 dev_dependencies:
   flutter_test:

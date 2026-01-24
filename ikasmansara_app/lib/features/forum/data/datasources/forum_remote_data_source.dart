@@ -28,10 +28,10 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
 
   @override
   Future<List<PostModel>> getPosts({String? category, String? query}) async {
-    String? filter;
-    if (category != null && category != 'Semua' && category.isNotEmpty) {
-      filter = 'category = "$category"';
-    }
+    // String? filter;
+    // if (category != null && category != 'Semua' && category.isNotEmpty) {
+    //   filter = 'category = "$category"';
+    // }
 
     // Note: PocketBase search usually requires more complex filter setup for text search
     // For simple implementation, we assume basic filtering
@@ -133,7 +133,8 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
 
     final record = await _pbService.pb
         .collection('comments')
-        .create(body: body, expand: 'author');
+        // .create(body: body, expand: 'author');
+        .create(body: body); // DEBUG: Remove expand
 
     return CommentModel.fromRecord(record);
   }

@@ -14,7 +14,11 @@ class NetworkException implements Exception {
 NetworkException mapPocketBaseError(ClientException e) {
   switch (e.statusCode) {
     case 400:
-      return NetworkException('Data tidak valid. Periksa input Anda.', 400);
+      // DEBUG MODE: Show Raw Response
+      return NetworkException(
+        'Bad Request (400):\n${e.response.toString()}',
+        400,
+      );
     case 401:
       return NetworkException(
         'Sesi Anda telah berakhir. Silakan login kembali.',
@@ -30,9 +34,6 @@ NetworkException mapPocketBaseError(ClientException e) {
         500,
       );
     default:
-      return NetworkException(
-        'Koneksi gagal: $e', // Show raw error for debugging
-        e.statusCode,
-      );
+      return NetworkException('Koneksi gagal: $e', e.statusCode);
   }
 }
