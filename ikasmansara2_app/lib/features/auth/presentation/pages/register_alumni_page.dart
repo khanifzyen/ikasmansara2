@@ -375,7 +375,7 @@ class _RegisterAlumniPageState extends State<RegisterAlumniPage> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
-          value: value,
+          initialValue: value,
           items: items,
           onChanged: onChanged,
           decoration: const InputDecoration(hintText: 'Pilih...'),

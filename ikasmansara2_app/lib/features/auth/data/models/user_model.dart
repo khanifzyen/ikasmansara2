@@ -53,8 +53,8 @@ class UserModel {
       domisili: record.getStringValue('domisili'),
       isVerified: record.getBoolValue('is_verified'),
       verifiedAt: DateTime.tryParse(record.getStringValue('verified_at')),
-      created: record.created,
-      updated: record.updated,
+      created: DateTime.tryParse(record.get<String>('created')),
+      updated: DateTime.tryParse(record.get<String>('updated')),
     );
   }
 
