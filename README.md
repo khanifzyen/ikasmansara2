@@ -1,45 +1,82 @@
-# IKA SMANSARA Web Portal
+# IKA SMANSARA - Mobile App Prototype
 
-Project ini berisi prototipe aplikasi web untuk Ikatan Alumni SMAN 1 Jepara (IKA SMANSARA). Implementasi web (Low Fidelity / Prototype) dapat ditemukan di dalam folder `lofi`.
+Prototype aplikasi mobile untuk Ikatan Alumni SMAN 1 Jepara (IKA SMANSARA). Project ini berisi mockup High-Fidelity (Hi-Fi) menggunakan HTML, CSS, dan JavaScript Native.
 
-## 📂 Lokasi Kode
+## 📂 Struktur Project
 
-Semua kode untuk versi web ini berada di folder:
-`./lofi`
+Prototype utama terletak di dalam folder `lofi/`.
+Semua file HTML dijalankan secara lokal dan menggunakan data mock (dummy) untuk simulasi fitur.
 
-## 🌟 Tentang Project
+## 👥 Jenis User & Hak Akses
 
-Aplikasi ini bertujuan untuk menghubungkan kembali para alumni, memfasilitasi kolaborasi, serta menyediakan informasi terkini seputar sekolah dan kegiatan alumni.
+Aplikasi ini memiliki 2 peran utama (User Roles) dengan hak akses yang berbeda:
 
-## 📱 Fitur Utama
+### 1. Alumni (`home.html`)
+User yang terverifikasi sebagai lulusan SMAN 1 Jepara.
+*   **Hak Akses Utama:**
+    *   ✅ **E-KTA (Kartu Tanda Anggota):** Kartu digital eksklusif dengan Nomor Anggota & Angkatan.
+    *   ✅ **Direktori Alumni:** Akses penuh mencari dan melihat daftar alumni lain.
+    *   ✅ **Loker:** Akses penuh ke info lowongan kerja & posting loker.
+    *   ✅ **Market:** Jual beli produk dalam komunitas.
+    *   ✅ **Forum:** Diskusi penuh.
+*   **Fitur Personal:**
+    *   **Tiketku:** Riwayat pembelian tiket event dengan QR Code.
+    *   **Donasiku:** Riwayat donasi pribadi dengan status pembayaran.
 
-Aplikasi ini memiliki dua mode pengguna: **Alumni** dan **Masyarakat Umum**.
+### 2. Umum / Staff (`home-public.html`)
+User tamu, guru, staff sekolah, atau masyarakat umum yang belum/tidak terverifikasi sebagai alumni.
+*   **Hak Akses Terbatas:**
+    *   ❌ **Tidak ada E-KTA:** Banner digantikan dengan ajakan registrasi.
+    *   ⚠️ **Loker (Terbatas):** Tidak muncul di Quick Menu utama (akses terbatas/read-only).
+    *   ✅ **Berita:** Akses baca berita sekolah/alumni.
+    *   ✅ **Donasi:** Bisa berpartisipasi dalam program donasi.
+    *   ✅ **Market:** Bisa melihat produk (View Only/Contact Seller).
+*   **Batasan:**
+    *   Beberapa fitur akan memunculkan *alert* login/registrasi jika diakses.
 
-### 🎓 Fitur Alumni (Full Access)
-*   **Direktori Alumni**: Pencarian alumni berdasarkan nama, tahun angkatan, pekerjaan, atau domisili.
-*   **E-KTA (Kartu Tanda Anggota)**: Kartu anggota digital dengan QR Code.
-*   **Marketplace**: Jual beli produk dan jasa antar alumni.
-*   **Loker (Lowongan Kerja)**: Portal informasi lowongan kerja. Alumni dapat memposting dan mencari lowongan.
-*   **Donasi**: Crowdfunding untuk program sosial dan pembangunan sekolah.
-*   **Forum**: Ruang diskusi untuk berbagai topik.
-*   **Berita**: Kabar terbaru tentang sekolah dan prestasi alumni.
+## 🚀 Fitur Utama
 
-### 👥 Fitur Masyarakat Umum
-*   **Berita Sekolah**: Akses ke berita dan informasi publik.
-*   **Donasi**: Dapat berpartisipasi dalam program donasi.
-*   **Marketplace**: Dapat melihat produk-produk UMKM alumni.
-*   **Forum (View Only)**: Melihat diskusi publik.
+Berikut adalah breakdown fitur yang tersedia dalam prototype:
 
-## 🛠️ Teknologi
+### 🔐 Autentikasi
+*   **Login**: Halaman masuk akun.
+*   **Register Alumni**: Form pendaftaran khusus alumni dengan verifikasi tahun angkatan.
+*   **Register Umum**: Form pendaftaran untuk masyarakat umum/staff.
+*   **Role Selection**: Halaman awal memilih peran ("Saya Alumni" atau "Umum/Staff").
 
-Project ini menggunakan teknologi web standar (Vanilla Stack) yang ringan:
+### 🏠 Dashboard & Navigasi
+*   **Bottom Navigation**:
+    1.  **Home**: Dashboard utama (beda tampilan untuk Alumni vs Umum).
+    2.  **Donasiku**: Riwayat donasi user (Filter: Lunas, Pending, Gagal).
+    3.  **Tiketku**: Riwayat tiket event user (Filter & QR Code).
+    4.  **Loker**: Info lowongan kerja.
+    5.  **Lainnya**: Drawer menu tambahan.
+*   **Side Drawer (Lainnya)**:
+    *   Akses ke Direktori, Market, Forum, dan Profil.
 
-*   **HTML5**: Struktur konten.
-*   **CSS3**: Styling dengan desain modern (Mobile-First approach).
-*   **JavaScript (Vanilla)**: Interaktivitas antarmuka sederhana.
+### 💳 Transaksi & Riwayat (History)
+*   **Metode Pembayaran (Mock)**: Simulasi pembayaran via Virtual Account BCA (Midtrans Mockup).
+*   **Donasiku**:
+    *   Tracking status donasi.
+    *   Validasi filter tanggal (Maksimal range 1 tahun).
+    *   Menampilkan ID Transaksi (`TRX-...`).
+*   **Tiketku**:
+    *   Manajemen tiket event.
+    *   Status: Pending (Bayar), Success (Lihat Tiket/QR), Expired.
+    *   Menampilkan ID Transaksi (`TRX-...`).
 
-## 🚀 Cara Menjalankan
+### 📱 Fitur Komunitas
+*   **E-KTA**: Kartu anggota digital (Hanya Alumni).
+*   **Direktori**: Pencarian alumni.
+*   **Forum**: Diskusi antar pengguna.
+*   **Market**: Marketplace sederhana komunitas.
+*   **Berita**: Portal informasi & prestasi sekolah.
 
-1.  Masuk ke folder `lofi`.
-2.  Buka file `index.html` menggunakan browser modern (Chrome, Firefox, Edge, Safari).
-3.  Disarankan menggunakan mode responsif (Mobile View) di Developer Tools browser untuk pengalaman terbaik, karena desain ini dibuat dengan konsep *Mobile-First*.
+## 🛠️ Catatan Teknis
+*   **Tech Stack**: HTML5, Vanilla CSS (Variables), Vanilla JS.
+*   **Data**: Menggunakan `const` array sebagai Mock Data di dalam setiap file HTML (tidak ada database backend riil).
+*   **Responsive**: Desain *Mobile-First* yang responsif.
+*   **Icons**: Menggunakan SVG native.
+
+---
+*Dibuat oleh Tim Pengembang IKA SMANSARA*

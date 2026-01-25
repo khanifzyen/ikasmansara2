@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Memory - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Kelola Memory</h2>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-chip active" onclick="setFilter(this)">Semua</button>
+            <button class="filter-chip" onclick="setFilter(this)">2020an</button>
+            <button class="filter-chip" onclick="setFilter(this)">2010an</button>
+            <button class="filter-chip" onclick="setFilter(this)">2000an</button>
+            <button class="filter-chip" onclick="setFilter(this)">1990an</button>
+        </div>
+
+        <div class="page-content content-padding">
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #D1FAE5;">📷</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Perpisahan Angkatan 2010</div>
+                    <div class="list-card-subtitle">120 foto • Tahun 2010</div>
+                </div>
+                <div class="list-card-actions">
+                    <button class="btn-action btn-edit" onclick="alert('Edit album')">Edit</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('album', 1)">🗑️</button>
+                </div>
+            </div>
+
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #DBEAFE;">📷</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Reuni Perak 2015</div>
+                    <div class="list-card-subtitle">56 foto • Tahun 2000</div>
+                </div>
+                <div class="list-card-actions">
+                    <button class="btn-action btn-edit" onclick="alert('Edit album')">Edit</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('album', 2)">🗑️</button>
+                </div>
+            </div>
+
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #FEF3C7;">📷</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Foto Kenangan Angkatan 1990</div>
+                    <div class="list-card-subtitle">24 foto • Tahun 1990</div>
+                </div>
+                <div class="list-card-actions">
+                    <button class="btn-action btn-edit" onclick="alert('Edit album')">Edit</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('album', 3)">🗑️</button>
+                </div>
+            </div>
+
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #FCE7F3;">📷</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Jalan Sehat 2024</div>
+                    <div class="list-card-subtitle">89 foto • Tahun 2024</div>
+                </div>
+                <div class="list-card-actions">
+                    <button class="btn-action btn-edit" onclick="alert('Edit album')">Edit</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('album', 4)">🗑️</button>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div
+                style="margin-top: 32px; padding: 32px; border: 2px dashed #E5E7EB; border-radius: 16px; text-align: center;">
+                <div style="font-size: 48px; opacity: 0.5; margin-bottom: 12px;">📤</div>
+                <h4 style="margin-bottom: 8px;">Upload Album Baru</h4>
+                <p style="font-size: 12px; color: var(--text-grey); margin-bottom: 16px;">Klik untuk memilih foto atau
+                    drag & drop</p>
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;"
+                    onchange="alert('Files selected!')">
+                <button class="btn-primary" style="width: auto; padding: 12px 24px;"
+                    onclick="document.getElementById('fileInput').click()">Pilih File</button>
+            </div>
+
+            <!-- Album Form -->
+            <div style="margin-top: 32px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px;">Detail Album</h3>
+                <div class="input-group">
+                    <label>Nama Album</label>
+                    <input type="text" class="input-field" placeholder="Contoh: Reuni Akbar 2026">
+                </div>
+                <div class="input-group">
+                    <label>Tahun</label>
+                    <input type="number" class="input-field" placeholder="2026">
+                </div>
+                <div class="input-group">
+                    <label>Deskripsi</label>
+                    <textarea class="input-field" rows="2" placeholder="Deskripsi singkat album..."></textarea>
+                </div>
+                <button class="btn-primary" onclick="submitForm('album')">Simpan Album</button>
+            </div>
+        </div>
+
+        <a href="#" class="fab-add" onclick="document.getElementById('fileInput').click(); return false;">+</a>
+
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

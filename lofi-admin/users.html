@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Users - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Desktop Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="sidebar-menu-item active">
+                <span class="menu-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <a href="events.html" class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span>Events</span>
+            </a>
+            <a href="donations.html" class="sidebar-menu-item">
+                <span class="menu-icon">💰</span>
+                <span>Donasi</span>
+            </a>
+            <a href="donation-transactions.html" class="sidebar-menu-item">
+                <span class="menu-icon">📋</span>
+                <span>Transaksi</span>
+            </a>
+            <a href="news.html" class="sidebar-menu-item">
+                <span class="menu-icon">📰</span>
+                <span>Berita</span>
+            </a>
+            <a href="forum.html" class="sidebar-menu-item">
+                <span class="menu-icon">💬</span>
+                <span>Forum</span>
+            </a>
+            <a href="loker.html" class="sidebar-menu-item">
+                <span class="menu-icon">💼</span>
+                <span>Loker</span>
+            </a>
+            <a href="market.html" class="sidebar-menu-item">
+                <span class="menu-icon">🛒</span>
+                <span>Market</span>
+            </a>
+            <a href="memory.html" class="sidebar-menu-item">
+                <span class="menu-icon">📷</span>
+                <span>Memory</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        <!-- Header -->
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Kelola Users</h2>
+        </div>
+
+        <!-- Search -->
+        <div class="search-header">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Cari user...">
+            </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-bar">
+            <button class="filter-chip active" onclick="setFilter(this)">Semua</button>
+            <button class="filter-chip" onclick="setFilter(this)">Alumni</button>
+            <button class="filter-chip" onclick="setFilter(this)">Umum</button>
+            <button class="filter-chip" onclick="setFilter(this)">Verified</button>
+            <button class="filter-chip" onclick="setFilter(this)">Pending</button>
+        </div>
+
+        <!-- User List -->
+        <div class="page-content content-padding">
+            <!-- Mobile List View -->
+            <div class="mobile-list">
+                <div class="list-card" onclick="location.href='user-detail.html?id=1'">
+                    <div class="list-card-avatar" style="background: #D1FAE5;">BS</div>
+                    <div class="list-card-content">
+                        <div class="list-card-title">Budi Santoso</div>
+                        <div class="list-card-subtitle">Alumni '10 • budi@email.com</div>
+                    </div>
+                    <span class="badge badge-success">Verified</span>
+                </div>
+
+                <div class="list-card" onclick="location.href='user-detail.html?id=2'">
+                    <div class="list-card-avatar" style="background: #DBEAFE;">SA</div>
+                    <div class="list-card-content">
+                        <div class="list-card-title">Siti Aminah</div>
+                        <div class="list-card-subtitle">Alumni '15 • siti@email.com</div>
+                    </div>
+                    <span class="badge badge-success">Verified</span>
+                </div>
+
+                <div class="list-card" onclick="location.href='user-detail.html?id=3'">
+                    <div class="list-card-avatar" style="background: #FEF3C7;">AF</div>
+                    <div class="list-card-content">
+                        <div class="list-card-title">Ahmad Fauzi</div>
+                        <div class="list-card-subtitle">Umum • ahmad@email.com</div>
+                    </div>
+                    <span class="badge badge-grey">Umum</span>
+                </div>
+
+                <div class="list-card" onclick="location.href='user-detail.html?id=4'">
+                    <div class="list-card-avatar" style="background: #FCE7F3;">DL</div>
+                    <div class="list-card-content">
+                        <div class="list-card-title">Dewi Lestari</div>
+                        <div class="list-card-subtitle">Alumni '08 • dewi@email.com</div>
+                    </div>
+                    <span class="badge badge-warning">Pending</span>
+                </div>
+
+                <div class="list-card" onclick="location.href='user-detail.html?id=5'">
+                    <div class="list-card-avatar" style="background: #E0E7FF;">RW</div>
+                    <div class="list-card-content">
+                        <div class="list-card-title">Rudi Wijaya</div>
+                        <div class="list-card-subtitle">Alumni '12 • rudi@email.com</div>
+                    </div>
+                    <span class="badge badge-success">Verified</span>
+                </div>
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Tipe</th>
+                            <th>Angkatan</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Budi Santoso</strong></td>
+                            <td>budi@email.com</td>
+                            <td>Alumni</td>
+                            <td>2010</td>
+                            <td><span class="badge badge-success">Verified</span></td>
+                            <td>
+                                <button class="btn-action btn-edit"
+                                    onclick="location.href='user-detail.html?id=1'">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Siti Aminah</strong></td>
+                            <td>siti@email.com</td>
+                            <td>Alumni</td>
+                            <td>2015</td>
+                            <td><span class="badge badge-success">Verified</span></td>
+                            <td>
+                                <button class="btn-action btn-edit"
+                                    onclick="location.href='user-detail.html?id=2'">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ahmad Fauzi</strong></td>
+                            <td>ahmad@email.com</td>
+                            <td>Umum</td>
+                            <td>-</td>
+                            <td><span class="badge badge-grey">Umum</span></td>
+                            <td>
+                                <button class="btn-action btn-edit"
+                                    onclick="location.href='user-detail.html?id=3'">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dewi Lestari</strong></td>
+                            <td>dewi@email.com</td>
+                            <td>Alumni</td>
+                            <td>2008</td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                            <td>
+                                <button class="btn-action btn-edit"
+                                    onclick="location.href='user-detail.html?id=4'">Edit</button>
+                                <button class="btn-action btn-approve" onclick="approveItem('user', 4)">Verify</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rudi Wijaya</strong></td>
+                            <td>rudi@email.com</td>
+                            <td>Alumni</td>
+                            <td>2012</td>
+                            <td><span class="badge badge-success">Verified</span></td>
+                            <td>
+                                <button class="btn-action btn-edit"
+                                    onclick="location.href='user-detail.html?id=5'">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="admin-nav-item active">
+                <span class="nav-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <a href="donations.html" class="admin-nav-item">
+                <span class="nav-icon">💰</span>
+                <span>Donasi</span>
+            </a>
+            <a href="events.html" class="admin-nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Events</span>
+            </a>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

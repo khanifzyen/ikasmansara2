@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - IKA SMANSARA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Desktop Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item active">
+                <span class="menu-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="sidebar-menu-item">
+                <span class="menu-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <a href="events.html" class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span>Events</span>
+            </a>
+            <a href="donations.html" class="sidebar-menu-item">
+                <span class="menu-icon">💰</span>
+                <span>Donasi</span>
+            </a>
+            <a href="donation-transactions.html" class="sidebar-menu-item">
+                <span class="menu-icon">📋</span>
+                <span>Transaksi</span>
+            </a>
+            <a href="news.html" class="sidebar-menu-item">
+                <span class="menu-icon">📰</span>
+                <span>Berita</span>
+            </a>
+            <a href="forum.html" class="sidebar-menu-item">
+                <span class="menu-icon">💬</span>
+                <span>Forum</span>
+            </a>
+            <a href="loker.html" class="sidebar-menu-item">
+                <span class="menu-icon">💼</span>
+                <span>Loker</span>
+            </a>
+            <a href="market.html" class="sidebar-menu-item">
+                <span class="menu-icon">🛒</span>
+                <span>Market</span>
+            </a>
+            <a href="memory.html" class="sidebar-menu-item">
+                <span class="menu-icon">📷</span>
+                <span>Memory</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <h1>Dashboard</h1>
+            <p>Selamat datang di Admin Panel IKA SMANSARA</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon users">👥</div>
+                <div class="stat-value" id="statUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon events">📅</div>
+                <div class="stat-value" id="statEvents">0</div>
+                <div class="stat-label">Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon donations">💰</div>
+                <div class="stat-value" id="statDonations">Rp 0</div>
+                <div class="stat-label">Total Donasi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon news">📰</div>
+                <div class="stat-value" id="statNews">0</div>
+                <div class="stat-label">Berita</div>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="page-content">
+            <h3 style="font-size: 18px; margin-bottom: 20px;">Kelola Fitur</h3>
+
+            <!-- Admin Menu Grid -->
+            <div class="admin-menu-grid" style="padding: 0;">
+                <a href="users.html" class="admin-menu-item">
+                    <div class="menu-icon">👥</div>
+                    <div class="menu-label">Users</div>
+                </a>
+                <a href="events.html" class="admin-menu-item">
+                    <div class="menu-icon">📅</div>
+                    <div class="menu-label">Events</div>
+                </a>
+                <a href="donations.html" class="admin-menu-item">
+                    <div class="menu-icon">💰</div>
+                    <div class="menu-label">Donasi</div>
+                </a>
+                <a href="news.html" class="admin-menu-item">
+                    <div class="menu-icon">📰</div>
+                    <div class="menu-label">Berita</div>
+                </a>
+                <a href="forum.html" class="admin-menu-item">
+                    <div class="menu-icon">💬</div>
+                    <div class="menu-label">Forum</div>
+                </a>
+                <a href="loker.html" class="admin-menu-item">
+                    <div class="menu-icon">💼</div>
+                    <div class="menu-label">Loker</div>
+                </a>
+                <a href="market.html" class="admin-menu-item">
+                    <div class="menu-icon">🛒</div>
+                    <div class="menu-label">Market</div>
+                </a>
+                <a href="memory.html" class="admin-menu-item">
+                    <div class="menu-icon">📷</div>
+                    <div class="menu-label">Memory</div>
+                </a>
+                <a href="donation-transactions.html" class="admin-menu-item">
+                    <div class="menu-icon">📋</div>
+                    <div class="menu-label">Transaksi</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="page-content content-padding">
+            <h3 style="font-size: 18px; margin-bottom: 20px;">Aktivitas Terbaru</h3>
+
+            <div class="list-card" style="cursor: default;">
+                <div class="list-card-avatar" style="background: #D1FAE5;">💰</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Donasi baru Rp 500.000</div>
+                    <div class="list-card-subtitle">Budi Santoso • 2 jam lalu</div>
+                </div>
+                <span class="badge badge-success">Lunas</span>
+            </div>
+
+            <div class="list-card" style="cursor: default;">
+                <div class="list-card-avatar" style="background: #DBEAFE;">👤</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">User baru mendaftar</div>
+                    <div class="list-card-subtitle">Ahmad Fauzi • 5 jam lalu</div>
+                </div>
+                <span class="badge badge-info">Baru</span>
+            </div>
+
+            <div class="list-card" style="cursor: default;">
+                <div class="list-card-avatar" style="background: #FEF3C7;">💼</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Loker baru menunggu approval</div>
+                    <div class="list-card-subtitle">PT Tech Indo • 1 hari lalu</div>
+                </div>
+                <span class="badge badge-warning">Pending</span>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="users.html" class="admin-nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <a href="donations.html" class="admin-nav-item">
+                <span class="nav-icon">💰</span>
+                <span>Donasi</span>
+            </a>
+            <a href="events.html" class="admin-nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Events</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Animate stats on load
+        document.addEventListener('DOMContentLoaded', () => {
+            animateValue(document.getElementById('statUsers'), 0, 1247, 1000);
+            animateValue(document.getElementById('statEvents'), 0, 12, 800);
+            animateValue(document.getElementById('statNews'), 0, 48, 900);
+
+            // Special formatting for donations
+            const donationEl = document.getElementById('statDonations');
+            let start = 0;
+            const end = 45000000;
+            const duration = 1200;
+            let startTimestamp = null;
+
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                donationEl.innerText = formatRupiah(current);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        });
+    </script>
+</body>
+
+</html>

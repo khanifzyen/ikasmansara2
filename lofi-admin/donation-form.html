@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Donasi - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Buat Campaign</h2>
+        </div>
+
+        <div class="form-section content-padding">
+            <div class="input-group">
+                <label>Judul Campaign</label>
+                <input type="text" class="input-field" placeholder="Contoh: Renovasi Masjid Sekolah">
+            </div>
+
+            <div class="input-group">
+                <label>Deskripsi</label>
+                <textarea class="input-field" rows="4" placeholder="Deskripsi lengkap campaign..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Target Donasi (Rp)</label>
+                <input type="number" class="input-field" placeholder="50000000">
+            </div>
+
+            <div class="input-group">
+                <label>Deadline</label>
+                <input type="date" class="input-field">
+            </div>
+
+            <div class="input-group">
+                <label>Banner Image URL</label>
+                <input type="url" class="input-field" placeholder="https://...">
+            </div>
+
+            <div class="input-group">
+                <label>Penyelenggara</label>
+                <input type="text" class="input-field" placeholder="Contoh: Panitia Pembangunan Masjid">
+            </div>
+
+            <div class="input-group">
+                <label>Kategori</label>
+                <select class="input-field">
+                    <option>Infrastruktur</option>
+                    <option>Pendidikan</option>
+                    <option>Sosial</option>
+                    <option>Kesehatan</option>
+                    <option>Lainnya</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Prioritas</label>
+                <select class="input-field">
+                    <option>Normal</option>
+                    <option>Urgent</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Status</label>
+                <select class="input-field">
+                    <option>Draft</option>
+                    <option>Aktif</option>
+                    <option>Selesai</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 24px;" onclick="submitForm('donation')">Simpan
+                Campaign</button>
+            <button class="btn-outline" style="margin-top: 12px; color: #DC2626; border-color: #DC2626;"
+                onclick="deleteItem('donation', 1)">Hapus Campaign</button>
+        </div>
+
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item active"><span
+                    class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

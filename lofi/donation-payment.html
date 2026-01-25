@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirim Donasi</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Inline styles removed, now using style.css -->
+</head>
+
+<body>
+    <div class="app-container" style="background: white;">
+
+        <!-- Header -->
+        <div class="nav-header">
+            <div class="back-btn" onclick="history.back()">←</div>
+            <h2>Kirim Donasi</h2>
+        </div>
+
+        <div class="content-scroll" style="padding-bottom: 100px;">
+
+            <!-- Amount Section -->
+            <div style="padding: 24px 20px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px;">Pilih Jumlah Donasi</h3>
+
+                <div class="amount-grid">
+                    <button class="amount-btn" data-amount="50000" onclick="selectAmount(50000, this)">Rp
+                        50.000</button>
+                    <button class="amount-btn" data-amount="100000" onclick="selectAmount(100000, this)">Rp
+                        100.000</button>
+                    <button class="amount-btn" data-amount="200000" onclick="selectAmount(200000, this)">Rp
+                        200.000</button>
+                    <button class="amount-btn" data-amount="500000" onclick="selectAmount(500000, this)">Rp
+                        500.000</button>
+                </div>
+
+                <div class="input-group">
+                    <label style="margin-bottom: 8px; display: block;">Nominal Lainnya</label>
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 16px; top: 14px; color: #6B7280;">Rp</span>
+                        <input type="number" id="customAmount" class="input-field" style="padding-left: 40px;"
+                            placeholder="Masukkan jumlah lain" oninput="updateCustomAmount(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div style="height: 8px; background: #F3F4F6;"></div>
+
+            <!-- Payment Method Section -->
+            <div style="padding: 24px 20px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px;">Pilih Metode Pembayaran</h3>
+
+                <div class="payment-method" id="method-QRIS" onclick="selectPayment('QRIS')">
+                    <div class="radio-circle" id="radio-QRIS"></div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 14px;">QRIS</div>
+                        <div style="font-size: 12px; color: var(--text-grey);">Gopay, OVO, Dana, ShopeePay</div>
+                    </div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Qris.svg/1200px-Qris.svg.png"
+                        style="height: 20px;">
+                </div>
+
+                <div class="payment-method" id="method-VA" onclick="selectPayment('VA')">
+                    <div class="radio-circle" id="radio-VA"></div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 14px;">Virtual Account</div>
+                        <div style="font-size: 12px; color: var(--text-grey);">BCA, Mandiri, BNI, BRI</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height: 8px; background: #F3F4F6;"></div>
+
+            <!-- Message Section -->
+            <div style="padding: 24px 20px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px;">Pesan / Doa (Opsional)</h3>
+                <textarea class="input-field" rows="3"
+                    placeholder="Tuliskan doa atau dukungan untuk program ini..."></textarea>
+            </div>
+
+            <div style="height: 8px; background: #F3F4F6;"></div>
+
+            <!-- Summary Section -->
+            <div style="padding: 24px 20px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px;">Ringkasan Pembayaran</h3>
+
+                <div class="summary-row">
+                    <span>Program</span>
+                    <span style="font-weight: 500; text-align: right; max-width: 60%;">Renovasi Masjid SMAN 1
+                        Jepara</span>
+                </div>
+                <div class="summary-row">
+                    <span>Donatur</span>
+                    <span style="font-weight: 500;">Budi Santoso</span>
+                </div>
+                <div class="summary-row">
+                    <span>Jumlah Donasi</span>
+                    <span style="font-weight: 500;" id="summary-amount">Rp 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Biaya Layanan</span>
+                    <span style="font-weight: 500;" id="summary-fee">Rp 0</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Diterima Program</span>
+                    <span style="color: var(--primary);" id="summary-total">Rp 0</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sticky Bottom -->
+        <div
+            style="position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 16px 20px; border-top: 1px solid #E5E7EB; max-width: 480px; margin: 0 auto; z-index: 99;">
+            <button class="btn-primary" onclick="processPayment()">Bayar Sekarang</button>
+        </div>
+
+    </div>
+
+    <script>
+        let selectedAmount = 0;
+        let selectedPaymentMethod = '';
+
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        }
+
+        function selectAmount(amount, element) {
+            selectedAmount = amount;
+            document.getElementById('customAmount').value = '';
+
+            // UI Update
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            } else {
+                // Find button by data-amount
+                document.querySelector(`.amount-btn[data-amount="${amount}"]`)?.classList.add('active');
+            }
+
+            updateSummary();
+        }
+
+        function updateCustomAmount(val) {
+            selectedAmount = parseInt(val) || 0;
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('active'));
+            updateSummary();
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+
+            // UI Update
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
+            document.getElementById(`method-${method}`).classList.add('active');
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const amountEl = document.getElementById('summary-amount');
+            const feeEl = document.getElementById('summary-fee');
+            const totalEl = document.getElementById('summary-total');
+
+            amountEl.textContent = formatRupiah(selectedAmount);
+
+            let fee = 0;
+            if (selectedPaymentMethod === 'QRIS') {
+                fee = selectedAmount * 0.015; // 1.5%
+            } else if (selectedPaymentMethod === 'VA') {
+                fee = 5500;
+            }
+
+            // Only show fee if payment method is selected and amount > 0
+            if (selectedPaymentMethod && selectedAmount > 0) {
+                feeEl.textContent = formatRupiah(fee);
+            } else {
+                feeEl.textContent = 'Rp 0';
+                fee = 0;
+            }
+
+            const total = Math.max(0, selectedAmount - fee);
+            totalEl.textContent = formatRupiah(total);
+        }
+
+        function processPayment() {
+            if (selectedAmount <= 0) {
+                alert('Silakan pilih jumlah donasi');
+                return;
+            }
+            if (!selectedPaymentMethod) {
+                alert('Silakan pilih metode pembayaran');
+                return;
+            }
+            alert('Terima kasih! Lanjut ke proses pembayaran...');
+        }
+
+        // Initialize Defaults
+        window.addEventListener('DOMContentLoaded', () => {
+            selectAmount(50000);
+            selectPayment('QRIS');
+        });
+    </script>
+</body>
+
+</html>

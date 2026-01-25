@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail User - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Detail User</h2>
+        </div>
+
+        <!-- Profile Section -->
+        <div
+            style="text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #1F2937 0%, #374151 100%); color: white;">
+            <div
+                style="width: 80px; height: 80px; background: #D1FAE5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; margin: 0 auto 12px;">
+                BS
+            </div>
+            <h2 style="font-size: 20px; margin-bottom: 4px; color: white;">Budi Santoso</h2>
+            <p style="font-size: 13px; opacity: 0.8;">Alumni Angkatan 2010</p>
+            <span class="badge badge-success" style="margin-top: 12px;">Verified</span>
+        </div>
+
+        <div class="form-section content-padding">
+            <h3>Informasi Akun</h3>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" class="input-field" value="budi.santoso@email.com">
+            </div>
+
+            <div class="input-group">
+                <label>Nomor HP</label>
+                <input type="tel" class="input-field" value="081234567890">
+            </div>
+
+            <div class="input-group">
+                <label>Tahun Angkatan</label>
+                <input type="number" class="input-field" value="2010">
+            </div>
+
+            <div class="input-group">
+                <label>Status Verifikasi</label>
+                <select class="input-field">
+                    <option selected>Verified</option>
+                    <option>Pending</option>
+                    <option>Rejected</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Tipe User</label>
+                <select class="input-field">
+                    <option selected>Alumni</option>
+                    <option>Umum</option>
+                    <option>Staff</option>
+                </select>
+            </div>
+
+            <!-- Stats -->
+            <h3 style="margin-top: 32px;">Statistik User</h3>
+            <div class="stats-grid" style="padding: 0; margin-top: 16px;">
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Total Donasi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Rp 2.5jt</div>
+                    <div class="stat-label">Jumlah Donasi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Event Diikuti</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Post Forum</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="margin-top: 32px;">
+                <button class="btn-primary" onclick="submitForm('user')">Simpan Perubahan</button>
+                <button class="btn-outline" style="margin-top: 12px; color: #DC2626; border-color: #DC2626;"
+                    onclick="deleteItem('user', 1)">Ban User</button>
+            </div>
+        </div>
+
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item active"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

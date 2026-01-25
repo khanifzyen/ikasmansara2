@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Forum - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Detail Post</h2>
+        </div>
+
+        <!-- Post Content -->
+        <div style="padding: 24px; border-bottom: 8px solid #f3f4f6;">
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <div
+                    style="width: 48px; height: 48px; background: #D1FAE5; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #059669; font-size: 16px;">
+                    BS</div>
+                <div>
+                    <div style="font-weight: 600; font-size: 15px;">Budi Santoso</div>
+                    <div style="font-size: 12px; color: var(--text-grey);">Alumni '10 • 2 hari lalu</div>
+                </div>
+            </div>
+
+            <h2 style="font-size: 20px; margin-bottom: 12px;">Tips Karir di Era Digital</h2>
+            <p style="font-size: 14px; line-height: 1.7; color: #4B5563; margin-bottom: 16px;">
+                Halo teman-teman alumni! Saya ingin berbagi pengalaman tentang karir di bidang teknologi.
+                Setelah lulus dari SMAN 1 Jepara, saya melanjutkan kuliah di jurusan Teknik Informatika dan sekarang
+                bekerja sebagai Software Engineer.
+            </p>
+            <p style="font-size: 14px; line-height: 1.7; color: #4B5563;">
+                Beberapa tips yang bisa saya bagikan: 1) Jangan berhenti belajar, 2) Bangun portfolio, 3) Networking itu
+                penting...
+            </p>
+
+            <!-- Post Actions -->
+            <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+                <button class="btn-action btn-approve" onclick="toggleStatus('pin', 1)">📌 Pin Post</button>
+                <button class="btn-action btn-delete" onclick="deleteItem('post', 1)">🗑️ Hapus</button>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="page-content content-padding">
+            <h3 style="margin-bottom: 20px;">Komentar (24)</h3>
+
+            <!-- Comment Item -->
+            <div style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f3f4f6;">
+                <div style="display: flex; gap: 10px;">
+                    <div
+                        style="width: 36px; height: 36px; background: #DBEAFE; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #1D4ED8; flex-shrink: 0;">
+                        SA</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 13px; font-weight: 600;">Siti Aminah</div>
+                        <div style="font-size: 11px; color: var(--text-grey); margin-bottom: 6px;">Alumni '15 • 1 hari
+                            lalu</div>
+                        <p style="font-size: 13px; line-height: 1.5; color: #4B5563;">Terima kasih sharingnya Mas Budi!
+                            Sangat menginspirasi 🙏</p>
+                    </div>
+                    <button class="btn-action btn-delete" style="height: fit-content; align-self: flex-start;"
+                        onclick="deleteItem('comment', 1)">🗑️</button>
+                </div>
+            </div>
+
+            <!-- Comment Item - Reported -->
+            <div style="margin-bottom: 20px; padding: 16px; background: #FEF2F2; border-radius: 12px;">
+                <span class="badge badge-danger" style="margin-bottom: 12px;">⚠️ Reported</span>
+                <div style="display: flex; gap: 10px;">
+                    <div
+                        style="width: 36px; height: 36px; background: #FEE2E2; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #DC2626; flex-shrink: 0;">
+                        XX</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 13px; font-weight: 600;">Anonymous User</div>
+                        <div style="font-size: 11px; color: var(--text-grey); margin-bottom: 6px;">5 jam lalu • 3
+                            reports</div>
+                        <p style="font-size: 13px; line-height: 1.5; color: #4B5563;">[Konten yang dilaporkan - mungkin
+                            spam atau tidak pantas]</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <button class="btn-action btn-delete" onclick="deleteItem('comment', 2)">🗑️</button>
+                        <button class="btn-action btn-reject" onclick="deleteItem('user-ban', 2)">🚫</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comment Item -->
+            <div style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f3f4f6;">
+                <div style="display: flex; gap: 10px;">
+                    <div
+                        style="width: 36px; height: 36px; background: #FEF3C7; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #D97706; flex-shrink: 0;">
+                        RW</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 13px; font-weight: 600;">Rudi Wijaya</div>
+                        <div style="font-size: 11px; color: var(--text-grey); margin-bottom: 6px;">Alumni '12 • 12 jam
+                            lalu</div>
+                        <p style="font-size: 13px; line-height: 1.5; color: #4B5563;">Setuju! Portfolio itu kunci. Saya
+                            juga sering hire based on portfolio.</p>
+                    </div>
+                    <button class="btn-action btn-delete" style="height: fit-content; align-self: flex-start;"
+                        onclick="deleteItem('comment', 3)">🗑️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

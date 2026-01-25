@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderasi Forum - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Moderasi Forum</h2>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-chip active" onclick="setFilter(this)">Semua</button>
+            <button class="filter-chip" onclick="setFilter(this)">Reported</button>
+            <button class="filter-chip" onclick="setFilter(this)">Pinned</button>
+        </div>
+
+        <div class="page-content content-padding">
+            <div class="list-card" onclick="location.href='forum-detail.html?id=1'">
+                <div class="list-card-avatar" style="background: #D1FAE5;">💬</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Tips Karir di Era Digital</div>
+                    <div class="list-card-subtitle">Budi Santoso • 24 replies</div>
+                </div>
+                <span class="badge badge-info">Pinned</span>
+            </div>
+
+            <div class="list-card" onclick="location.href='forum-detail.html?id=2'">
+                <div class="list-card-avatar" style="background: #FEE2E2;">💬</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Posting tidak pantas</div>
+                    <div class="list-card-subtitle">Anonymous • 5 reports</div>
+                </div>
+                <span class="badge badge-danger">Reported</span>
+            </div>
+
+            <div class="list-card" onclick="location.href='forum-detail.html?id=3'">
+                <div class="list-card-avatar" style="background: #DBEAFE;">💬</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Ada yang ingat Bu Sari?</div>
+                    <div class="list-card-subtitle">Siti Aminah • 56 replies</div>
+                </div>
+                <span class="badge badge-success">Active</span>
+            </div>
+
+            <div class="list-card" onclick="location.href='forum-detail.html?id=4'">
+                <div class="list-card-avatar" style="background: #FEF3C7;">💬</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Rekomendasi tempat makan di Jepara</div>
+                    <div class="list-card-subtitle">Rudi Wijaya • 32 replies</div>
+                </div>
+                <span class="badge badge-success">Active</span>
+            </div>
+        </div>
+
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

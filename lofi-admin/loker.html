@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderasi Loker - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Moderasi Loker</h2>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-chip active" onclick="setFilter(this)">Semua</button>
+            <button class="filter-chip" onclick="setFilter(this)">Pending</button>
+            <button class="filter-chip" onclick="setFilter(this)">Approved</button>
+            <button class="filter-chip" onclick="setFilter(this)">Rejected</button>
+        </div>
+
+        <div class="page-content content-padding">
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #FEF3C7;">💼</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Software Engineer</div>
+                    <div class="list-card-subtitle">PT Tech Indo • Full-time</div>
+                    <div style="font-size: 10px; color: var(--text-grey); margin-top: 4px;">Dipost oleh: Budi Santoso
+                    </div>
+                </div>
+                <div class="list-card-actions">
+                    <button class="btn-action btn-approve" onclick="approveItem('loker', 1)">✓</button>
+                    <button class="btn-action btn-reject" onclick="rejectItem('loker', 1)">✗</button>
+                </div>
+            </div>
+
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #D1FAE5;">💼</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Marketing Manager</div>
+                    <div class="list-card-subtitle">CV Sejahtera • Full-time</div>
+                    <div style="font-size: 10px; color: var(--text-grey); margin-top: 4px;">Dipost oleh: Siti Aminah
+                    </div>
+                </div>
+                <span class="badge badge-success">Approved</span>
+            </div>
+
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #FEF3C7;">💼</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Graphic Designer</div>
+                    <div class="list-card-subtitle">Freelance • Remote</div>
+                    <div style="font-size: 10px; color: var(--text-grey); margin-top: 4px;">Dipost oleh: Rudi Wijaya
+                    </div>
+                </div>
+                <div class="list-card-actions">
+                    <button class="btn-action btn-approve" onclick="approveItem('loker', 3)">✓</button>
+                    <button class="btn-action btn-reject" onclick="rejectItem('loker', 3)">✗</button>
+                </div>
+            </div>
+
+            <div class="list-card">
+                <div class="list-card-avatar" style="background: #FEE2E2;">💼</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Sales Representative</div>
+                    <div class="list-card-subtitle">Tidak diketahui • Mencurigakan</div>
+                    <div style="font-size: 10px; color: var(--text-grey); margin-top: 4px;">Dipost oleh: Unknown</div>
+                </div>
+                <span class="badge badge-danger">Rejected</span>
+            </div>
+        </div>
+
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <div id="confirmModal" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeConfirm()">Batal</button>
+                    <button class="btn-primary" onclick="executeConfirm()">Ya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
