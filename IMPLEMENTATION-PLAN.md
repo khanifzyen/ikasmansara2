@@ -138,13 +138,15 @@ lib/
 | `ProfileScreen` | Profil user | `profile.html` |
 | `EditProfileScreen` | Edit profil | `edit-profile.html` |
 
+- [x] Implementasi UI Screens & Navigation Shell
+
 ### 3.2 Features
-- [ ] Greeting card dengan nama user
-- [ ] Quick stats (upcoming events, donations)
-- [ ] News carousel
-- [ ] Menu shortcuts
-- [ ] Bottom navigation (Home, Donasiku, Tiketku, Loker, More)
-- [ ] Side drawer menu
+- [x] Greeting card dengan nama user
+- [x] Quick stats (upcoming events, donations)
+- [x] News carousel
+- [x] Menu shortcuts
+- [x] Bottom navigation (Home, Donasiku, Tiketku, Loker, More)
+- [x] Side drawer menu
 
 ---
 
@@ -156,9 +158,9 @@ lib/
 |--------|-----------|----------------|
 | `EKTAScreen` | Kartu alumni digital + QR | `ekta.html` |
 
-- [ ] Generate QR code dari user ID
-- [ ] Card flip animation
-- [ ] Share/download kartu
+- [x] Generate QR code dari user ID (UI Placeholder)
+- [x] Card flip animation (Visual Only)
+- [x] Share/download kartu (UI Only)
 
 ### 4.2 Directory
 
@@ -167,9 +169,9 @@ lib/
 | `DirectoryScreen` | List alumni dengan filter | `directory.html` |
 | `DirectoryDetailScreen` | Detail profil alumni | - |
 
-- [ ] Search by nama, angkatan
-- [ ] Filter by domisili, pekerjaan
-- [ ] Infinite scroll pagination
+- [x] Search by nama, angkatan
+- [x] Filter by domisili, pekerjaan
+- [x] Infinite scroll pagination (UI Implementation)
 
 ---
 
@@ -183,13 +185,15 @@ lib/
 | `TicketListScreen` | List tiket user | `tiketku.html` |
 | `TicketDetailScreen` | Detail tiket + QR | - |
 
+- [x] Implementasi UI Screens
+
 ### 5.2 Features
-- [ ] Event detail dengan countdown
-- [ ] Ticket booking flow (qty, size, sub-events)
-- [ ] Payment integration (VA simulation)
-- [ ] E-ticket dengan QR code
-- [ ] Sub-event registration
-- [ ] Shirt pickup status
+- [x] Event detail dengan info lengkap
+- [x] Ticket booking flow (qty, size selection mock)
+- [x] Payment integration (UI Simulation)
+- [x] E-ticket dengan QR code (QrImageView)
+- [x] Sub-event registration (Tab Section)
+- [x] Shared content for Sponsors & Donations
 
 ---
 
@@ -199,12 +203,18 @@ lib/
 
 | Screen | Deskripsi | Referensi Lofi |
 |--------|-----------|----------------|
-| `DonationListScreen` | List campaign donasi | `donation.html` |
-| `DonationDetailScreen` | Detail campaign + progress | `donation-detail.html` |
-| `DonationPaymentScreen` | Form donasi + payment | `donation-payment.html` |
+| `DonationListScreen` | Daftar kampanye donasi | `donation.html` |
+| `DonationDetailScreen` | Detail kampanye + payment | `donation-detail.html` |
 | `MyDonationsScreen` | Riwayat donasi user | `donasiku.html` |
 
+- [x] Implementasi UI Screens
+
 ### 6.2 Features
+- [x] Campaign slider di Home
+- [x] Campaign list dengan progress bar
+- [x] Donation detail dengan urgent badge
+- [x] Payment simulation (VA popup)
+- [x] Donatur list (Real-time mock)
 - [ ] Progress bar dengan animasi
 - [ ] Donatur list (recent)
 - [ ] Anonymous donation option

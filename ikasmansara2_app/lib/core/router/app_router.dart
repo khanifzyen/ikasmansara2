@@ -11,6 +11,16 @@ import '../../features/auth/presentation/pages/role_selection_page.dart';
 import '../../features/auth/presentation/pages/register_alumni_page.dart';
 import '../../features/auth/presentation/pages/register_public_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/home/presentation/pages/main_shell.dart';
+import '../../features/donations/presentation/pages/donation_list_page.dart';
+import '../../features/events/presentation/pages/ticket_list_page.dart';
+import '../../features/loker/presentation/pages/loker_list_page.dart';
+import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/directory/presentation/pages/directory_page.dart';
+import '../../features/ekta/presentation/pages/ekta_page.dart';
+import '../../features/events/presentation/pages/event_detail_page.dart';
+import '../../features/events/presentation/pages/ticket_detail_page.dart';
+import '../../features/donations/presentation/pages/donation_detail_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -65,18 +75,99 @@ class AppRouter {
         builder: (context, state) => const RegisterPublicPage(),
       ),
 
-      // Home (Main Shell)
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const HomePage(),
+      // Main Shell (Bottom Nav)
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainShell(navigationShell: navigationShell);
+        },
+        branches: [
+          // Home
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                name: 'home',
+                builder: (context, state) => const HomePage(),
+              ),
+            ],
+          ),
+
+          // Donasiku
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/donations',
+                name: 'donations',
+                builder: (context, state) => const DonationListPage(),
+              ),
+            ],
+          ),
+
+          // Tiketku
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/tickets',
+                name: 'tickets',
+                builder: (context, state) => const TicketListPage(),
+              ),
+            ],
+          ),
+
+          // Loker
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/loker',
+                name: 'loker',
+                builder: (context, state) => const LokerListPage(),
+              ),
+            ],
+          ),
+        ],
       ),
 
-      // Profile
+      // Pages passing through Shell (or separate)
+      // Profile (Separate because it comes from Drawer)
       GoRoute(
         path: '/profile',
         name: 'profile',
-        builder: (context, state) => const Placeholder(), // TODO: ProfilePage
+        builder: (context, state) => const ProfilePage(),
+      ),
+
+      // Directory (Phase 4)
+      GoRoute(
+        path: '/directory',
+        name: 'directory',
+        builder: (context, state) => const DirectoryPage(),
+      ),
+
+      // E-KTA (Phase 4)
+      GoRoute(
+        path: '/ekta',
+        name: 'ekta',
+        builder: (context, state) => const EKTAPage(),
+      ),
+
+      // Event Detail (Phase 5)
+      GoRoute(
+        path: '/event-detail',
+        name: 'event-detail',
+        builder: (context, state) => const EventDetailPage(),
+      ),
+
+      // Ticket Detail (Phase 5)
+      GoRoute(
+        path: '/ticket-detail',
+        name: 'ticket-detail',
+        builder: (context, state) => const TicketDetailPage(),
+      ),
+
+      // Donation Detail (Phase 6)
+      GoRoute(
+        path: '/donation-detail',
+        name: 'donation-detail',
+        builder: (context, state) => const DonationDetailPage(),
       ),
     ],
     errorBuilder: (context, state) =>

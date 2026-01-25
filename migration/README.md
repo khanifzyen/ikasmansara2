@@ -46,6 +46,16 @@ npm run migrate:market
 npm run migrate:memory
 ```
 
+### Seed Database with Dummy Data
+```bash
+npm run seed
+```
+
+### Remove All Seeded Data
+```bash
+npm run seed:down
+```
+
 ## Collections Created
 
 | # | Collection | Description |
