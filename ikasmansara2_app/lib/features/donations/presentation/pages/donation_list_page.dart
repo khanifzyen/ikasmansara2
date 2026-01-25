@@ -1,55 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/di/injection.dart';
+import '../bloc/donation_list_bloc.dart';
 
 class DonationListPage extends StatelessWidget {
   const DonationListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Program Donasi'),
+    return BlocProvider(
+      create: (context) => getIt<DonationListBloc>()..add(FetchDonations()),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _CampaignCard(
-            title: 'Renovasi Masjid Sekolah SMAN 1 Jepara',
-            description: 'Mari bantu adik-adik kita beribadah dengan nyaman.',
-            imageUrl: 'assets/images/logo-ika.png', // Placeholder
-            targetAmount: 50000000,
-            currentAmount: 35000000,
-            donorCount: 145,
-            isUrgent: true,
-            onTap: () => context.push('/donation-detail'),
-          ),
-          _CampaignCard(
-            title: 'Beasiswa Anak Alumni Kurang Mampu',
-            description:
-                'Bantuan biaya pendidikan bagi anak alumni yang membutuhkan.',
-            imageUrl: 'assets/images/logo-ika.png', // Placeholder
-            targetAmount: 20000000,
-            currentAmount: 12500000,
-            donorCount: 88,
-            isUrgent: false,
-            onTap: () {},
-          ),
-          _CampaignCard(
-            title: 'Dana Tali Kasih (Alumni Sakit)',
-            description: 'Solidaritas untuk rekan alumni yang sedang sakit.',
-            imageUrl: 'assets/images/logo-ika.png', // Placeholder
-            targetAmount: 10000000, // Flexible target
-            currentAmount: 2000000,
-            donorCount: 15,
-            isUrgent: false,
-            onTap: () {},
-          ),
-        ],
+        appBar: AppBar(
+          title: const Text('Program Donasi'),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          actions: [
+            IconButton(
+              onPressed: () => context.pushNamed('my-donations'),
+              icon: const Icon(Icons.history),
+              tooltip: 'Riwayat Donasi',
+            ),
+          ],
+        ),
+        body: BlocBuilder<DonationListBloc, DonationListState>(
+          builder: (context, state) {
+            if (state is DonationListLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is DonationListError) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else if (state is DonationListLoaded) {
+              if (state.donations.isEmpty) {
+                return const Center(child: Text('Belum ada program donasi.'));
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: state.donations.length,
+                itemBuilder: (context, index) {
+                  final donation = state.donations[index];
+                  // Use a helper to resolve image URL
+                  final imageUrl = donation.banner.isNotEmpty
+                      ? '${AppConstants.pocketBaseUrl}/api/files/donations/${donation.id}/${donation.banner}'
+                      : 'assets/images/placeholder_donation.png';
+
+                  return _CampaignCard(
+                    title: donation.title,
+                    description: donation
+                        .description, // Note: description might be HTML if editor used
+                    imageUrl: imageUrl,
+                    targetAmount: donation.targetAmount,
+                    currentAmount: donation.collectedAmount,
+                    donorCount: donation.donorCount,
+                    isUrgent: donation.isUrgent,
+                    onTap: () => context.pushNamed(
+                      'donation-detail',
+                      extra: donation.id, // Pass ID to detail page
+                    ),
+                  );
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

@@ -21,6 +21,7 @@ import '../../features/ekta/presentation/pages/ekta_page.dart';
 import '../../features/events/presentation/pages/event_detail_page.dart';
 import '../../features/events/presentation/pages/ticket_detail_page.dart';
 import '../../features/donations/presentation/pages/donation_detail_page.dart';
+import '../../features/donations/presentation/pages/my_donations_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -167,7 +168,17 @@ class AppRouter {
       GoRoute(
         path: '/donation-detail',
         name: 'donation-detail',
-        builder: (context, state) => const DonationDetailPage(),
+        builder: (context, state) {
+          final donationId = state.extra as String;
+          return DonationDetailPage(donationId: donationId);
+        },
+      ),
+
+      // My Donations (History)
+      GoRoute(
+        path: '/my-donations',
+        name: 'my-donations',
+        builder: (context, state) => const MyDonationsPage(),
       ),
     ],
     errorBuilder: (context, state) =>
