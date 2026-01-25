@@ -118,10 +118,16 @@ class DonationDetailBloc
     required this.createDonationTransaction,
   }) : super(DonationDetailInitial()) {
     on<FetchDonationDetail>((event, emit) async {
+      // ignore: avoid_print
+      print('DEBUG: DonationDetailBloc -> FetchDonationDetail(${event.id})');
       emit(DonationDetailLoading());
       try {
         final donation = await getDonationDetail(event.id);
         final transactions = await getDonationTransactions(event.id);
+        // ignore: avoid_print
+        print(
+          'DEBUG: DonationDetailBloc -> Detail Loaded & ${transactions.length} trx',
+        );
         emit(
           DonationDetailLoaded(
             donation: donation,
@@ -129,11 +135,15 @@ class DonationDetailBloc
           ),
         );
       } catch (e) {
+        // ignore: avoid_print
+        print('DEBUG: DonationDetailBloc -> Detail Error: $e');
         emit(DonationDetailError(e.toString()));
       }
     });
 
     on<CreateTransactionEvent>((event, emit) async {
+      // ignore: avoid_print
+      print('DEBUG: DonationDetailBloc -> CreateTransactionEvent');
       // Optimistically show loading or define a separate loading state for transaction
       // For simplicity, we assume the UI handles 'TransactionLoading' and then we might need to re-fetch to restore 'Loaded' state
       emit(TransactionLoading());
@@ -146,10 +156,16 @@ class DonationDetailBloc
           message: event.message,
           paymentMethod: event.paymentMethod,
         );
+        // ignore: avoid_print
+        print(
+          'DEBUG: DonationDetailBloc -> Transaction Success: ${transaction.transactionId}',
+        );
         emit(TransactionSuccess(transaction));
         // Optionally, one could auto-refresh the detail here.
         // But better to let UI decide to dispatch FetchDonationDetail again.
       } catch (e) {
+        // ignore: avoid_print
+        print('DEBUG: DonationDetailBloc -> Transaction Error: $e');
         emit(TransactionError(e.toString()));
         // If we want to recover the previous loaded state, we'd need to store it.
         // But 'TransactionError' is specific enough.

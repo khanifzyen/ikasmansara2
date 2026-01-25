@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/currency_input_formatter.dart';
 import '../../domain/entities/donation.dart';
 import '../bloc/donation_detail_bloc.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 
 class DonationPaymentSheet extends StatefulWidget {
   final Donation donation;
@@ -19,12 +22,16 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
   String? _selectedPaymentMethod;
   bool _isAnonymous = false;
   final List<double> _presetAmounts = [10000, 20000, 50000, 100000, 500000];
-  final List<String> _paymentMethods = [
-    'Transfer Bank (BRI)',
-    'Transfer Bank (BCA)',
-    'GoPay',
-    'OVO',
-  ];
+  final List<String> _paymentMethods = ['QRIS', 'Virtual Account'];
+
+  @override
+  void initState() {
+    super.initState();
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthAuthenticated) {
+      _nameController.text = authState.user.name;
+    }
+  }
 
   @override
   void dispose() {
@@ -34,10 +41,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
   }
 
   void _submit() {
-    final amountString = _amountController.text.replaceAll(
-      RegExp(r'[^0-9]'),
-      '',
-    );
+    final amountString = _amountController.text.replaceAll('.', '');
     final amount = double.tryParse(amountString) ?? 0;
 
     if (amount < 10000) {
@@ -129,6 +133,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                   TextField(
                     controller: _amountController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [CurrencyInputFormatter()],
                     decoration: InputDecoration(
                       prefixText: 'Rp ',
                       border: OutlineInputBorder(
@@ -144,14 +149,41 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                     spacing: 8,
                     runSpacing: 8,
                     children: _presetAmounts.map((amount) {
+                      final isSelected =
+                          double.tryParse(
+                            _amountController.text.replaceAll('.', ''),
+                          ) ==
+                          amount;
                       return ChoiceChip(
                         label: Text(
                           currencyFormat.format(amount).replaceAll('Rp ', ''),
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
                         ),
-                        selected: false,
+                        selected: isSelected,
+                        selectedColor: AppColors.primary,
+                        backgroundColor: Colors.grey[200],
+                        checkmarkColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: isSelected
+                                ? AppColors.primary
+                                : Colors.transparent,
+                          ),
+                        ),
                         onSelected: (selected) {
                           if (selected) {
-                            _amountController.text = amount.toInt().toString();
+                            setState(() {
+                              _amountController.text = currencyFormat
+                                  .format(amount)
+                                  .replaceAll('Rp ', '')
+                                  .trim();
+                            });
                           }
                         },
                       );
@@ -199,24 +231,43 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    value: _selectedPaymentMethod,
-                    items: _paymentMethods
-                        .map(
-                          (method) => DropdownMenuItem(
-                            value: method,
-                            child: Text(method),
+                  Column(
+                    children: _paymentMethods.map((method) {
+                      return RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            Icon(
+                              method == 'QRIS'
+                                  ? Icons.qr_code
+                                  : Icons.credit_card,
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(method),
+                          ],
+                        ),
+                        value: method,
+                        groupValue: _selectedPaymentMethod,
+                        onChanged: (val) {
+                          setState(() {
+                            _selectedPaymentMethod = val;
+                          });
+                        },
+                        contentPadding: EdgeInsets.zero,
+                        activeColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: _selectedPaymentMethod == method
+                                ? AppColors.primary
+                                : Colors.grey[300]!,
                           ),
-                        )
-                        .toList(),
-                    onChanged: (val) =>
-                        setState(() => _selectedPaymentMethod = val),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      hintText: 'Pilih metode pembayaran',
-                    ),
+                        ),
+                        tileColor: _selectedPaymentMethod == method
+                            ? AppColors.primary.withValues(alpha: 0.1)
+                            : Colors.transparent,
+                      );
+                    }).toList(),
                   ),
 
                   const SizedBox(height: 32),

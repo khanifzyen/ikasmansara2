@@ -43,11 +43,17 @@ class MyDonationBloc extends Bloc<MyDonationEvent, MyDonationState> {
 
   MyDonationBloc(this.getMyDonations) : super(MyDonationInitial()) {
     on<FetchMyDonations>((event, emit) async {
+      // ignore: avoid_print
+      print('DEBUG: MyDonationBloc -> FetchMyDonations');
       emit(MyDonationLoading());
       try {
         final transactions = await getMyDonations();
+        // ignore: avoid_print
+        print('DEBUG: MyDonationBloc -> Loaded ${transactions.length} items');
         emit(MyDonationLoaded(transactions));
       } catch (e) {
+        // ignore: avoid_print
+        print('DEBUG: MyDonationBloc -> Error: $e');
         emit(MyDonationError(e.toString()));
       }
     });

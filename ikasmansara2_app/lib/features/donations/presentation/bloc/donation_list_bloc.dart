@@ -43,11 +43,17 @@ class DonationListBloc extends Bloc<DonationListEvent, DonationListState> {
 
   DonationListBloc(this.getDonations) : super(DonationListInitial()) {
     on<FetchDonations>((event, emit) async {
+      // ignore: avoid_print
+      print('DEBUG: DonationListBloc -> FetchDonations');
       emit(DonationListLoading());
       try {
         final donations = await getDonations();
+        // ignore: avoid_print
+        print('DEBUG: DonationListBloc -> Loaded ${donations.length} items');
         emit(DonationListLoaded(donations));
       } catch (e) {
+        // ignore: avoid_print
+        print('DEBUG: DonationListBloc -> Error: $e');
         emit(DonationListError(e.toString()));
       }
     });

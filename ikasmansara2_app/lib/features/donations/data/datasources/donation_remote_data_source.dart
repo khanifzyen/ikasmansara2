@@ -26,49 +26,95 @@ class DonationRemoteDataSourceImpl implements DonationRemoteDataSource {
 
   @override
   Future<List<DonationModel>> getDonations() async {
-    final records = await _pbClient.pb
-        .collection('donations')
-        .getFullList(sort: '-created');
-    return records.map((r) => DonationModel.fromRecord(r)).toList();
+    // ignore: avoid_print
+    print('DEBUG: Fetching donations list...');
+    try {
+      final records = await _pbClient.pb
+          .collection('donations')
+          .getFullList(sort: '-created');
+      // ignore: avoid_print
+      print('DEBUG: Fetched ${records.length} donations');
+      return records.map((r) => DonationModel.fromRecord(r)).toList();
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error fetching donations: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<DonationModel> getDonationDetail(String id) async {
-    final record = await _pbClient.pb.collection('donations').getOne(id);
-    return DonationModel.fromRecord(record);
+    // ignore: avoid_print
+    print('DEBUG: Fetching donation detail for $id...');
+    try {
+      final record = await _pbClient.pb.collection('donations').getOne(id);
+      // ignore: avoid_print
+      print('DEBUG: Fetched donation detail: ${record.id}');
+      return DonationModel.fromRecord(record);
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error fetching donation detail: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<List<DonationTransactionModel>> getMyDonationHistory() async {
+    // ignore: avoid_print
+    print('DEBUG: Fetching my donation history...');
     final user = _pbClient.currentUser;
     if (user == null) {
+      // ignore: avoid_print
+      print('DEBUG: No user logged in');
       throw Exception('User not logged in');
     }
-    final records = await _pbClient.pb
-        .collection('donation_transactions')
-        .getFullList(
-          filter: 'user = "${user.id}"',
-          sort: '-created',
-          expand: 'donation',
-        );
-    return records.map((r) => DonationTransactionModel.fromRecord(r)).toList();
+    try {
+      final records = await _pbClient.pb
+          .collection('donation_transactions')
+          .getFullList(
+            filter: 'user = "${user.id}"',
+            sort: '-created',
+            expand: 'donation',
+          );
+      // ignore: avoid_print
+      print('DEBUG: Fetched ${records.length} my transactions');
+      return records
+          .map((r) => DonationTransactionModel.fromRecord(r))
+          .toList();
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error fetching my history: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<List<DonationTransactionModel>> getDonationTransactions(
     String donationId,
   ) async {
-    final records = await _pbClient.pb
-        .collection('donation_transactions')
-        .getList(
-          page: 1,
-          perPage: 20, // Limit to recent 20
-          filter: 'donation = "$donationId" && payment_status = "success"',
-          sort: '-created',
-        );
-    return records.items
-        .map((r) => DonationTransactionModel.fromRecord(r))
-        .toList();
+    // ignore: avoid_print
+    print('DEBUG: Fetching transactions for donation $donationId...');
+    try {
+      final records = await _pbClient.pb
+          .collection('donation_transactions')
+          .getList(
+            page: 1,
+            perPage: 20, // Limit to recent 20
+            filter: 'donation = "$donationId" && payment_status = "success"',
+            sort: '-created',
+          );
+      // ignore: avoid_print
+      print(
+        'DEBUG: Fetched ${records.items.length} transactions for donation $donationId',
+      );
+      return records.items
+          .map((r) => DonationTransactionModel.fromRecord(r))
+          .toList();
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error fetching transactions: $e');
+      rethrow;
+    }
   }
 
   @override
@@ -80,6 +126,8 @@ class DonationRemoteDataSourceImpl implements DonationRemoteDataSource {
     String? message,
     String? paymentMethod,
   }) async {
+    // ignore: avoid_print
+    print('DEBUG: Creating transaction for donation $donationId...');
     final user = _pbClient.currentUser;
     final body = {
       'donation': donationId,
@@ -94,9 +142,17 @@ class DonationRemoteDataSourceImpl implements DonationRemoteDataSource {
       if (paymentMethod != null) 'payment_method': paymentMethod,
     };
 
-    final record = await _pbClient.pb
-        .collection('donation_transactions')
-        .create(body: body);
-    return DonationTransactionModel.fromRecord(record);
+    try {
+      final record = await _pbClient.pb
+          .collection('donation_transactions')
+          .create(body: body);
+      // ignore: avoid_print
+      print('DEBUG: Transaction created: ${record.id}');
+      return DonationTransactionModel.fromRecord(record);
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error creating transaction: $e');
+      rethrow;
+    }
   }
 }

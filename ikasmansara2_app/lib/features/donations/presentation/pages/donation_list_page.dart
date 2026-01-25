@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/di/injection.dart';
@@ -57,6 +58,7 @@ class DonationListPage extends StatelessWidget {
                     currentAmount: donation.collectedAmount,
                     donorCount: donation.donorCount,
                     isUrgent: donation.isUrgent,
+                    deadline: donation.deadline,
                     onTap: () => context.pushNamed(
                       'donation-detail',
                       extra: donation.id, // Pass ID to detail page
@@ -81,6 +83,7 @@ class _CampaignCard extends StatelessWidget {
   final double currentAmount;
   final int donorCount;
   final bool isUrgent;
+  final DateTime deadline;
   final VoidCallback onTap;
 
   const _CampaignCard({
@@ -91,11 +94,17 @@ class _CampaignCard extends StatelessWidget {
     required this.currentAmount,
     required this.donorCount,
     required this.isUrgent,
+    required this.deadline,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final currencyFormat = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
     final progress = (currentAmount / targetAmount).clamp(0.0, 1.0);
     final percentage = (progress * 100).toInt();
 
@@ -131,19 +140,33 @@ class _CampaignCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(12),
-                        image: DecorationImage(
-                          image: AssetImage(imageUrl),
-                          fit: BoxFit.cover,
-                        ),
                       ),
-                      // Placeholder icon if asset not found logic could be here
-                      child: const Center(
-                        child: Icon(
-                          Icons.volunteer_activism,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: imageUrl.startsWith('http')
+                          ? Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Center(
+                                    child: Icon(
+                                      Icons.volunteer_activism,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                            )
+                          : Image.asset(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Center(
+                                    child: Icon(
+                                      Icons.volunteer_activism,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                            ),
                     ),
                     if (isUrgent)
                       Positioned(
@@ -189,19 +212,42 @@ class _CampaignCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                const SizedBox(height: 16),
+
+                // Deadline
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.access_time_rounded,
+                      size: 14,
+                      color: AppColors.textGrey,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textGrey,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
                 // Progress
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Rp ${currentAmount.toStringAsFixed(0)}', // Basic formatting
+                      currencyFormat.format(currentAmount),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
                       ),
                     ),
                     Text(
-                      'dari Rp ${targetAmount.toStringAsFixed(0)}',
+                      'dari ${currencyFormat.format(targetAmount)}',
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textGrey,

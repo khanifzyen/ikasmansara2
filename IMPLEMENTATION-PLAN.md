@@ -215,11 +215,11 @@ lib/
 - [x] Donation detail dengan urgent badge
 - [x] Payment simulation (VA popup)
 - [x] Donatur list (Real-time mock)
-- [ ] Progress bar dengan animasi
-- [ ] Donatur list (recent)
-- [ ] Anonymous donation option
-- [ ] Payment methods
-- [ ] Transaction history dengan filter
+- [x] Progress bar dengan animasi
+- [x] Donatur list (recent)
+- [x] Anonymous donation option
+- [x] Payment methods
+- [x] Transaction history dengan filter
 
 ---
 
