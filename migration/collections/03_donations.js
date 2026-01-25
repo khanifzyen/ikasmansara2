@@ -57,6 +57,8 @@ async function migrateDonations() {
     const donationsId = await getCollectionId(pb, 'donations');
 
     // 2. Donation Transactions Collection
+    const eventsId = await getCollectionId(pb, 'events');
+
     await createCollection(pb, {
         name: 'donation_transactions',
         type: 'base',
@@ -69,8 +71,15 @@ async function migrateDonations() {
             {
                 name: 'donation',
                 type: 'relation',
-                required: true,
+                required: false, // Optional - either donation or event
                 collectionId: donationsId,
+                maxSelect: 1
+            },
+            {
+                name: 'event',
+                type: 'relation',
+                required: false, // Optional - either donation or event
+                collectionId: eventsId,
                 maxSelect: 1
             },
             {
@@ -96,6 +105,7 @@ async function migrateDonations() {
         indexes: [
             'CREATE UNIQUE INDEX idx_trx_id ON donation_transactions (transaction_id)',
             'CREATE INDEX idx_donation_trx ON donation_transactions (donation)',
+            'CREATE INDEX idx_event_trx ON donation_transactions (event)',
             'CREATE INDEX idx_donation_status ON donation_transactions (payment_status)'
         ]
     });

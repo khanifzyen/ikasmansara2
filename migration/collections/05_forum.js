@@ -61,7 +61,7 @@ async function migrateForum() {
 
     const postsId = await getCollectionId(pb, 'forum_posts');
 
-    // 2. Forum Comments Collection
+    // 2. Forum Comments Collection (create without parent first)
     await createCollection(pb, {
         name: 'forum_comments',
         type: 'base',
@@ -86,16 +86,30 @@ async function migrateForum() {
                 collectionId: usersId,
                 maxSelect: 1
             },
-            { name: 'content', type: 'text', required: true },
-            {
-                name: 'parent',
-                type: 'relation',
-                required: false,
-                collectionId: '_pbc_forum_comments', // self-reference placeholder
-                maxSelect: 1
-            }
+            { name: 'content', type: 'text', required: true }
         ]
     });
+
+    // Get the forum_comments collection ID and add self-reference for parent
+    const commentsId = await getCollectionId(pb, 'forum_comments');
+    try {
+        const commentsCollection = await pb.collections.getOne('forum_comments');
+        await pb.collections.update('forum_comments', {
+            fields: [
+                ...commentsCollection.fields,
+                {
+                    name: 'parent',
+                    type: 'relation',
+                    required: false,
+                    collectionId: commentsId,
+                    maxSelect: 1
+                }
+            ]
+        });
+        console.log('✅ Added parent field to forum_comments');
+    } catch (error) {
+        console.log('⚠️  Could not add parent field:', error.message);
+    }
 
     // 3. Forum Likes Collection
     await createCollection(pb, {

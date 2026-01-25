@@ -20,6 +20,7 @@ erDiagram
     events ||--o{ event_sub_events : includes
     events ||--o{ event_sponsors : receives
     events ||--o{ event_registrations : has
+    events ||--o{ donation_transactions : "receives donations"
     
     donations ||--o{ donation_transactions : receives
     
@@ -177,7 +178,8 @@ Pendaftaran peserta event.
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
-| `donation` | relation | ✅ | → donations |
+| `donation` | relation | ❌ | → donations (null jika donasi event) |
+| `event` | relation | ❌ | → events (null jika donasi campaign) |
 | `user` | relation | ❌ | → users (null = anonim) |
 | `donor_name` | text | ✅ | Nama donatur (bisa "Hamba Allah") |
 | `amount` | number | ✅ | Jumlah donasi (Rp) |
@@ -186,6 +188,8 @@ Pendaftaran peserta event.
 | `payment_status` | select | ✅ | `pending`, `success`, `failed` |
 | `payment_method` | text | ❌ | Metode pembayaran |
 | `transaction_id` | text | ✅ | ID transaksi unik |
+
+> **Note:** Transaksi harus memiliki salah satu dari `donation` ATAU `event`, tidak boleh keduanya kosong.
 
 ---
 

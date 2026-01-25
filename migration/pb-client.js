@@ -5,6 +5,9 @@ dotenv.config();
 
 const pb = new PocketBase(process.env.POCKETBASE_URL);
 
+// Disable auto-cancellation to prevent concurrent request issues
+pb.autoCancellation(false);
+
 /**
  * Authenticate as superuser/admin
  */
