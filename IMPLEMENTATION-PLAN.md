@@ -63,6 +63,7 @@ lib/
   
   # Local Storage
   flutter pub add flutter_secure_storage drift sqlite3_flutter_libs
+  flutter pub add shared_preferences flutter_dotenv
   
   # UI Components
   flutter pub add google_fonts flutter_svg
@@ -97,14 +98,14 @@ lib/
 ## Phase 2: Authentication (Week 2-3)
 
 ### 2.1 Data Layer
-- [ ] `AuthRemoteDataSource` - PocketBase auth API
-- [ ] `AuthLocalDataSource` - Secure storage untuk token
-- [ ] `UserModel` - DTO dengan freezed
+- [x] `AuthRemoteDataSource` - PocketBase auth API
+- [x] `AuthLocalDataSource` - Secure storage untuk token (Managed by `PBClient`)
+- [x] `UserModel` - DTO dengan freezed
 
 ### 2.2 Domain Layer
-- [ ] `User` entity
-- [ ] `AuthRepository` interface
-- [ ] UseCases: `Login`, `Register`, `Logout`, `GetCurrentUser`
+- [x] `User` entity
+- [x] `AuthRepository` interface
+- [x] UseCases: `Login`, `Register`, `Logout`, `GetCurrentUser` (Implemented in Bloc/Repo)
 
 ### 2.3 Presentation Layer
 
@@ -117,9 +118,12 @@ lib/
 | `RegisterAlumniScreen` | Form pendaftaran alumni | `register-alumni.html` |
 | `RegisterPublicScreen` | Form pendaftaran umum | `register-public.html` |
 
+- [x] Implementasi UI Screens di atas
+- [x] Branding & Theming (Sesuai Lofi style)
+
 ### 2.4 BLoC
-- [ ] `AuthBloc` - Handle login, register, logout
-- [ ] `SplashCubit` - Check auth → route
+- [x] `AuthBloc` - Handle login, register, logout
+- [x] `Splash` Logic - Check auth + Onboarding → route
 
 ---
 

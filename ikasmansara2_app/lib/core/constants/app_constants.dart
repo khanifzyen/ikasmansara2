@@ -7,9 +7,9 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String appName = 'IKA SMANSARA';
+  static const String schoolName = 'SMA Negeri 1 Jepara';
   static const String appVersion = '1.0.0';
-  static const String appTagline = 'Ikatan Alumni SMA Negeri 1 Samarinda';
+  static const String appTagline = 'Ikatan Alumni SMA Negeri 1 Jepara';
 
   // PocketBase
   static String get pocketBaseUrl =>

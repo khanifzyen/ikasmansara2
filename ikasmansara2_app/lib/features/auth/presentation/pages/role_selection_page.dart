@@ -18,7 +18,16 @@ class RoleSelectionPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 48),
+              const SizedBox(height: 24),
+              // Logo
+              Center(
+                child: Image.asset(
+                  'assets/images/logo-ika.png',
+                  height: 80,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 24),
 
               // Header
               const Text(
@@ -44,7 +53,7 @@ class RoleSelectionPage extends StatelessWidget {
                 iconBgColor: AppColors.primaryLight,
                 title: 'Alumni SMANSA',
                 description:
-                    'Untuk alumni SMA Negeri 1 Samarinda. Dapatkan E-KTA, akses direktori, dan fitur lengkap.',
+                    'Untuk alumni SMA Negeri 1 Jepara. Dapatkan E-KTA, akses direktori, dan fitur lengkap.',
                 onTap: () => context.push('/register/alumni'),
               ),
 

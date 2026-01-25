@@ -70,6 +70,16 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Logo
+                  Center(
+                    child: Image.asset(
+                      'assets/images/logo-ika.png',
+                      height: 80,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
                   // Header
                   const Text(
                     'Masuk',

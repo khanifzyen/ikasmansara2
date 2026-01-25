@@ -3,7 +3,9 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/pb_client.dart';
 
 class SplashPage extends StatefulWidget {
@@ -21,40 +23,46 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _checkAuth() async {
+    // Artificial delay for splash screen
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
 
     // Check if user is logged in
-    if (PBClient.instance.isAuthenticated) {
+    final isAuthenticated = PBClient.instance.isAuthenticated;
+    if (isAuthenticated) {
       context.go('/home');
-    } else {
-      // TODO: Check if onboarding completed
+      return;
+    }
+
+    // Check if onboarding completed
+    final prefs = await SharedPreferences.getInstance();
+    final onboardingCompleted =
+        prefs.getBool(AppConstants.onboardingKey) ?? false;
+
+    if (!mounted) return;
+
+    if (!onboardingCompleted) {
       context.go('/onboarding');
+    } else {
+      context.go('/role-selection');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo placeholder
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Icon(
-                Icons.school,
-                size: 60,
-                color: AppColors.primary,
-              ),
+            // Logo
+            Image.asset(
+              'assets/images/logo-ika.png',
+              width: 150,
+              height: 150,
+              fit: BoxFit.contain,
             ),
             const SizedBox(height: 24),
             const Text(
@@ -62,17 +70,17 @@ class _SplashPageState extends State<SplashPage> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Ikatan Alumni SMA Negeri 1 Samarinda',
-              style: TextStyle(fontSize: 14, color: Colors.white70),
+              'Ikatan Alumni SMA Negeri 1 Jepara',
+              style: TextStyle(fontSize: 14, color: AppColors.textGrey),
             ),
             const SizedBox(height: 48),
             const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
           ],
         ),

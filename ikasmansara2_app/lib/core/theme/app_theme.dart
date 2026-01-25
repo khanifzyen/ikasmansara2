@@ -9,6 +9,28 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData get lightTheme {
+    // Base TextTheme with Inter
+    final baseTextTheme = GoogleFonts.interTextTheme();
+
+    // Override headings with Poppins
+    final textTheme = baseTextTheme.copyWith(
+      displayLarge: GoogleFonts.poppins(textStyle: baseTextTheme.displayLarge),
+      displayMedium: GoogleFonts.poppins(
+        textStyle: baseTextTheme.displayMedium,
+      ),
+      displaySmall: GoogleFonts.poppins(textStyle: baseTextTheme.displaySmall),
+      headlineLarge: GoogleFonts.poppins(
+        textStyle: baseTextTheme.headlineLarge,
+      ),
+      headlineMedium: GoogleFonts.poppins(
+        textStyle: baseTextTheme.headlineMedium,
+      ),
+      headlineSmall: GoogleFonts.poppins(
+        textStyle: baseTextTheme.headlineSmall,
+      ),
+      titleLarge: GoogleFonts.poppins(textStyle: baseTextTheme.titleLarge),
+    );
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -24,7 +46,7 @@ class AppTheme {
         onSurface: AppColors.textDark,
         onError: Colors.white,
       ),
-      textTheme: GoogleFonts.interTextTheme(),
+      textTheme: textTheme,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textDark,
