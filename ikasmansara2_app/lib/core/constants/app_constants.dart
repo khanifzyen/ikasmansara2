@@ -1,0 +1,26 @@
+/// App Constants - IKA SMANSARA
+library;
+
+class AppConstants {
+  AppConstants._();
+
+  // App Info
+  static const String appName = 'IKA SMANSARA';
+  static const String appVersion = '1.0.0';
+  static const String appTagline = 'Ikatan Alumni SMA Negeri 1 Samarinda';
+
+  // PocketBase
+  static const String pocketBaseUrl = 'http://127.0.0.1:8090';
+
+  // Storage Keys
+  static const String tokenKey = 'auth_token';
+  static const String userKey = 'user_data';
+  static const String onboardingKey = 'onboarding_completed';
+
+  // Pagination
+  static const int pageSize = 20;
+
+  // Timeouts
+  static const Duration connectionTimeout = Duration(seconds: 30);
+  static const Duration receiveTimeout = Duration(seconds: 30);
+}

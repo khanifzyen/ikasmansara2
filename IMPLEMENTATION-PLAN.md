@@ -45,12 +45,12 @@ lib/
 
 ---
 
-## Phase 1: Foundation (Week 1-2)
+## Phase 1: Foundation (Week 1-2) ✅
 
-### 1.1 Project Setup
-- [ ] Create Flutter project: `flutter create ika_smansara`
-- [ ] Setup folder structure (Clean Architecture + Feature-First)
-- [ ] Install dependencies menggunakan `flutter pub add`:
+### 1.1 Project Setup ✅
+- [x] Create Flutter project: `flutter create ika_smansara`
+- [x] Setup folder structure (Clean Architecture + Feature-First)
+- [x] Install dependencies menggunakan `flutter pub add`:
   ```bash
   # State Management & Architecture
   flutter pub add flutter_bloc bloc
@@ -79,18 +79,18 @@ lib/
   flutter pub add --dev drift_dev
   ```
 
-### 1.2 Core Setup
-- [ ] Setup GetIt + Injectable
-- [ ] Create PocketBase client wrapper (`core/network/pb_client.dart`)
-- [ ] Setup GoRouter dengan route guards
-- [ ] Create base widgets (Button, Input, Card, etc.)
-- [ ] Setup app theme (colors, typography dari design system)
+### 1.2 Core Setup ✅
+- [x] Setup GetIt + Injectable
+- [x] Create PocketBase client wrapper (`core/network/pb_client.dart`)
+- [x] Setup GoRouter dengan route guards
+- [x] Create base widgets (Button, Input, Card, etc.)
+- [x] Setup app theme (colors, typography dari design system)
 
-### 1.3 PocketBase Backend
-- [ ] Deploy PocketBase (local atau cloud)
-- [ ] Import schema dari `SKEMA.md`
-- [ ] Setup API rules dan permissions
-- [ ] Create admin account
+### 1.3 PocketBase Backend ⏭️ (Skipped - Sudah setup oleh user)
+- [x] Deploy PocketBase (local atau cloud)
+- [x] Import schema dari `SKEMA.md`
+- [x] Setup API rules dan permissions
+- [x] Create admin account
 
 ---
 
