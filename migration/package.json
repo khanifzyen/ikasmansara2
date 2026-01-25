@@ -1,0 +1,21 @@
+{
+  "name": "ika-smansara-migration",
+  "version": "1.0.0",
+  "description": "PocketBase migration scripts for IKA SMANSARA",
+  "type": "module",
+  "scripts": {
+    "migrate": "node index.js",
+    "migrate:users": "node collections/01_users.js",
+    "migrate:events": "node collections/02_events.js",
+    "migrate:donations": "node collections/03_donations.js",
+    "migrate:news": "node collections/04_news.js",
+    "migrate:forum": "node collections/05_forum.js",
+    "migrate:loker": "node collections/06_loker.js",
+    "migrate:market": "node collections/07_market.js",
+    "migrate:memory": "node collections/08_memory.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "pocketbase": "^0.21.1"
+  }
+}
