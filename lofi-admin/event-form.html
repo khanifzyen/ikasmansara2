@@ -6,6 +6,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Event - Admin</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .form-tabs {
+            display: flex;
+            border-bottom: 2px solid #f3f4f6;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .form-tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-grey);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .form-tab:hover {
+            color: var(--text-dark);
+        }
+
+        .form-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .form-tab-content {
+            display: none;
+        }
+
+        .form-tab-content.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dynamic-list {
+            margin-bottom: 20px;
+        }
+
+        .dynamic-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .dynamic-item .remove-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-item-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-grey);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-item-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #f9fafb;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+        }
+
+        .upload-zone input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: var(--text-grey);
+        }
+
+        .inline-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .inline-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -33,75 +162,305 @@
     <div class="app-container">
         <div class="nav-header">
             <div class="back-btn" onclick="goBack()">←</div>
-            <h2>Buat Event</h2>
+            <h2>Pengaturan Event</h2>
+        </div>
+
+        <!-- Form Tabs -->
+        <div class="form-tabs" style="padding: 0 20px;">
+            <div class="form-tab active" onclick="switchFormTab('info', this)">Info Dasar</div>
+            <div class="form-tab" onclick="switchFormTab('tiket', this)">Tiket</div>
+            <div class="form-tab" onclick="switchFormTab('subevent', this)">Sub-Events</div>
+            <div class="form-tab" onclick="switchFormTab('sponsor', this)">Sponsor & Donasi</div>
         </div>
 
         <div class="form-section content-padding">
-            <div class="input-group">
-                <label>Judul Event</label>
-                <input type="text" class="input-field" placeholder="Contoh: Jalan Sehat 2026">
+            <!-- Tab 1: Info Dasar -->
+            <div id="tabInfo" class="form-tab-content active">
+                <div class="input-group">
+                    <label>Judul Event</label>
+                    <input type="text" class="input-field" placeholder="Contoh: Jalan Sehat 2026"
+                        value="Jalan Sehat & Reuni Akbar 2026">
+                </div>
+
+                <div class="inline-row">
+                    <div class="input-group">
+                        <label>Tanggal</label>
+                        <input type="date" class="input-field" value="2026-08-20">
+                    </div>
+                    <div class="input-group">
+                        <label>Waktu</label>
+                        <input type="time" class="input-field" value="06:00">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Lokasi</label>
+                    <input type="text" class="input-field" placeholder="Contoh: Lapangan SMAN 1 Jepara"
+                        value="Lapangan Utama SMAN 1 Jepara">
+                </div>
+
+                <div class="input-group">
+                    <label>Deskripsi</label>
+                    <textarea class="input-field" rows="4"
+                        placeholder="Deskripsi lengkap event...">Mari meriahkan acara tahunan kita! Reuni akbar sekaligus jalan sehat keliling kota Jepara.</textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Banner Event (Upload)</label>
+                    <div class="upload-zone" onclick="document.getElementById('bannerUpload').click()">
+                        <input type="file" id="bannerUpload" accept="image/*">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Klik untuk upload banner (1200x600px)</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Status Event</label>
+                    <select class="input-field">
+                        <option>Draft</option>
+                        <option selected>Aktif</option>
+                        <option>Selesai</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Tanggal</label>
-                <input type="date" class="input-field">
+            <!-- Tab 2: Tiket -->
+            <div id="tabTiket" class="form-tab-content">
+                <h3 style="margin-bottom: 20px;">Pengaturan Tiket Utama</h3>
+
+                <div class="input-group">
+                    <label>Gambar Tiket/Kaos (Upload)</label>
+                    <div class="upload-zone" onclick="document.getElementById('ticketImgUpload').click()">
+                        <input type="file" id="ticketImgUpload" accept="image/*">
+                        <div class="upload-icon">👕</div>
+                        <div class="upload-text">Upload preview kaos atau tiket</div>
+                    </div>
+                </div>
+
+                <div class="inline-row">
+                    <div class="input-group">
+                        <label>Harga Tiket (Rp)</label>
+                        <input type="number" class="input-field" value="50000">
+                    </div>
+                    <div class="input-group">
+                        <label>Kuota Peserta</label>
+                        <input type="number" class="input-field" value="1000">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Include (dipisah koma)</label>
+                    <input type="text" class="input-field" placeholder="Kaos, Snack, Kupon"
+                        value="Kaos, Snack, Doorprize">
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 32px 0;">
+
+                <h3 style="margin-bottom: 20px;">Opsi Tambahan (Ukuran Kaos, dll)</h3>
+
+                <div id="ticketOptionsList" class="dynamic-list">
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Nama Opsi</label>
+                            <input type="text" class="input-field" value="Ukuran Kaos">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Pilihan (format: Label|Harga Tambahan)</label>
+                            <textarea class="input-field" rows="3"
+                                placeholder="S|0&#10;M|0&#10;L|0&#10;XL|0&#10;XXL|10000&#10;XXXL|15000">S|0
+M|0
+L|0
+XL|0
+XXL|10000
+XXXL|15000</textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addTicketOption()">+ Tambah Opsi Lain</button>
             </div>
 
-            <div class="input-group">
-                <label>Waktu</label>
-                <input type="time" class="input-field">
+            <!-- Tab 3: Sub-Events -->
+            <div id="tabSubevent" class="form-tab-content">
+                <h3 style="margin-bottom: 20px;">Kegiatan Pendukung</h3>
+                <p style="font-size: 13px; color: var(--text-grey); margin-bottom: 20px;">Tambahkan kegiatan opsional
+                    yang bisa diikuti peserta (misal: cek kesehatan, donor darah).</p>
+
+                <div id="subeventList" class="dynamic-list">
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Nama Kegiatan</label>
+                            <input type="text" class="input-field" value="🩺 Cek Kesehatan Gratis">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Deskripsi Singkat</label>
+                            <input type="text" class="input-field" value="Tensi, Gula Darah, Asam Urat">
+                        </div>
+                        <div class="inline-row">
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Kuota</label>
+                                <input type="number" class="input-field" value="200">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Lokasi Stand</label>
+                                <input type="text" class="input-field" value="Meja A">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Nama Kegiatan</label>
+                            <input type="text" class="input-field" value="👁️ Pemeriksaan Mata">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Deskripsi Singkat</label>
+                            <input type="text" class="input-field" value="Kerjasama dengan RS Mata lokal">
+                        </div>
+                        <div class="inline-row">
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Kuota</label>
+                                <input type="number" class="input-field" value="100">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Lokasi Stand</label>
+                                <input type="text" class="input-field" value="Meja B">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Nama Kegiatan</label>
+                            <input type="text" class="input-field" value="🩸 Donor Darah">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 12px;">
+                            <label>Deskripsi Singkat</label>
+                            <input type="text" class="input-field" value="Setetes darah anda, nyawa bagi sesama">
+                        </div>
+                        <div class="inline-row">
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Kuota</label>
+                                <input type="number" class="input-field" placeholder="Unlimited">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Lokasi Stand</label>
+                                <input type="text" class="input-field" value="Area PMI">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addSubevent()">+ Tambah Kegiatan</button>
             </div>
 
-            <div class="input-group">
-                <label>Lokasi</label>
-                <input type="text" class="input-field" placeholder="Contoh: Lapangan SMAN 1 Jepara">
+            <!-- Tab 4: Sponsor & Donasi -->
+            <div id="tabSponsor" class="form-tab-content">
+                <h3 style="margin-bottom: 20px;">Paket Sponsorship</h3>
+                <p style="font-size: 13px; color: var(--text-grey); margin-bottom: 20px;">Aktifkan jika event ini
+                    menerima sponsor.</p>
+
+                <div class="input-group" style="margin-bottom: 24px;">
+                    <label style="display: flex; align-items: center; gap: 12px;">
+                        <input type="checkbox" id="enableSponsorship" checked style="width: 20px; height: 20px;">
+                        <span>Aktifkan Sponsorship</span>
+                    </label>
+                </div>
+
+                <div id="sponsorTiersList" class="dynamic-list">
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="inline-row" style="margin-bottom: 12px;">
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Nama Tier</label>
+                                <input type="text" class="input-field" value="Platinum">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Harga (Rp)</label>
+                                <input type="number" class="input-field" value="10000000">
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Benefit (pisah baris)</label>
+                            <textarea class="input-field" rows="3">Logo Besar di Backdrop Utama
+Logo di Punggung Kaos
+Booth Ukuran 3x3m
+Ad-lib oleh MC 10x</textarea>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="inline-row" style="margin-bottom: 12px;">
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Nama Tier</label>
+                                <input type="text" class="input-field" value="Gold">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Harga (Rp)</label>
+                                <input type="number" class="input-field" value="5000000">
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Benefit (pisah baris)</label>
+                            <textarea class="input-field" rows="3">Logo Sedang di Backdrop
+Logo di Lengan Kaos
+Booth Ukuran 2x2m</textarea>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-item">
+                        <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                        <div class="inline-row" style="margin-bottom: 12px;">
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Nama Tier</label>
+                                <input type="text" class="input-field" value="Silver">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 0;">
+                                <label>Harga (Rp)</label>
+                                <input type="number" class="input-field" value="2500000">
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Benefit (pisah baris)</label>
+                            <textarea class="input-field" rows="2">Logo Kecil di Banner
+X-Banner di area acara</textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addSponsorTier()">+ Tambah Tier</button>
+
+                <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 32px 0;">
+
+                <h3 style="margin-bottom: 20px;">Pengaturan Donasi</h3>
+
+                <div class="input-group" style="margin-bottom: 24px;">
+                    <label style="display: flex; align-items: center; gap: 12px;">
+                        <input type="checkbox" id="enableDonation" checked style="width: 20px; height: 20px;">
+                        <span>Aktifkan Donasi untuk Event Ini</span>
+                    </label>
+                </div>
+
+                <div class="input-group">
+                    <label>Deskripsi Donasi</label>
+                    <textarea class="input-field" rows="2"
+                        placeholder="Contoh: Dukungan sukarela untuk operasional acara.">Dukungan sukarela untuk operasional acara.</textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Target Donasi (Opsional)</label>
+                    <input type="number" class="input-field" placeholder="0 untuk tanpa target" value="5000000">
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Deskripsi</label>
-                <textarea class="input-field" rows="4" placeholder="Deskripsi lengkap event..."></textarea>
+            <!-- Save Button -->
+            <div style="margin-top: 32px; padding-bottom: 80px;">
+                <button class="btn-primary" onclick="submitForm('event')">Simpan Pengaturan Event</button>
+                <button class="btn-outline" style="margin-top: 12px; color: #DC2626; border-color: #DC2626;"
+                    onclick="deleteItem('event', 1)">Hapus Event</button>
             </div>
-
-            <div class="input-group">
-                <label>Banner Image URL</label>
-                <input type="url" class="input-field" placeholder="https://...">
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 32px 0;">
-
-            <h3 style="margin-bottom: 20px;">Pengaturan Tiket</h3>
-
-            <div class="input-group">
-                <label>Harga Tiket (Rp)</label>
-                <input type="number" class="input-field" placeholder="50000">
-            </div>
-
-            <div class="input-group">
-                <label>Kuota Peserta</label>
-                <input type="number" class="input-field" placeholder="500">
-            </div>
-
-            <div class="input-group">
-                <label>Include</label>
-                <input type="text" class="input-field" placeholder="Kaos, Snack, Kupon">
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 32px 0;">
-
-            <h3 style="margin-bottom: 20px;">Status</h3>
-
-            <div class="input-group">
-                <label>Status Event</label>
-                <select class="input-field">
-                    <option>Draft</option>
-                    <option>Aktif</option>
-                    <option>Selesai</option>
-                </select>
-            </div>
-
-            <button class="btn-primary" style="margin-top: 24px;" onclick="submitForm('event')">Simpan Event</button>
-            <button class="btn-outline" style="margin-top: 12px; color: #DC2626; border-color: #DC2626;"
-                onclick="deleteItem('event', 1)">Hapus Event</button>
         </div>
 
         <div class="admin-bottom-nav">
@@ -124,6 +483,88 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Tab switching for event form
+        function switchFormTab(tabName, btn) {
+            document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-tab-content').forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            const targetId = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            document.getElementById(targetId).classList.add('active');
+        }
+
+        // Add dynamic items
+        function addTicketOption() {
+            const list = document.getElementById('ticketOptionsList');
+            const html = `
+                <div class="dynamic-item">
+                    <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>Nama Opsi</label>
+                        <input type="text" class="input-field" placeholder="Contoh: Ukuran Kaos Anak">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Pilihan (format: Label|Harga Tambahan)</label>
+                        <textarea class="input-field" rows="3" placeholder="S|0&#10;M|0&#10;L|0"></textarea>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addSubevent() {
+            const list = document.getElementById('subeventList');
+            const html = `
+                <div class="dynamic-item">
+                    <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>Nama Kegiatan</label>
+                        <input type="text" class="input-field" placeholder="Contoh: 🎤 Karaoke Challenge">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>Deskripsi Singkat</label>
+                        <input type="text" class="input-field" placeholder="Deskripsi kegiatan...">
+                    </div>
+                    <div class="inline-row">
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Kuota</label>
+                            <input type="number" class="input-field" placeholder="Kosong = unlimited">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Lokasi Stand</label>
+                            <input type="text" class="input-field" placeholder="Contoh: Stage Utama">
+                        </div>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addSponsorTier() {
+            const list = document.getElementById('sponsorTiersList');
+            const html = `
+                <div class="dynamic-item">
+                    <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+                    <div class="inline-row" style="margin-bottom: 12px;">
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Nama Tier</label>
+                            <input type="text" class="input-field" placeholder="Contoh: Bronze">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Harga (Rp)</label>
+                            <input type="number" class="input-field" placeholder="1000000">
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Benefit (pisah baris)</label>
+                        <textarea class="input-field" rows="2" placeholder="Benefit 1&#10;Benefit 2"></textarea>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+    </script>
 </body>
 
 </html>

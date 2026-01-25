@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah User - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Desktop Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item"><span class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        <!-- Header -->
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2>Tambah User</h2>
+        </div>
+
+        <div class="page-content content-padding">
+            <form id="userForm"
+                onsubmit="event.preventDefault(); alert('User berhasil ditambahkan!'); location.href='users.html';">
+
+                <!-- Data Akun -->
+                <div class="form-section">
+                    <h3 class="section-title" style="font-size: 16px; margin-bottom: 16px; color: var(--primary);">Data
+                        Akun</h3>
+                    <div class="input-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" class="input-field" placeholder="Sesuai Ijazah">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" class="input-field" placeholder="contoh@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label>No WhatsApp</label>
+                        <input type="tel" class="input-field" placeholder="0812...">
+                    </div>
+                    <div class="input-group">
+                        <label>Password Default</label>
+                        <input type="text" class="input-field" value="123456" readonly style="background: #f3f4f6;">
+                        <small style="color: var(--text-grey);">Password default: 123456</small>
+                    </div>
+                </div>
+
+                <!-- Data Sekolah -->
+                <div class="form-section">
+                    <h3 class="section-title" style="font-size: 16px; margin-bottom: 16px; color: var(--primary);">Data
+                        Sekolah</h3>
+                    <div class="input-group">
+                        <label>Tahun Lulus (Angkatan)</label>
+                        <select class="input-field">
+                            <option>Pilih Tahun</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                            <option>2021</option>
+                            <option>2010</option>
+                            <option>2000</option>
+                            <option>1998</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Profil Saat Ini -->
+                <div class="form-section">
+                    <h3 class="section-title" style="font-size: 16px; margin-bottom: 16px; color: var(--primary);">
+                        Profil Saat Ini</h3>
+                    <div class="input-group">
+                        <label>Status Pekerjaan</label>
+                        <select class="input-field">
+                            <option>Swasta</option>
+                            <option>PNS/BUMN</option>
+                            <option>Wirausaha</option>
+                            <option>Mahasiswa</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Instansi / Perusahaan</label>
+                        <input type="text" class="input-field" placeholder="Tempat bekerja">
+                    </div>
+                    <div class="input-group">
+                        <label>Domisili (Kota)</label>
+                        <input type="text" class="input-field" placeholder="Kota tempat tinggal">
+                    </div>
+                </div>
+
+                <!-- Status User -->
+                <div class="form-section">
+                    <h3 class="section-title" style="font-size: 16px; margin-bottom: 16px; color: var(--primary);">
+                        Status User</h3>
+                    <div class="input-group">
+                        <label>Status Verifikasi</label>
+                        <select class="input-field">
+                            <option value="verified">Verified (Alumni)</option>
+                            <option value="pending">Pending</option>
+                            <option value="umum">Umum</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-container" style="margin-top: 24px;">
+                    <button type="submit" class="btn-primary">Simpan User</button>
+                    <button type="button" class="btn-outline"
+                        style="margin-top: 12px; color: #DC2626; border-color: #DC2626;"
+                        onclick="goBack()">Batal</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item active"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

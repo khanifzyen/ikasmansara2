@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Dashboard - Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subevent-stat {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subevent-stat .title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .subevent-stat .subtitle {
+            font-size: 12px;
+            color: var(--text-grey);
+        }
+
+        .subevent-stat .count {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .sponsor-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .sponsor-logo {
+            width: 60px;
+            height: 60px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .sponsor-info {
+            flex: 1;
+        }
+
+        .sponsor-info .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sponsor-info .tier {
+            font-size: 12px;
+            color: var(--text-grey);
+        }
+
+        .sponsor-amount {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Accordion Styles */
+        .accordion-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: #f3f4f6;
+        }
+
+        .accordion-icon {
+            font-size: 12px;
+            color: var(--text-grey);
+            transition: transform 0.3s;
+        }
+
+        .accordion-section.collapsed .accordion-icon {
+            transform: rotate(-90deg);
+        }
+
+        .accordion-content {
+            padding: 16px;
+            background: white;
+        }
+
+        .accordion-section.collapsed .accordion-content {
+            display: none;
+        }
+
+        /* Mobile Finance List */
+        .mobile-finance-list {
+            display: none;
+        }
+
+        .finance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f9fafb;
+            margin-bottom: 8px;
+        }
+
+        .finance-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .finance-desc {
+            font-size: 12px;
+            color: var(--text-grey);
+        }
+
+        .finance-amount {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .finance-amount.positive {
+            color: #059669;
+        }
+
+        .finance-amount.negative {
+            color: #DC2626;
+        }
+
+        .show-mobile-only {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .accordion-header {
+                padding: 12px 16px;
+            }
+
+            .accordion-content .data-table-wrapper {
+                display: none;
+            }
+
+            .mobile-finance-list {
+                display: block;
+            }
+
+            .show-mobile-only {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Desktop Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">📅</span><span>Events</span></a>
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="nav-header">
+            <div class="back-btn" onclick="goBack()">←</div>
+            <h2 id="eventTitle">Jalan Sehat & Reuni Akbar 2026</h2>
+            <button class="btn-action btn-edit hide-mobile" onclick="location.href='event-form.html?id=1'">⚙️
+                Edit</button>
+            <button class="btn-action btn-primary hide-mobile" onclick="openScanner()" style="width: auto;">📷 Scan
+                QR</button>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid" style="padding-bottom: 0;">
+            <div class="stat-card">
+                <div class="stat-icon users" style="background: #E0F2FE;">👥</div>
+                <div class="stat-value">856</div>
+                <div class="stat-label">Pendaftar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon donations" style="background: #D1FAE5;">💰</div>
+                <div class="stat-value">Rp 42.8jt</div>
+                <div class="stat-label">Pemasukan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon news" style="background: #FEE2E2;">💸</div>
+                <div class="stat-value">Rp 12.5jt</div>
+                <div class="stat-label">Pengeluaran</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon events" style="background: #FEF3C7;">⚖️</div>
+                <div class="stat-value">Rp 30.3jt</div>
+                <div class="stat-label">Saldo</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="filter-bar" style="margin-top: 20px; border-bottom: 1px solid #eee;">
+            <button class="filter-chip active" onclick="switchTab('peserta', this)">Peserta</button>
+            <button class="filter-chip" onclick="switchTab('keuangan', this)">Keuangan</button>
+            <button class="filter-chip" onclick="switchTab('subevent', this)">Sub-Events</button>
+            <button class="filter-chip" onclick="switchTab('sponsor', this)">Sponsor</button>
+            <button class="filter-chip" onclick="switchTab('donasi', this)">Donasi</button>
+        </div>
+
+        <!-- Tab: Peserta -->
+        <div id="tabPeserta" class="page-content content-padding tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 18px;">Daftar Peserta</h3>
+                <button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 13px;"
+                    onclick="openModal('modalAddPeserta')">+ Tambah Manual</button>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID Transaksi</th>
+                            <th>Nama</th>
+                            <th>Angkatan</th>
+                            <th>Tiket</th>
+                            <th>Ukuran Kaos</th>
+                            <th>Total Bayar</th>
+                            <th>Channel</th>
+                            <th>Kaos</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0001</code>
+                            </td>
+                            <td><strong>Budi Santoso</strong></td>
+                            <td>2010</td>
+                            <td>3</td>
+                            <td>L, M, XL</td>
+                            <td style="font-weight: 600;">Rp 150.000</td>
+                            <td><span class="badge badge-info">Aplikasi</span></td>
+                            <td><span class="badge badge-success">Diambil</span></td>
+                            <td><span class="badge badge-success">Lunas</span></td>
+                            <td><button class="btn-action btn-edit" onclick="showParticipantDetail(1)">Detail</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0002</code>
+                            </td>
+                            <td><strong>Siti Aminah</strong></td>
+                            <td>2015</td>
+                            <td>2</td>
+                            <td>M, S</td>
+                            <td style="font-weight: 600;">Rp 100.000</td>
+                            <td><span class="badge badge-warning">Cash</span></td>
+                            <td><span class="badge badge-warning">Belum</span></td>
+                            <td><span class="badge badge-success">Lunas</span></td>
+                            <td><button class="btn-action btn-edit" onclick="showParticipantDetail(2)">Detail</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0003</code>
+                            </td>
+                            <td><strong>Ahmad Fauzi</strong></td>
+                            <td>2008</td>
+                            <td>1</td>
+                            <td>XXL</td>
+                            <td style="font-weight: 600;">Rp 60.000</td>
+                            <td><span class="badge badge-grey">Transfer</span></td>
+                            <td><span class="badge badge-grey">-</span></td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                            <td><button class="btn-action btn-approve"
+                                    onclick="approveItem('peserta', 3)">Validasi</button></td>
+                        </tr>
+                        <tr>
+                            <td><code
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0004</code>
+                            </td>
+                            <td><strong>Dewi Lestari</strong></td>
+                            <td>2012</td>
+                            <td>4</td>
+                            <td>L, L, M, XXXL</td>
+                            <td style="font-weight: 600;">Rp 215.000</td>
+                            <td><span class="badge badge-info">Aplikasi</span></td>
+                            <td><span class="badge badge-success">Diambil</span></td>
+                            <td><span class="badge badge-success">Lunas</span></td>
+                            <td><button class="btn-action btn-edit" onclick="showParticipantDetail(4)">Detail</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mobile-list">
+                <div class="list-card" onclick="showParticipantDetail(1)">
+                    <div class="list-card-avatar">BS</div>
+                    <div class="list-card-content">
+                        <div style="font-size: 10px; color: var(--text-grey); margin-bottom: 2px;">TRX-JS-0001</div>
+                        <div class="list-card-title">Budi Santoso <span
+                                style="font-weight: 400; font-size: 12px; color: var(--text-grey);">• 3 tiket</span>
+                        </div>
+                        <div class="list-card-subtitle">2010 • L, M, XL • <strong style="color: var(--primary);">Rp
+                                150.000</strong></div>
+                    </div>
+                    <span class="badge badge-success">Diambil</span>
+                </div>
+                <div class="list-card" onclick="showParticipantDetail(2)">
+                    <div class="list-card-avatar">SA</div>
+                    <div class="list-card-content">
+                        <div style="font-size: 10px; color: var(--text-grey); margin-bottom: 2px;">TRX-JS-0002</div>
+                        <div class="list-card-title">Siti Aminah <span
+                                style="font-weight: 400; font-size: 12px; color: var(--text-grey);">• 2 tiket</span>
+                        </div>
+                        <div class="list-card-subtitle">2015 • M, S • <strong style="color: var(--primary);">Rp
+                                100.000</strong></div>
+                    </div>
+                    <span class="badge badge-warning">Belum</span>
+                </div>
+                <div class="list-card" onclick="showParticipantDetail(3)">
+                    <div class="list-card-avatar">AF</div>
+                    <div class="list-card-content">
+                        <div style="font-size: 10px; color: var(--text-grey); margin-bottom: 2px;">TRX-JS-0003</div>
+                        <div class="list-card-title">Ahmad Fauzi <span
+                                style="font-weight: 400; font-size: 12px; color: var(--text-grey);">• 1 tiket</span>
+                        </div>
+                        <div class="list-card-subtitle">2008 • XXL • <strong style="color: var(--primary);">Rp
+                                60.000</strong></div>
+                    </div>
+                    <span class="badge badge-warning">Pending</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Keuangan -->
+        <div id="tabKeuangan" class="page-content content-padding tab-content" style="display: none;">
+            <!-- Summary Stats -->
+            <div class="stats-grid" style="padding: 0; margin-bottom: 32px;">
+                <div class="stat-card" style="background: #D1FAE5;">
+                    <div class="stat-label">Total Pemasukan</div>
+                    <div class="stat-value" style="font-size: 16px; color: #059669;">Rp 60.300.000</div>
+                </div>
+                <div class="stat-card" style="background: #FEE2E2;">
+                    <div class="stat-label">Total Pengeluaran</div>
+                    <div class="stat-value" style="font-size: 16px; color: #DC2626;">Rp 12.500.000</div>
+                </div>
+                <div class="stat-card" style="background: #FEF3C7;">
+                    <div class="stat-label">Saldo Bersih</div>
+                    <div class="stat-value" style="font-size: 16px; color: #D97706;">Rp 47.800.000</div>
+                </div>
+            </div>
+
+            <!-- Catatan Pemasukan (Accordion for Mobile) -->
+            <div class="accordion-section" style="margin-bottom: 24px;">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 18px;">📥</span>
+                        <h3 style="font-size: 16px; margin: 0;">Catatan Pemasukan</h3>
+                        <span class="badge badge-success" style="font-size: 11px;">6 item</span>
+                    </div>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="data-table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Sumber</th>
+                                    <th>Channel/Keterangan</th>
+                                    <th>Jumlah</th>
+                                    <th>Tgl</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge badge-info">Peserta</span></td>
+                                    <td>Aplikasi (Lunas)</td>
+                                    <td style="color: #059669; font-weight: 600;">+ Rp 25.000.000</td>
+                                    <td>20 Jan</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge badge-info">Peserta</span></td>
+                                    <td>Cash - Panitia (Lunas)</td>
+                                    <td style="color: #059669; font-weight: 600;">+ Rp 10.300.000</td>
+                                    <td>22 Jan</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge badge-info">Peserta</span></td>
+                                    <td>Transfer Bank IKA (Lunas)</td>
+                                    <td style="color: #059669; font-weight: 600;">+ Rp 7.500.000</td>
+                                    <td>23 Jan</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge badge-success">Sponsor</span></td>
+                                    <td>PT Bank Jepara (Platinum)</td>
+                                    <td style="color: #059669; font-weight: 600;">+ Rp 10.000.000</td>
+                                    <td>15 Jan</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge badge-success">Sponsor</span></td>
+                                    <td>CV Mebel Sejahtera (Gold)</td>
+                                    <td style="color: #059669; font-weight: 600;">+ Rp 5.000.000</td>
+                                    <td>18 Jan</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge badge-warning">Donasi</span></td>
+                                    <td>Donasi Event</td>
+                                    <td style="color: #059669; font-weight: 600;">+ Rp 2.500.000</td>
+                                    <td>24 Jan</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mobile List View -->
+                    <div class="mobile-finance-list">
+                        <div class="finance-item income">
+                            <div class="finance-info">
+                                <span class="badge badge-info">Peserta</span>
+                                <span class="finance-desc">Aplikasi (Lunas)</span>
+                            </div>
+                            <span class="finance-amount positive">+ Rp 25jt</span>
+                        </div>
+                        <div class="finance-item income">
+                            <div class="finance-info">
+                                <span class="badge badge-info">Peserta</span>
+                                <span class="finance-desc">Cash - Panitia</span>
+                            </div>
+                            <span class="finance-amount positive">+ Rp 10.3jt</span>
+                        </div>
+                        <div class="finance-item income">
+                            <div class="finance-info">
+                                <span class="badge badge-success">Sponsor</span>
+                                <span class="finance-desc">PT Bank Jepara</span>
+                            </div>
+                            <span class="finance-amount positive">+ Rp 10jt</span>
+                        </div>
+                        <div class="finance-item income">
+                            <div class="finance-info">
+                                <span class="badge badge-warning">Donasi</span>
+                                <span class="finance-desc">Donasi Event</span>
+                            </div>
+                            <span class="finance-amount positive">+ Rp 2.5jt</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catatan Pengeluaran (Accordion for Mobile) -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 18px;">📤</span>
+                        <h3 style="font-size: 16px; margin: 0;">Catatan Pengeluaran</h3>
+                        <span class="badge badge-danger" style="font-size: 11px; background: #FEE2E2; color: #DC2626;">3
+                            item</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="btn-primary hide-mobile" style="width: auto; padding: 8px 16px; font-size: 12px;"
+                            onclick="event.stopPropagation(); openModal('modalAddExpense')">+ Tambah</button>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <div class="data-table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Keperluan</th>
+                                    <th>Kategori</th>
+                                    <th>Jumlah</th>
+                                    <th>Bukti</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Produksi Kaos</strong></td>
+                                    <td>Logistik</td>
+                                    <td style="color: #DC2626;">- Rp 8.000.000</td>
+                                    <td><a href="#" class="view-all">Lihat</a></td>
+                                    <td><button class="btn-action btn-delete">🗑️</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Konsumsi Rapat</strong></td>
+                                    <td>Konsumsi</td>
+                                    <td style="color: #DC2626;">- Rp 500.000</td>
+                                    <td><a href="#" class="view-all">Lihat</a></td>
+                                    <td><button class="btn-action btn-delete">🗑️</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sewa Sound System</strong></td>
+                                    <td>Logistik</td>
+                                    <td style="color: #DC2626;">- Rp 4.000.000</td>
+                                    <td><a href="#" class="view-all">Lihat</a></td>
+                                    <td><button class="btn-action btn-delete">🗑️</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mobile List View -->
+                    <div class="mobile-finance-list">
+                        <div class="finance-item expense">
+                            <div class="finance-info">
+                                <strong>Produksi Kaos</strong>
+                                <span class="finance-desc">Logistik</span>
+                            </div>
+                            <span class="finance-amount negative">- Rp 8jt</span>
+                        </div>
+                        <div class="finance-item expense">
+                            <div class="finance-info">
+                                <strong>Konsumsi Rapat</strong>
+                                <span class="finance-desc">Konsumsi</span>
+                            </div>
+                            <span class="finance-amount negative">- Rp 500rb</span>
+                        </div>
+                        <div class="finance-item expense">
+                            <div class="finance-info">
+                                <strong>Sewa Sound System</strong>
+                                <span class="finance-desc">Logistik</span>
+                            </div>
+                            <span class="finance-amount negative">- Rp 4jt</span>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Add Button -->
+                    <button class="btn-primary show-mobile-only" style="width: 100%; margin-top: 16px;"
+                        onclick="openModal('modalAddExpense')">+ Tambah Pengeluaran</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Sub-Events -->
+        <div id="tabSubevent" class="page-content content-padding tab-content" style="display: none;">
+            <div class="section-title">
+                <span>Kegiatan Pendukung</span>
+            </div>
+
+            <div class="subevent-stat" style="cursor: pointer;" onclick="showSubeventParticipants('health')">
+                <div>
+                    <div class="title">🩺 Cek Kesehatan Gratis</div>
+                    <div class="subtitle">Kuota 200 • Lokasi: Meja A</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="count">155/200</div>
+                    <span style="color: var(--text-grey);">›</span>
+                </div>
+            </div>
+
+            <div class="subevent-stat" style="cursor: pointer;" onclick="showSubeventParticipants('eye')">
+                <div>
+                    <div class="title">👁️ Pemeriksaan Mata</div>
+                    <div class="subtitle">Kuota 100 • Lokasi: Meja B</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="count">88/100</div>
+                    <span style="color: var(--text-grey);">›</span>
+                </div>
+            </div>
+
+            <div class="subevent-stat" style="cursor: pointer;" onclick="showSubeventParticipants('blood')">
+                <div>
+                    <div class="title">🩸 Donor Darah</div>
+                    <div class="subtitle">Unlimited • Lokasi: Area PMI</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="count">32</div>
+                    <span style="color: var(--text-grey);">›</span>
+                </div>
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-grey); margin-top: 24px;">
+                ⚙️ <a href="event-form.html?id=1&tab=subevent" class="view-all">Edit pengaturan sub-events</a>
+            </p>
+        </div>
+
+        <!-- Tab: Sponsor -->
+        <div id="tabSponsor" class="page-content content-padding tab-content" style="display: none;">
+            <div class="section-title">
+                <span>Daftar Sponsor</span>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span style="font-size: 14px; color: var(--primary); font-weight: 700;">Total: Rp 17.5jt</span>
+                    <button class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 13px;"
+                        onclick="openModal('modalAddSponsor')">+ Tambah</button>
+                </div>
+            </div>
+
+            <div class="sponsor-card">
+                <div class="sponsor-logo">🏢</div>
+                <div class="sponsor-info">
+                    <div class="name">PT Bank Jepara</div>
+                    <div class="tier">Platinum Sponsor</div>
+                </div>
+                <div class="sponsor-amount">Rp 10jt</div>
+            </div>
+
+            <div class="sponsor-card">
+                <div class="sponsor-logo">🏭</div>
+                <div class="sponsor-info">
+                    <div class="name">CV Mebel Sejahtera</div>
+                    <div class="tier">Gold Sponsor</div>
+                </div>
+                <div class="sponsor-amount">Rp 5jt</div>
+            </div>
+
+            <div class="sponsor-card">
+                <div class="sponsor-logo">🛒</div>
+                <div class="sponsor-info">
+                    <div class="name">Toko Barokah</div>
+                    <div class="tier">Silver Sponsor</div>
+                </div>
+                <div class="sponsor-amount">Rp 2.5jt</div>
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-grey); margin-top: 24px;">
+                ⚙️ <a href="event-form.html?id=1&tab=sponsor" class="view-all">Edit paket sponsorship</a>
+            </p>
+        </div>
+
+        <!-- Tab: Donasi -->
+        <div id="tabDonasi" class="page-content content-padding tab-content" style="display: none;">
+            <div class="section-title">
+                <span>Donasi Event</span>
+            </div>
+
+            <div
+                style="background: linear-gradient(135deg, var(--primary) 0%, #047857 100%); padding: 20px; border-radius: 16px; color: white; margin-bottom: 24px;">
+                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 4px;">Total Donasi Terkumpul</div>
+                <div style="font-size: 28px; font-weight: 700;">Rp 3.250.000</div>
+                <div style="font-size: 13px; opacity: 0.9; margin-top: 8px;">dari target Rp 5.000.000 (65%)</div>
+                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin-top: 12px;">
+                    <div style="background: white; height: 100%; width: 65%; border-radius: 4px;"></div>
+                </div>
+            </div>
+
+            <div class="section-title" style="margin-top: 32px;">
+                <span>Donatur Terbaru</span>
+            </div>
+
+            <div class="list-card" style="cursor: default;">
+                <div class="list-card-avatar" style="background: #D1FAE5;">BS</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Budi Santoso</div>
+                    <div class="list-card-subtitle">2 jam lalu</div>
+                </div>
+                <span style="font-weight: 600; color: var(--primary);">Rp 500.000</span>
+            </div>
+
+            <div class="list-card" style="cursor: default;">
+                <div class="list-card-avatar" style="background: #DBEAFE;">HA</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Hamba Allah</div>
+                    <div class="list-card-subtitle">5 jam lalu</div>
+                </div>
+                <span style="font-weight: 600; color: var(--primary);">Rp 200.000</span>
+            </div>
+
+            <div class="list-card" style="cursor: default;">
+                <div class="list-card-avatar" style="background: #FEF3C7;">SA</div>
+                <div class="list-card-content">
+                    <div class="list-card-title">Siti Aminah</div>
+                    <div class="list-card-subtitle">1 hari lalu</div>
+                </div>
+                <span style="font-weight: 600; color: var(--primary);">Rp 1.000.000</span>
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-grey); margin-top: 24px;">
+                ⚙️ <a href="event-form.html?id=1&tab=sponsor" class="view-all">Edit pengaturan donasi</a>
+            </p>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="admin-bottom-nav">
+            <a href="index.html" class="admin-nav-item"><span class="nav-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="admin-nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
+            <a href="donations.html" class="admin-nav-item"><span class="nav-icon">💰</span><span>Donasi</span></a>
+            <a href="events.html" class="admin-nav-item active"><span class="nav-icon">📅</span><span>Events</span></a>
+        </div>
+
+        <!-- FAB for mobile -->
+        <div class="fab-add hide-desktop" onclick="openModal('modalAddPeserta')">+</div>
+
+        <!-- Modal: Tambah Peserta Manual -->
+        <div id="modalAddPeserta" class="confirm-modal">
+            <div class="confirm-modal-content" style="max-width: 500px; text-align: left;">
+                <h3 style="margin-bottom: 20px;">Input Peserta Manual</h3>
+                <div class="input-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" class="input-field" placeholder="Nama Peserta">
+                </div>
+                <div class="input-group">
+                    <label>Tahun Angkatan</label>
+                    <input type="number" class="input-field" placeholder="2010">
+                </div>
+                <div class="input-group">
+                    <label>Ukuran Kaos</label>
+                    <select class="input-field">
+                        <option>S</option>
+                        <option>M</option>
+                        <option selected>L</option>
+                        <option>XL</option>
+                        <option>XXL (+10rb)</option>
+                        <option>XXXL (+15rb)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Channel Pendaftaran</label>
+                    <select class="input-field">
+                        <option>Cash (Panitia)</option>
+                        <option>Rekening Bank IKA</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Jumlah Bayar (Rp)</label>
+                    <input type="number" class="input-field" value="50000">
+                </div>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeModal('modalAddPeserta')">Batal</button>
+                    <button class="btn-primary" onclick="submitParticipant()">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Tambah Pengeluaran -->
+        <div id="modalAddExpense" class="confirm-modal">
+            <div class="confirm-modal-content" style="max-width: 500px; text-align: left;">
+                <h3 style="margin-bottom: 20px;">Input Pengeluaran</h3>
+                <div class="input-group">
+                    <label>Keperluan</label>
+                    <input type="text" class="input-field" placeholder="Contoh: Pembelian Banner">
+                </div>
+                <div class="input-group">
+                    <label>Kategori</label>
+                    <select class="input-field">
+                        <option>Logistik</option>
+                        <option>Konsumsi</option>
+                        <option>Publikasi</option>
+                        <option>Lainnya</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Jumlah Nominal (Rp)</label>
+                    <input type="number" class="input-field" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label>Bukti Bayar (File Upload)</label>
+                    <input type="file" class="input-field" accept="image/*,application/pdf">
+                </div>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeModal('modalAddExpense')">Batal</button>
+                    <button class="btn-primary" onclick="submitExpense()">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Tambah Sponsor -->
+        <div id="modalAddSponsor" class="confirm-modal">
+            <div class="confirm-modal-content" style="max-width: 500px; text-align: left;">
+                <h3 style="margin-bottom: 20px;">Tambah Sponsor Manual</h3>
+                <div class="input-group">
+                    <label>Nama Perusahaan</label>
+                    <input type="text" class="input-field" placeholder="Contoh: PT Maju Jaya">
+                </div>
+                <div class="input-group">
+                    <label>Icon (Emoji)</label>
+                    <select class="input-field" id="sponsorIconSelect">
+                        <option value="🏢">🏢 Gedung</option>
+                        <option value="🏭">🏭 Pabrik</option>
+                        <option value="🏪">🏪 Toko</option>
+                        <option value="🛒">🛒 Retail</option>
+                        <option value="🏦">🏦 Bank</option>
+                        <option value="🚗">🚗 Otomotif</option>
+                        <option value="🍽️">🍽️ Restoran</option>
+                        <option value="💼">💼 Bisnis</option>
+                        <option value="🏥">🏥 Kesehatan</option>
+                        <option value="📱">📱 Teknologi</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Tier Sponsorship</label>
+                    <select class="input-field" id="sponsorTierSelect">
+                        <option value="Platinum">Platinum (Rp 10.000.000)</option>
+                        <option value="Gold">Gold (Rp 5.000.000)</option>
+                        <option value="Silver">Silver (Rp 2.500.000)</option>
+                        <option value="Custom">Custom (Input Manual)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Nominal (Rp)</label>
+                    <input type="number" class="input-field" id="sponsorNominal" placeholder="10000000"
+                        value="10000000">
+                </div>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeModal('modalAddSponsor')">Batal</button>
+                    <button class="btn-primary" onclick="submitSponsor()">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Detail Peserta dengan QR -->
+        <div id="modalParticipantDetail" class="confirm-modal">
+            <div class="confirm-modal-content"
+                style="max-width: 420px; text-align: left; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0;">Detail Tiket</h3>
+                    <span onclick="closeModal('modalParticipantDetail')"
+                        style="cursor: pointer; background: #eee; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">×</span>
+                </div>
+
+                <!-- Ticket Card Style -->
+                <div
+                    style="border: 2px dashed #ddd; border-radius: 16px; padding: 20px; background: #f9fafb; position: relative;">
+                    <!-- Punch holes -->
+                    <div
+                        style="position: absolute; left: -10px; top: 50%; width: 20px; height: 20px; background: white; border-radius: 50%; margin-top: -10px;">
+                    </div>
+                    <div
+                        style="position: absolute; right: -10px; top: 50%; width: 20px; height: 20px; background: white; border-radius: 50%; margin-top: -10px;">
+                    </div>
+
+                    <!-- QR Code -->
+                    <div
+                        style="text-align: center; padding-bottom: 16px; border-bottom: 1px dashed #ddd; margin-bottom: 16px;">
+                        <img id="detailQR"
+                            src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=JS-2026-0001"
+                            style="width: 140px; height: 140px;">
+                        <div style="font-size: 12px; color: var(--text-dark); margin-top: 8px;">Kode Booking: <b
+                                id="detailCode">JS-2026-0001</b></div>
+                    </div>
+
+                    <!-- Info -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--text-grey);">Nama Peserta</div>
+                        <div id="detailName" style="font-weight: 600; font-size: 16px;">Budi Santoso</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Angkatan</div>
+                            <div id="detailAngkatan" style="font-weight: 600;">2010</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Jumlah Tiket</div>
+                            <div id="detailTicketCount" style="font-weight: 600;">3 Tiket</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--text-grey); margin-bottom: 8px;">Rincian Ukuran Kaos
+                        </div>
+                        <div id="detailSizes" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span
+                                style="background: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">L</span>
+                            <span
+                                style="background: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">M</span>
+                            <span
+                                style="background: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">XL</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Total Bayar</div>
+                            <div id="detailTotal" style="font-weight: 700; color: var(--primary); font-size: 18px;">Rp
+                                150.000</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Channel</div>
+                            <div id="detailChannel"><span class="badge badge-info">Aplikasi</span></div>
+                            <div style="font-size: 12px; color: var(--text-grey); margin-top: 12px;">ID Transaksi</div>
+                            <div id="detailTrxId" style="font-weight: 600; font-size: 14px;">-</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Status Bayar</div>
+                            <div id="detailPaymentStatus"><span class="badge badge-success">Lunas</span></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Status Kaos</div>
+                            <div id="detailShirtStatus"><span class="badge badge-success">Sudah Diambil</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                    <button class="btn-outline" style="flex: 1;" onclick="toggleShirtStatus()">Toggle Kaos</button>
+                    <button class="btn-primary" style="flex: 1;"
+                        onclick="closeModal('modalParticipantDetail')">Tutup</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Sub-Event Participants -->
+        <div id="modalSubeventParticipants" class="confirm-modal">
+            <div class="confirm-modal-content"
+                style="max-width: 600px; text-align: left; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 id="subeventModalTitle" style="margin: 0;">🩺 Cek Kesehatan Gratis</h3>
+                    <span onclick="closeModal('modalSubeventParticipants')"
+                        style="cursor: pointer; background: #eee; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">×</span>
+                </div>
+
+                <div
+                    style="background: #f0fdf4; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 13px; color: var(--text-dark);">Total Peserta Terdaftar</span>
+                    <span id="subeventTotalCount"
+                        style="font-weight: 700; color: var(--primary); font-size: 18px;">155/200</span>
+                </div>
+
+                <!-- Participant List -->
+                <div id="subeventParticipantList">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn-primary" style="width: 100%;"
+                        onclick="closeModal('modalSubeventParticipants')">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="events.html" class="bottom-nav-item active">
+            <span class="bottom-nav-icon">📅</span>
+            <span>Events</span>
+        </a>
+
+        <!-- FAB -->
+        <div class="bottom-fab" onclick="openScanner()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3H9V9H3V3Z" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M15 3H21V9H15V3Z" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M3 15H9V21H3V15Z" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M14 15H21V21H14V15Z" fill="white" fill-opacity="0.2" />
+                <path d="M14 15V21" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M21 15V21" stroke="white" stroke-width="2" stroke-linecap="round" />
+                <path d="M14 18H21" stroke="white" stroke-width="2" stroke-linecap="round" />
+            </svg>
+        </div>
+
+        <a href="users.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">👥</span>
+            <span>Users</span>
+        </a>
+        <a href="donations.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">💰</span>
+            <span>Donasi</span>
+        </a>
+    </nav>
+
+    <script>
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+            btn.classList.add('active');
+            const targetId = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            const target = document.getElementById(targetId);
+            if (target) target.style.display = 'block';
+        }
+
+        function toggleAccordion(header) {
+            const section = header.closest('.accordion-section');
+            section.classList.toggle('collapsed');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function submitParticipant() {
+            alert('Peserta berhasil ditambahkan secara manual!');
+            closeModal('modalAddPeserta');
+        }
+
+        function submitExpense() {
+            alert('Pengeluaran berhasil dicatat!');
+            closeModal('modalAddExpense');
+        }
+
+        function submitSponsor() {
+            alert('Sponsor berhasil ditambahkan!');
+            closeModal('modalAddSponsor');
+        }
+
+        // Mock data for participants
+        const participantData = {
+            1: { name: 'Budi Santoso', angkatan: '2010', tickets: 3, sizes: ['L', 'M', 'XL'], total: 'Rp 150.000', channel: 'Aplikasi', trxId: 'TRX-JS-0001', payment: 'Lunas', shirt: 'Sudah Diambil', code: 'JS-2026-0001' },
+            2: { name: 'Siti Aminah', angkatan: '2015', tickets: 2, sizes: ['M', 'S'], total: 'Rp 100.000', channel: 'Cash', trxId: '-', payment: 'Lunas', shirt: 'Belum Diambil', code: 'JS-2026-0002' },
+            3: { name: 'Ahmad Fauzi', angkatan: '2008', tickets: 1, sizes: ['XXL'], total: 'Rp 60.000', channel: 'Transfer', trxId: '-', payment: 'Pending', shirt: '-', code: 'JS-2026-0003' },
+            4: { name: 'Dewi Lestari', angkatan: '2012', tickets: 4, sizes: ['L', 'L', 'M', 'XXXL'], total: 'Rp 215.000', channel: 'Aplikasi', trxId: 'TRX-JS-0004', payment: 'Lunas', shirt: 'Sudah Diambil', code: 'JS-2026-0004' }
+        };
+
+        function showParticipantDetail(id) {
+            const data = participantData[id];
+            if (!data) return;
+
+            document.getElementById('detailName').innerText = data.name;
+            document.getElementById('detailAngkatan').innerText = data.angkatan;
+            document.getElementById('detailTicketCount').innerText = data.tickets + ' Tiket';
+            document.getElementById('detailTotal').innerText = data.total;
+            document.getElementById('detailCode').innerText = data.code;
+            document.getElementById('detailQR').src = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=' + data.code;
+
+            // Sizes
+            const sizesHtml = data.sizes.map(s => `<span style="background: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">${s}</span>`).join('');
+            document.getElementById('detailSizes').innerHTML = sizesHtml;
+
+            // Channel badge
+            const channelColors = { 'Aplikasi': 'badge-info', 'Cash': 'badge-warning', 'Transfer': 'badge-grey' };
+            document.getElementById('detailChannel').innerHTML = `<span class="badge ${channelColors[data.channel] || 'badge-grey'}">${data.channel}</span>`;
+            document.getElementById('detailTrxId').innerText = data.trxId;
+
+            // Payment status
+            const paymentClass = data.payment === 'Lunas' ? 'badge-success' : 'badge-warning';
+            document.getElementById('detailPaymentStatus').innerHTML = `<span class="badge ${paymentClass}">${data.payment}</span>`;
+
+            // Shirt status
+            const shirtClass = data.shirt === 'Sudah Diambil' ? 'badge-success' : (data.shirt === 'Belum Diambil' ? 'badge-warning' : 'badge-grey');
+            document.getElementById('detailShirtStatus').innerHTML = `<span class="badge ${shirtClass}">${data.shirt}</span>`;
+
+            openModal('modalParticipantDetail');
+        }
+
+        function toggleShirtStatus() {
+            const statusEl = document.getElementById('detailShirtStatus');
+            const currentText = statusEl.innerText;
+            if (currentText === 'Sudah Diambil') {
+                statusEl.innerHTML = '<span class="badge badge-warning">Belum Diambil</span>';
+            } else {
+                statusEl.innerHTML = '<span class="badge badge-success">Sudah Diambil</span>';
+            }
+            alert('Status kaos berhasil diubah!');
+        }
+
+        // Sub-event participants data
+        const subeventData = {
+            health: {
+                title: '🩺 Cek Kesehatan Gratis',
+                total: '155/200',
+                participants: [
+                    { name: 'Budi Santoso', angkatan: '2010', code: 'HLT-2026-0001', status: 'Hadir' },
+                    { name: 'Siti Aminah', angkatan: '2015', code: 'HLT-2026-0002', status: 'Hadir' },
+                    { name: 'Dewi Lestari', angkatan: '2012', code: 'HLT-2026-0003', status: 'Belum' },
+                    { name: 'Ahmad Fauzi', angkatan: '2008', code: 'HLT-2026-0004', status: 'Belum' },
+                    { name: 'Rina Kusuma', angkatan: '2018', code: 'HLT-2026-0005', status: 'Hadir' }
+                ]
+            },
+            eye: {
+                title: '👁️ Pemeriksaan Mata',
+                total: '88/100',
+                participants: [
+                    { name: 'Andi Wijaya', angkatan: '2005', code: 'EYE-2026-0001', status: 'Hadir' },
+                    { name: 'Maya Sari', angkatan: '2011', code: 'EYE-2026-0002', status: 'Belum' },
+                    { name: 'Budi Santoso', angkatan: '2010', code: 'EYE-2026-0003', status: 'Hadir' }
+                ]
+            },
+            blood: {
+                title: '🩸 Donor Darah',
+                total: '32',
+                participants: [
+                    { name: 'Hendra Gunawan', angkatan: '2007', code: 'BLD-2026-0001', status: 'Hadir' },
+                    { name: 'Fitri Handayani', angkatan: '2014', code: 'BLD-2026-0002', status: 'Hadir' },
+                    { name: 'Rudi Hartono', angkatan: '2009', code: 'BLD-2026-0003', status: 'Belum' }
+                ]
+            }
+        };
+
+        function showSubeventParticipants(type) {
+            const data = subeventData[type];
+            if (!data) return;
+
+            document.getElementById('subeventModalTitle').innerText = data.title;
+            document.getElementById('subeventTotalCount').innerText = data.total;
+
+            // Generate participant list HTML
+            let html = '';
+            data.participants.forEach((p, index) => {
+                const statusClass = p.status === 'Hadir' ? 'badge-success' : 'badge-warning';
+                const initials = p.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+                html += `
+                    <div style="display: flex; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 12px; margin-bottom: 12px; align-items: center;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${p.code}" style="width: 60px; height: 60px; border-radius: 8px;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${p.name}</div>
+                            <div style="font-size: 12px; color: var(--text-grey);">Angkatan ${p.angkatan} • ${p.code}</div>
+                        </div>
+                        <span class="badge ${statusClass}">${p.status}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('subeventParticipantList').innerHTML = html;
+            openModal('modalSubeventParticipants');
+        }
+
+        let html5QrcodeScanner = null;
+
+        function openScanner() {
+            document.getElementById('scanResult').style.display = 'none';
+            openModal('modalScanner');
+
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader", { fps: 10, qrbox: 250 }
+                );
+            }
+
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        }
+
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => {
+                    closeModal('modalScanner');
+                }).catch(error => {
+                    console.error("Failed to clear html5QrcodeScanner. ", error);
+                    closeModal('modalScanner');
+                });
+            } else {
+                closeModal('modalScanner');
+            }
+        }
+
+        // Modal HTML (Restored with Simulation Buttons)
+        const modalScannerHtml = `
+            <div id="modalScanner" class="confirm-modal">
+                <div class="confirm-modal-content" style="max-width: 500px;">
+                    <h3>Scan QR Code</h3>
+                    <div id="reader" style="width: 100%; min-height: 300px; background: #000; margin-bottom: 16px;"></div>
+                    <div id="scanResult" style="padding: 12px; background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; color: #15803d; display: none; margin-bottom: 16px;">
+                        Scan Berhasil!
+                    </div>
+
+                    <!-- Simulation Buttons (For Demo) -->
+                    <div style="margin-bottom: 16px; padding: 12px; background: #f9fafb; border-radius: 8px; border: 1px dashed #ddd;">
+                        <div style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Simulasi Scan (Tanpa Kamera)</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button class="btn-outline" style="font-size: 11px; padding: 6px;" onclick="onScanSuccess('JS-2026-0002', null)">
+                                👕 Ambil Kaos
+                                <br><span style="font-weight: normal; font-size: 9px;">(Siti Aminah)</span>
+                            </button>
+                            <button class="btn-outline" style="font-size: 11px; padding: 6px;" onclick="onScanSuccess('HLT-2026-0003', null)">
+                                🩺 Cek Kesehatan
+                                <br><span style="font-weight: normal; font-size: 9px;">(Dewi Lestari)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" style="width: 100%;" onclick="stopScanner()">Tutup</button>
+                </div>
+            </div>
+        `;
+        // Append modal to body if not exists
+        if (!document.getElementById('modalScanner')) {
+            document.body.insertAdjacentHTML('beforeend', modalScannerHtml);
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Handle on success condition with the decoded message.
+            console.log(`Scan result: ${decodedText}`, decodedResult);
+
+            let message = '';
+            let success = false;
+
+            // Pattern for Main Event Shirt Pickup: JS-YYYY-ID (e.g., JS-2026-0001)
+            if (decodedText.startsWith('JS-')) {
+                // Find participant
+                let participantFound = false;
+                for (let id in participantData) {
+                    if (participantData[id].code === decodedText) {
+                        participantData[id].shirt = 'Sudah Diambil';
+                        message = `✅ ${participantData[id].name} - Kaos Diambil`;
+                        participantFound = true;
+                        success = true;
+
+                        // Refresh lists if open
+                        // Ideally we would refresh the UI here, e.g. switchTab('peserta')
+                        break;
+                    }
+                }
+                if (!participantFound) message = `❌ Data Peserta Tidak Ditemukan (${decodedText})`;
+            }
+            // Pattern for Sub-events: HLT/EYE/BLD-YYYY-ID
+            else if (decodedText.match(/^(HLT|EYE|BLD)-/)) {
+                // Find subevent
+                let subeventFound = false;
+                for (let type in subeventData) {
+                    let pIndex = subeventData[type].participants.findIndex(p => p.code === decodedText);
+                    if (pIndex !== -1) {
+                        subeventData[type].participants[pIndex].status = 'Hadir';
+                        message = `✅ ${subeventData[type].participants[pIndex].name} - Hadir di ${subeventData[type].title}`;
+                        subeventFound = true;
+                        success = true;
+                        break;
+                    }
+                }
+                if (!subeventFound) message = `❌ Data Sub-event Tidak Ditemukan (${decodedText})`;
+            } else {
+                message = `⚠️ QR Code Tidak Dikenali: ${decodedText}`;
+            }
+
+            const resultDiv = document.getElementById('scanResult');
+            resultDiv.innerText = message;
+            resultDiv.style.display = 'block';
+            resultDiv.style.borderColor = success ? '#22c55e' : '#ef4444';
+            resultDiv.style.color = success ? '#15803d' : '#991b1b';
+            resultDiv.style.backgroundColor = success ? '#f0fdf4' : '#fef2f2';
+
+            if (success) {
+                // Optional: stop scanning after success
+                // html5QrcodeScanner.clear();
+            }
+        }
+
+        function onScanFailure(error) {
+            // handle scan failure, usually better to ignore and keep scanning.
+            // for example:
+            // console.warn(`Code scan error = ${error}`);
+        }
+
+
+    </script>
+</body>
+
+</html>

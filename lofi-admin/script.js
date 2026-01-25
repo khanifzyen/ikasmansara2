@@ -98,6 +98,56 @@ function rejectItem(type, id) {
     });
 }
 
+// Date Filter Logic
+function initDateFilter() {
+    const today = new Date();
+    const lastYear = new Date();
+    lastYear.setFullYear(today.getFullYear() - 1);
+
+    const startDateInput = document.getElementById('filterStartDate');
+    const endDateInput = document.getElementById('filterEndDate');
+
+    if (startDateInput && endDateInput) {
+        // Set Default Values (Today and 1 Year Ago)
+        endDateInput.valueAsDate = today;
+        startDateInput.valueAsDate = lastYear;
+
+        // Max date is today
+        endDateInput.max = today.toISOString().split('T')[0];
+        startDateInput.max = today.toISOString().split('T')[0];
+
+        // Event Listener to validate range
+        startDateInput.addEventListener('change', () => validateDateRange(startDateInput, endDateInput));
+        endDateInput.addEventListener('change', () => validateDateRange(startDateInput, endDateInput));
+    }
+}
+
+function validateDateRange(startInput, endInput) {
+    const start = new Date(startInput.value);
+    const end = new Date(endInput.value);
+
+    // Calculate difference in milliseconds
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const isMoreThanOneYear = diffDays > 365;
+
+    if (start > end) {
+        alert('Tanggal awal tidak boleh lebih besar dari tanggal akhir!');
+        // Reset start to 1 year before end
+        const newStart = new Date(end);
+        newStart.setFullYear(end.getFullYear() - 1);
+        startInput.valueAsDate = newStart;
+    } else if (isMoreThanOneYear) {
+        alert('Rentang tanggal tidak boleh lebih dari 1 tahun!');
+        // Adjust start date to be exactly 1 year before end
+        const newStart = new Date(end);
+        newStart.setFullYear(end.getFullYear() - 1);
+        startInput.valueAsDate = newStart;
+    }
+}
+
+// Call init on load
+document.addEventListener('DOMContentLoaded', initDateFilter);
 function toggleStatus(type, id) {
     alert(`Status ${type} dengan ID ${id} berhasil diubah (Mock)`);
 }
@@ -127,4 +177,43 @@ function animateValue(element, start, end, duration) {
         }
     };
     window.requestAnimationFrame(step);
+}
+
+// Dashboard Utilities
+function switchTab(tabName, btn) {
+    // Remove active classes
+    const container = btn.closest('.app-container');
+    container.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+    container.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+    // Add active class
+    btn.classList.add('active');
+    const targetId = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+    const target = document.getElementById(targetId);
+    if (target) target.style.display = 'block';
+}
+
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.add('active');
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('active');
+}
+
+function submitParticipant() {
+    alert('Peserta berhasil ditambahkan secara manual!');
+    closeModal('modalAddPeserta');
+}
+
+function submitExpense() {
+    alert('Pengeluaran berhasil dicatat!');
+    closeModal('modalAddExpense');
+}
+
+// FAB Menu (Mobile)
+function toggleFabMenu() {
+    alert('FAB Menu: \n1. Tambah Peserta\n2. Catat Pengeluaran');
 }

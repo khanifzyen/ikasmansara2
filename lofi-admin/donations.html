@@ -43,8 +43,20 @@
             <button class="filter-chip" onclick="setFilter(this)">Selesai</button>
         </div>
 
+        <div class="date-filter-section">
+            <div class="date-input-group">
+                <label>Tanggal Awal</label>
+                <input type="date" id="filterStartDate">
+            </div>
+            <div class="date-input-group">
+                <label>Tanggal Akhir</label>
+                <input type="date" id="filterEndDate">
+            </div>
+            <button class="btn-filter-apply">Terapkan</button>
+        </div>
+
         <div class="page-content content-padding">
-            <div class="list-card" onclick="location.href='donation-form.html?id=1'">
+            <div class="list-card" onclick="location.href='donations-detail.html?id=1'">
                 <div class="list-card-avatar" style="background: #D1FAE5;">💰</div>
                 <div class="list-card-content">
                     <div class="list-card-title">Renovasi Masjid Sekolah</div>

@@ -44,8 +44,20 @@
             <button class="filter-chip" onclick="setFilter(this)">Selesai</button>
         </div>
 
+        <div class="date-filter-section">
+            <div class="date-input-group">
+                <label>Tanggal Awal</label>
+                <input type="date" id="filterStartDate">
+            </div>
+            <div class="date-input-group">
+                <label>Tanggal Akhir</label>
+                <input type="date" id="filterEndDate">
+            </div>
+            <button class="btn-filter-apply">Terapkan</button>
+        </div>
+
         <div class="page-content content-padding">
-            <div class="list-card">
+            <div class="list-card" onclick="location.href='event-dashboard.html?id=1'">
                 <div class="list-card-avatar" style="background: #FEF3C7;">📅</div>
                 <div class="list-card-content">
                     <div class="list-card-title">Jalan Sehat & Reuni Akbar 2026</div>
@@ -53,11 +65,10 @@
                 </div>
                 <div class="list-card-actions">
                     <span class="badge badge-success hide-mobile">Aktif</span>
-                    <button class="btn-action btn-edit" onclick="location.href='event-form.html?id=1'">Edit</button>
                 </div>
             </div>
 
-            <div class="list-card">
+            <div class="list-card" onclick="location.href='event-dashboard.html?id=2'">
                 <div class="list-card-avatar" style="background: #DBEAFE;">📅</div>
                 <div class="list-card-content">
                     <div class="list-card-title">Bakti Sosial Angkatan 2010</div>
@@ -65,11 +76,10 @@
                 </div>
                 <div class="list-card-actions">
                     <span class="badge badge-warning hide-mobile">Draft</span>
-                    <button class="btn-action btn-edit" onclick="location.href='event-form.html?id=2'">Edit</button>
                 </div>
             </div>
 
-            <div class="list-card">
+            <div class="list-card" onclick="location.href='event-dashboard.html?id=3'">
                 <div class="list-card-avatar" style="background: #D1FAE5;">📅</div>
                 <div class="list-card-content">
                     <div class="list-card-title">Seminar Karir Alumni</div>
@@ -77,7 +87,6 @@
                 </div>
                 <div class="list-card-actions">
                     <span class="badge badge-success hide-mobile">Aktif</span>
-                    <button class="btn-action btn-edit" onclick="location.href='event-form.html?id=3'">Edit</button>
                 </div>
             </div>
         </div>
