@@ -1,6 +1,7 @@
 /// Auth Repository Implementation
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/failures/auth_failure.dart';
@@ -38,6 +39,14 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
+
+      // Check if email is verified (system field)
+      if (!user.verified) {
+        debugPrint('AuthRepository: Email not verified for ${user.email}');
+        await _remoteDataSource.logout();
+        return (data: null, failure: const EmailNotVerifiedFailure());
+      }
+
       await _remoteDataSource.saveAuth();
       return (data: user.toEntity(), failure: null);
     } catch (e) {
@@ -50,6 +59,9 @@ class AuthRepositoryImpl implements AuthRepository {
     RegisterAlumniParams params,
   ) async {
     try {
+      debugPrint(
+        'AuthRepository: Registering alumni with email: ${params.email}',
+      );
       final user = await _remoteDataSource.register(
         email: params.email,
         password: params.password,
@@ -62,8 +74,17 @@ class AuthRepositoryImpl implements AuthRepository {
         company: params.company,
         domisili: params.domisili,
       );
+      debugPrint('AuthRepository: Alumni registered successfully: ${user.id}');
+
+      // Request verification email
+      debugPrint(
+        'AuthRepository: Requesting verification email for: ${params.email}',
+      );
+      await _remoteDataSource.requestVerification(params.email);
+
       return (data: user.toEntity(), failure: null);
     } catch (e) {
+      debugPrint('AuthRepository: Register alumni failed: $e');
       return (data: null, failure: _mapException(e));
     }
   }
@@ -81,6 +102,10 @@ class AuthRepositoryImpl implements AuthRepository {
         phone: '',
         role: 'public',
       );
+
+      // Request verification email
+      await _remoteDataSource.requestVerification(params.email);
+
       return (data: user.toEntity(), failure: null);
     } catch (e) {
       return (data: null, failure: _mapException(e));
@@ -110,7 +135,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// Map PocketBase exceptions to domain failures
   AuthFailure _mapException(dynamic e) {
+    debugPrint('AuthRepository: _mapException: $e');
     if (e is ClientException) {
+      debugPrint('AuthRepository: ClientException response: ${e.response}');
       final response = e.response;
       final statusCode = e.statusCode;
 

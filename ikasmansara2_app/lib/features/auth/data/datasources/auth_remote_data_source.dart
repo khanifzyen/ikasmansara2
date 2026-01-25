@@ -88,6 +88,11 @@ class AuthRemoteDataSource {
     await _pbClient.clearAuth();
   }
 
+  /// Request verification email
+  Future<void> requestVerification(String email) async {
+    await _pb.collection('users').requestVerification(email);
+  }
+
   /// Save auth to secure storage
   Future<void> saveAuth() async {
     await _pbClient.saveAuth();

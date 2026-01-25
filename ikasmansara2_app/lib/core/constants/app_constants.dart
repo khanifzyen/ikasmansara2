@@ -1,6 +1,8 @@
 /// App Constants - IKA SMANSARA
 library;
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class AppConstants {
   AppConstants._();
 
@@ -10,7 +12,8 @@ class AppConstants {
   static const String appTagline = 'Ikatan Alumni SMA Negeri 1 Samarinda';
 
   // PocketBase
-  static const String pocketBaseUrl = 'http://127.0.0.1:8090';
+  static String get pocketBaseUrl =>
+      dotenv.env['POCKETBASE_URL'] ?? 'http://127.0.0.1:8090';
 
   // Storage Keys
   static const String tokenKey = 'auth_token';

@@ -50,6 +50,12 @@ class UnauthorizedFailure extends AuthFailure {
     : super('Sesi telah berakhir. Silakan login kembali');
 }
 
+/// Email not verified
+class EmailNotVerifiedFailure extends AuthFailure {
+  const EmailNotVerifiedFailure()
+    : super('Email belum diverifikasi. Silakan cek inbox email Anda.');
+}
+
 /// Validation error from API
 class ValidationFailure extends AuthFailure {
   final Map<String, dynamic>? errors;

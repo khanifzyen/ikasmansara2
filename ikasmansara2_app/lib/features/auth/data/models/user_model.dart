@@ -17,6 +17,7 @@ class UserModel {
   final String? company;
   final String? domisili;
   final bool isVerified;
+  final bool verified;
   final DateTime? verifiedAt;
   final DateTime? created;
   final DateTime? updated;
@@ -33,6 +34,7 @@ class UserModel {
     this.company,
     this.domisili,
     this.isVerified = false,
+    this.verified = false,
     this.verifiedAt,
     this.created,
     this.updated,
@@ -52,6 +54,7 @@ class UserModel {
       company: record.getStringValue('company'),
       domisili: record.getStringValue('domisili'),
       isVerified: record.getBoolValue('is_verified'),
+      verified: record.getBoolValue('verified'), // System field
       verifiedAt: DateTime.tryParse(record.getStringValue('verified_at')),
       created: DateTime.tryParse(record.get<String>('created')),
       updated: DateTime.tryParse(record.get<String>('updated')),
@@ -72,6 +75,7 @@ class UserModel {
       company: company,
       domisili: domisili,
       isVerified: isVerified,
+      verified: verified,
       verifiedAt: verifiedAt,
     );
   }
@@ -90,6 +94,7 @@ class UserModel {
       company: json['company'] as String?,
       domisili: json['domisili'] as String?,
       isVerified: json['is_verified'] as bool? ?? false,
+      verified: json['verified'] as bool? ?? false,
       verifiedAt: json['verified_at'] != null
           ? DateTime.tryParse(json['verified_at'] as String)
           : null,
@@ -116,6 +121,7 @@ class UserModel {
       'company': company,
       'domisili': domisili,
       'is_verified': isVerified,
+      'verified': verified,
       'verified_at': verifiedAt?.toIso8601String(),
       'created': created?.toIso8601String(),
       'updated': updated?.toIso8601String(),

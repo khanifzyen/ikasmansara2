@@ -75,6 +75,7 @@ class UserEntity extends Equatable {
   final String? company;
   final String? domisili;
   final bool isVerified;
+  final bool verified;
   final DateTime? verifiedAt;
 
   const UserEntity({
@@ -89,6 +90,7 @@ class UserEntity extends Equatable {
     this.company,
     this.domisili,
     this.isVerified = false,
+    this.verified = false,
     this.verifiedAt,
   });
 
@@ -108,6 +110,7 @@ class UserEntity extends Equatable {
     company,
     domisili,
     isVerified,
+    verified,
     verifiedAt,
   ];
 }
