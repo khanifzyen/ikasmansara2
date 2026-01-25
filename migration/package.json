@@ -14,7 +14,9 @@
     "migrate:market": "node collections/07_market.js",
     "migrate:memory": "node collections/08_memory.js",
     "seed": "node seeder.js",
-    "seed:down": "node seeder.js --down"
+    "seed:down": "node seeder.js --down",
+    "seed:relations": "node seeder-relations.js",
+    "seed:relations:down": "node seeder-relations.js --down"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

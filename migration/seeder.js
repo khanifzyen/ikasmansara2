@@ -161,17 +161,14 @@ const eventsData = [
     {
         title: 'Jalan Sehat & Reuni Akbar 2026',
         description: 'Acara tahunan jalan sehat dan reuni akbar alumni SMAN 1 Jepara dengan berbagai doorprize menarik.',
-        event_date: '2026-08-20 08:00:00.000Z',
+        date: '2026-08-20 08:00:00.000Z',
+        time: '08:00 WIB',
         location: 'SMAN 1 Jepara',
-        ticket_price: 100000,
-        ticket_quota: 500,
-        tickets_sold: 0,
-        has_merchandise: true,
-        merchandise_sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-        registration_open: true,
-        registration_deadline: '2026-08-15 23:59:59.000Z',
         status: 'active',
-        banner_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800'
+        enable_sponsorship: true,
+        enable_donation: true,
+        donation_target: 50000000,
+        donation_description: 'Donasi untuk kegiatan reuni akbar'
     }
 ];
 
@@ -222,39 +219,43 @@ const donationsData = [
 const newsData = [
     {
         title: 'Tim Basket SMAN 1 Jepara Juara DBL Central Java Series 2023',
-        content: 'Tim basket SMAN 1 Jepara berhasil meraih juara dalam kompetisi DBL Central Java Series 2023. Prestasi membanggakan ini diraih setelah mengalahkan SMAN 3 Semarang di final.',
+        slug: 'tim-basket-smansara-juara-dbl-2023',
+        summary: 'Tim basket SMAN 1 Jepara berhasil meraih juara dalam kompetisi DBL Central Java Series 2023.',
+        content: 'Tim basket SMAN 1 Jepara berhasil meraih juara dalam kompetisi DBL Central Java Series 2023. Prestasi membanggakan ini diraih setelah mengalahkan SMAN 3 Semarang di final dengan skor 78-65.',
         category: 'prestasi',
         status: 'published',
-        featured: true,
-        view_count: 234,
-        image_url: 'https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=800'
+        publish_date: '2024-01-20 10:00:00.000Z',
+        view_count: 234
     },
     {
         title: 'Reuni Perak Angkatan 98 Berlangsung Meriah di Aula Sekolah',
+        slug: 'reuni-perak-angkatan-98',
+        summary: 'Reuni perak angkatan 1998 berlangsung meriah di aula SMAN 1 Jepara.',
         content: 'Reuni perak angkatan 1998 berlangsung meriah di aula SMAN 1 Jepara. Acara yang dihadiri lebih dari 150 alumni ini dimeriahkan dengan berbagai pertunjukan nostalgia.',
-        category: 'alumni',
+        category: 'kegiatan',
         status: 'published',
-        featured: false,
-        view_count: 189,
-        image_url: 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=800'
+        publish_date: '2024-01-18 14:00:00.000Z',
+        view_count: 189
     },
     {
         title: 'Jalan Sehat HUT SMANSARA ke-60 Siap Digelar Minggu Depan',
+        slug: 'jalan-sehat-hut-smansara-60',
+        summary: 'Panitia akan menggelar acara jalan sehat yang terbuka untuk umum.',
         content: 'Dalam rangka memperingati HUT ke-60 SMAN 1 Jepara, panitia akan menggelar acara jalan sehat yang terbuka untuk umum. Peserta akan mendapat doorprize menarik.',
-        category: 'event',
+        category: 'pengumuman',
         status: 'published',
-        featured: true,
-        view_count: 456,
-        image_url: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800'
+        publish_date: '2024-01-15 09:00:00.000Z',
+        view_count: 456
     },
     {
         title: 'Seminar Karir untuk Siswa Kelas XII bersama Alumni Sukses',
+        slug: 'seminar-karir-siswa-kelas-xii',
+        summary: 'IKA SMANSARA mengadakan seminar karir untuk siswa kelas XII.',
         content: 'IKA SMANSARA mengadakan seminar karir untuk siswa kelas XII dengan menghadirkan alumni-alumni sukses dari berbagai bidang profesi.',
-        category: 'pendidikan',
+        category: 'kegiatan',
         status: 'published',
-        featured: false,
-        view_count: 123,
-        image_url: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800'
+        publish_date: '2024-01-10 08:00:00.000Z',
+        view_count: 123
     }
 ];
 
@@ -294,40 +295,34 @@ const forumCommentsData = [
 // Loker (Job Listings) Data
 const lokerData = [
     {
-        title: 'Senior Accounting Staff',
-        company_name: 'PT. Telkom Indonesia (Persero)',
-        company_logo: 'https://ui-avatars.com/api/?name=T&background=0D8ABC&color=fff',
+        position: 'Senior Accounting Staff',
+        company: 'PT. Telkom Indonesia (Persero)',
         job_type: 'fulltime',
         location: 'Jakarta Selatan',
         salary_range: 'IDR 8jt - 12jt',
-        description: 'Kami mencari Senior Accounting Staff yang berpengalaman untuk bergabung dengan tim finance kami.',
-        requirements: 'S1 Akuntansi, pengalaman minimal 3 tahun, menguasai SAP',
-        contact_info: 'hr@telkom.co.id',
-        status: 'active'
+        description: 'Kami mencari Senior Accounting Staff yang berpengalaman untuk bergabung dengan tim finance kami. Requirements: S1 Akuntansi, pengalaman minimal 3 tahun, menguasai SAP.',
+        apply_link: 'https://recruitment.telkom.co.id',
+        status: 'approved'
     },
     {
-        title: 'Graphic Designer Intern',
-        company_name: 'Gojek Indonesia',
-        company_logo: 'https://ui-avatars.com/api/?name=G&background=EA4335&color=fff',
+        position: 'Graphic Designer Intern',
+        company: 'Gojek Indonesia',
         job_type: 'internship',
         location: 'WFH / Remote',
         salary_range: 'Paid Intern',
-        description: 'Kesempatan magang untuk mahasiswa desain grafis dengan passion tinggi.',
-        requirements: 'Mahasiswa semester 5+, menguasai Adobe Creative Suite',
-        contact_info: 'intern@gojek.com',
-        status: 'active'
+        description: 'Kesempatan magang untuk mahasiswa desain grafis dengan passion tinggi. Requirements: Mahasiswa semester 5+, menguasai Adobe Creative Suite.',
+        apply_link: 'https://career.gojek.com/intern',
+        status: 'approved'
     },
     {
-        title: 'Arsitek Renovasi Rumah',
-        company_name: 'Citra Land Property',
-        company_logo: 'https://ui-avatars.com/api/?name=C&background=F9A825&color=fff',
+        position: 'Arsitek Renovasi Rumah',
+        company: 'Citra Land Property',
         job_type: 'freelance',
         location: 'Jepara Kota',
-        salary_range: 'Proyek',
-        description: 'Mencari arsitek untuk proyek renovasi rumah di area Jepara.',
-        requirements: 'S1 Arsitektur, portofolio kuat, bisa AutoCAD & SketchUp',
-        contact_info: '081234567898',
-        status: 'active'
+        salary_range: 'Per Proyek',
+        description: 'Mencari arsitek untuk proyek renovasi rumah di area Jepara. Requirements: S1 Arsitektur, portofolio kuat, bisa AutoCAD & SketchUp.',
+        apply_link: 'https://wa.me/6281234567898',
+        status: 'approved'
     }
 ];
 
@@ -339,19 +334,17 @@ const marketData = [
         price: 25000,
         category: 'kuliner',
         location: 'Jepara',
-        contact_wa: '081234567893',
-        status: 'active',
-        image_url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400'
+        contact: '081234567893',
+        status: 'approved'
     },
     {
         name: 'Jasa Desain Arsitek',
         description: 'Jasa desain arsitektur untuk rumah tinggal, ruko, dan bangunan komersial.',
-        price: 0,
-        category: 'jasa',
+        price: 1,
+        category: 'jasa_professional',
         location: 'Online',
-        contact_wa: '081234567894',
-        status: 'active',
-        image_url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400'
+        contact: '081234567894',
+        status: 'approved'
     },
     {
         name: 'Kue Kering Lebaran Premium',
@@ -359,37 +352,31 @@ const marketData = [
         price: 85000,
         category: 'kuliner',
         location: 'Kudus',
-        contact_wa: '081234567895',
-        status: 'active',
-        image_url: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400'
+        contact: '081234567895',
+        status: 'approved'
     },
     {
         name: 'Kursus Bahasa Inggris Private',
         description: 'Les privat bahasa Inggris untuk semua level. Conversation, TOEFL, IELTS.',
         price: 500000,
-        category: 'jasa',
+        category: 'jasa_professional',
         location: 'Jepara',
-        contact_wa: '081234567896',
-        status: 'active',
-        image_url: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=400'
+        contact: '081234567896',
+        status: 'approved'
     }
 ];
 
-// Memory/Photos Data
+// Memory/Photos Data - Note: Memories require file upload, skipping for now
 const memoryData = [
     {
-        title: 'Foto Kartinian 1997',
         description: 'Foto bersama saat acara Kartinian tahun 1997',
         year: 1997,
-        tags: ['kartinian', 'nostalgia', '1997'],
-        image_url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800'
+        is_approved: true
     },
     {
-        title: 'Reuni Angkatan 98',
         description: 'Momen kebersamaan saat reuni perak angkatan 1998',
         year: 2023,
-        tags: ['reuni', 'angkatan98', '2023'],
-        image_url: 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=800'
+        is_approved: true
     }
 ];
 
@@ -546,10 +533,10 @@ async function seedLoker(pb, userIds) {
         try {
             const record = await pb.collection('loker').create({
                 ...lokerData[i],
-                posted_by: postedByUsers[i] || userIds[0]
+                user: postedByUsers[i] || userIds[0]
             });
             seededIds.loker.push(record.id);
-            console.log(`  ✅ Created loker: ${lokerData[i].title}`);
+            console.log(`  ✅ Created loker: ${lokerData[i].position}`);
         } catch (error) {
             console.error(`  ❌ Failed to create loker:`, error.message);
         }
@@ -565,35 +552,43 @@ async function seedMarket(pb, userIds) {
 
     for (let i = 0; i < marketData.length; i++) {
         try {
-            const record = await pb.collection('market_products').create({
+            const userId = sellerUsers[i] || userIds[0];
+            console.log(`  📝 Creating product: ${marketData[i].name} with user: ${userId}`);
+            const record = await pb.collection('market').create({
                 ...marketData[i],
-                seller: sellerUsers[i] || userIds[0]
+                user: userId
             });
             seededIds.market_products.push(record.id);
             console.log(`  ✅ Created product: ${marketData[i].name}`);
         } catch (error) {
-            console.error(`  ❌ Failed to create product:`, error.message);
+            console.error(`  ❌ Failed to create product "${marketData[i].name}":`, error.message);
+            if (error.data) {
+                console.error(`     Details:`, JSON.stringify(error.data, null, 2));
+            }
         }
     }
 }
 
 /**
  * Seed Memories/Photos
+ * Note: Memories require file upload for 'image' field, skipping for now
  */
 async function seedMemories(pb, userIds) {
     console.log('\n📷 Seeding Memories...');
-    for (let i = 0; i < memoryData.length; i++) {
-        try {
-            const record = await pb.collection('memories').create({
-                ...memoryData[i],
-                uploaded_by: userIds[i + 2] || userIds[0]
-            });
-            seededIds.memories.push(record.id);
-            console.log(`  ✅ Created memory: ${memoryData[i].title}`);
-        } catch (error) {
-            console.error(`  ❌ Failed to create memory:`, error.message);
-        }
-    }
+    console.log('  ⚠️  Skipping memories - requires file upload for image field');
+    // Memories require file upload which cannot be done with URL data
+    // for (let i = 0; i < memoryData.length; i++) {
+    //     try {
+    //         const record = await pb.collection('memories').create({
+    //             ...memoryData[i],
+    //             user: userIds[i + 2] || userIds[0]
+    //         });
+    //         seededIds.memories.push(record.id);
+    //         console.log(`  ✅ Created memory`);
+    //     } catch (error) {
+    //         console.error(`  ❌ Failed to create memory:`, error.message);
+    //     }
+    // }
 }
 
 // ============================================
@@ -679,7 +674,7 @@ async function seedDown() {
         // Delete in reverse order (to respect foreign key constraints)
         const collectionsToClean = [
             'memories',
-            'market_products',
+            'market',
             'loker',
             'forum_likes',
             'forum_comments',

@@ -56,6 +56,16 @@ npm run seed
 npm run seed:down
 ```
 
+### Seed Relational Data (run after main seed)
+```bash
+npm run seed:relations
+```
+
+### Remove Relational Data
+```bash
+npm run seed:relations:down
+```
+
 ## Collections Created
 
 | # | Collection | Description |
