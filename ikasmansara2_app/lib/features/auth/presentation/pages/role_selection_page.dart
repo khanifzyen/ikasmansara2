@@ -45,7 +45,7 @@ class RoleSelectionPage extends StatelessWidget {
                 title: 'Alumni SMANSA',
                 description:
                     'Untuk alumni SMA Negeri 1 Samarinda. Dapatkan E-KTA, akses direktori, dan fitur lengkap.',
-                onTap: () => context.push('/login', extra: 'alumni'),
+                onTap: () => context.push('/register/alumni'),
               ),
 
               const SizedBox(height: 16),
@@ -58,7 +58,7 @@ class RoleSelectionPage extends StatelessWidget {
                 title: 'Masyarakat Umum',
                 description:
                     'Untuk non-alumni. Akses berita, event, dan donasi.',
-                onTap: () => context.push('/login', extra: 'public'),
+                onTap: () => context.push('/register/public'),
               ),
 
               const Spacer(),

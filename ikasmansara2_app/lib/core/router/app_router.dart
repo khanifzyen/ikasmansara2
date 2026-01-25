@@ -8,6 +8,8 @@ import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/role_selection_page.dart';
+import '../../features/auth/presentation/pages/register_alumni_page.dart';
+import '../../features/auth/presentation/pages/register_public_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 
 class AppRouter {
@@ -53,16 +55,14 @@ class AppRouter {
       GoRoute(
         path: '/register/alumni',
         name: 'register-alumni',
-        builder: (context, state) =>
-            const Placeholder(), // TODO: RegisterAlumniPage
+        builder: (context, state) => const RegisterAlumniPage(),
       ),
 
       // Register Public
       GoRoute(
         path: '/register/public',
         name: 'register-public',
-        builder: (context, state) =>
-            const Placeholder(), // TODO: RegisterPublicPage
+        builder: (context, state) => const RegisterPublicPage(),
       ),
 
       // Home (Main Shell)
