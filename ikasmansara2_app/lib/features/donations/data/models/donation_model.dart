@@ -1,22 +1,34 @@
+// ignore_for_file: invalid_annotation_target
+
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../domain/entities/donation.dart';
 
-class DonationModel extends Donation {
-  const DonationModel({
-    required super.id,
-    required super.title,
-    required super.description,
-    required super.targetAmount,
-    required super.collectedAmount,
-    required super.deadline,
-    required super.banner,
-    required super.organizer,
-    required super.category,
-    required super.priority,
-    required super.status,
-    required super.donorCount,
-    required super.createdBy,
-  });
+part 'donation_model.freezed.dart';
+part 'donation_model.g.dart';
+
+@freezed
+abstract class DonationModel with _$DonationModel {
+  const DonationModel._();
+
+  const factory DonationModel({
+    required String id,
+    required String title,
+    required String description,
+    @JsonKey(name: 'target_amount') required double targetAmount,
+    @JsonKey(name: 'collected_amount') required double collectedAmount,
+    required DateTime deadline,
+    required String banner,
+    required String organizer,
+    required String category,
+    required String priority,
+    required String status,
+    @JsonKey(name: 'donor_count') required int donorCount,
+    @JsonKey(name: 'created_by') required String createdBy,
+  }) = _DonationModel;
+
+  factory DonationModel.fromJson(Map<String, dynamic> json) =>
+      _$DonationModelFromJson(json);
 
   factory DonationModel.fromRecord(RecordModel record) {
     return DonationModel(
@@ -33,24 +45,6 @@ class DonationModel extends Donation {
       status: record.getStringValue('status'),
       donorCount: record.getIntValue('donor_count'),
       createdBy: record.getStringValue('created_by'),
-    );
-  }
-
-  factory DonationModel.fromJson(Map<String, dynamic> json) {
-    return DonationModel(
-      id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      targetAmount: (json['target_amount'] as num?)?.toDouble() ?? 0.0,
-      collectedAmount: (json['collected_amount'] as num?)?.toDouble() ?? 0.0,
-      deadline: DateTime.parse(json['deadline'] as String),
-      banner: json['banner'] as String? ?? '',
-      organizer: json['organizer'] as String? ?? '',
-      category: json['category'] as String? ?? '',
-      priority: json['priority'] as String? ?? '',
-      status: json['status'] as String? ?? '',
-      donorCount: json['donor_count'] as int? ?? 0,
-      createdBy: json['created_by'] as String? ?? '',
     );
   }
 

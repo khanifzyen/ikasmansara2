@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:pocketbase/pocketbase.dart';
+
 import '../../../../core/network/pb_client.dart';
 import '../models/news_model.dart';
 

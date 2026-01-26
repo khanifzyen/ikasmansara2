@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../domain/entities/news.dart';
@@ -6,7 +8,7 @@ part 'news_model.freezed.dart';
 part 'news_model.g.dart';
 
 @freezed
-class NewsModel with _$NewsModel {
+abstract class NewsModel with _$NewsModel {
   const NewsModel._();
 
   const factory NewsModel({

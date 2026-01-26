@@ -49,3 +49,8 @@ pb_migrations/
 *.crt
 credentials.json
 secrets.json
+
+# code generation
+*.g.dart
+*.freezed.dart
+

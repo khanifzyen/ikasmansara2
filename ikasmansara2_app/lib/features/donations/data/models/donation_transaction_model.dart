@@ -1,21 +1,33 @@
+// ignore_for_file: invalid_annotation_target
+
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../domain/entities/donation_transaction.dart';
 
-class DonationTransactionModel extends DonationTransaction {
-  const DonationTransactionModel({
-    required super.id,
-    super.donationId,
-    super.eventId,
-    super.userId,
-    required super.donorName,
-    required super.amount,
-    super.message,
-    required super.isAnonymous,
-    required super.paymentStatus,
-    super.paymentMethod,
-    required super.transactionId,
-    required super.created,
-  });
+part 'donation_transaction_model.freezed.dart';
+part 'donation_transaction_model.g.dart';
+
+@freezed
+abstract class DonationTransactionModel with _$DonationTransactionModel {
+  const DonationTransactionModel._();
+
+  const factory DonationTransactionModel({
+    required String id,
+    String? donationId,
+    String? eventId,
+    String? userId,
+    @JsonKey(name: 'donor_name') required String donorName,
+    required double amount,
+    String? message,
+    @JsonKey(name: 'is_anonymous') required bool isAnonymous,
+    @JsonKey(name: 'payment_status') required String paymentStatus,
+    @JsonKey(name: 'payment_method') String? paymentMethod,
+    @JsonKey(name: 'transaction_id') required String transactionId,
+    required DateTime created,
+  }) = _DonationTransactionModel;
+
+  factory DonationTransactionModel.fromJson(Map<String, dynamic> json) =>
+      _$DonationTransactionModelFromJson(json);
 
   factory DonationTransactionModel.fromRecord(RecordModel record) {
     return DonationTransactionModel(
@@ -31,23 +43,6 @@ class DonationTransactionModel extends DonationTransaction {
       paymentMethod: record.getStringValue('payment_method'),
       transactionId: record.getStringValue('transaction_id'),
       created: DateTime.parse(record.get<String>('created')),
-    );
-  }
-
-  factory DonationTransactionModel.fromJson(Map<String, dynamic> json) {
-    return DonationTransactionModel(
-      id: json['id'] as String? ?? '',
-      donationId: json['donation'] as String?,
-      eventId: json['event'] as String?,
-      userId: json['user'] as String?,
-      donorName: json['donor_name'] as String? ?? '',
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
-      message: json['message'] as String?,
-      isAnonymous: json['is_anonymous'] as bool? ?? false,
-      paymentStatus: json['payment_status'] as String? ?? '',
-      paymentMethod: json['payment_method'] as String?,
-      transactionId: json['transaction_id'] as String? ?? '',
-      created: DateTime.parse(json['created'] as String),
     );
   }
 
