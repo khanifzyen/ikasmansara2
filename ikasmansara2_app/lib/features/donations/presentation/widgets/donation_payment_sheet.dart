@@ -92,220 +92,223 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Handle Bar
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 24),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Handle Bar
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 24),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
 
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Donasi untuk ${widget.donation.title}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Amount Input
-                  const Text(
-                    'Nominal Donasi',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [CurrencyInputFormatter()],
-                    decoration: InputDecoration(
-                      prefixText: 'Rp ',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Donasi untuk ${widget.donation.title}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      hintText: '0',
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 24),
 
-                  // Presets
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _presetAmounts.map((amount) {
-                      final isSelected =
-                          double.tryParse(
-                            _amountController.text.replaceAll('.', ''),
-                          ) ==
-                          amount;
-                      return ChoiceChip(
-                        label: Text(
-                          currencyFormat.format(amount).replaceAll('Rp ', ''),
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        selected: isSelected,
-                        selectedColor: AppColors.primary,
-                        backgroundColor: Colors.grey[200],
-                        checkmarkColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                            color: isSelected
-                                ? AppColors.primary
-                                : Colors.transparent,
-                          ),
-                        ),
-                        onSelected: (selected) {
-                          if (selected) {
-                            setState(() {
-                              _amountController.text = currencyFormat
-                                  .format(amount)
-                                  .replaceAll('Rp ', '')
-                                  .trim();
-                            });
-                          }
-                        },
-                      );
-                    }).toList(),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Anonymous Checkbox
-                  SwitchListTile(
-                    title: const Text('Sembunyikan nama saya (Hamba Allah)'),
-                    value: _isAnonymous,
-                    contentPadding: EdgeInsets.zero,
-                    onChanged: (val) {
-                      setState(() {
-                        _isAnonymous = val;
-                      });
-                    },
-                  ),
-
-                  // Name Input (if not anonymous)
-                  if (!_isAnonymous) ...[
-                    const SizedBox(height: 12),
+                    // Amount Input
                     const Text(
-                      'Nama Donatur',
+                      'Nominal Donasi',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     TextField(
-                      controller: _nameController,
+                      controller: _amountController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [CurrencyInputFormatter()],
                       decoration: InputDecoration(
+                        prefixText: 'Rp ',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        hintText: 'Nama lengkap Anda',
+                        hintText: '0',
                       ),
                     ),
-                  ],
+                    const SizedBox(height: 12),
 
-                  const SizedBox(height: 24),
-
-                  // Payment Method
-                  const Text(
-                    'Metode Pembayaran',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  Column(
-                    children: _paymentMethods.map((method) {
-                      return RadioListTile<String>(
-                        title: Row(
-                          children: [
-                            Icon(
-                              method == 'QRIS'
-                                  ? Icons.qr_code
-                                  : Icons.credit_card,
-                              color: AppColors.primary,
+                    // Presets
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _presetAmounts.map((amount) {
+                        final isSelected =
+                            double.tryParse(
+                              _amountController.text.replaceAll('.', ''),
+                            ) ==
+                            amount;
+                        return ChoiceChip(
+                          label: Text(
+                            currencyFormat.format(amount).replaceAll('Rp ', ''),
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
-                            const SizedBox(width: 12),
-                            Text(method),
-                          ],
-                        ),
-                        value: method,
-                        groupValue: _selectedPaymentMethod,
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedPaymentMethod = val;
-                          });
-                        },
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
-                            color: _selectedPaymentMethod == method
-                                ? AppColors.primary
-                                : Colors.grey[300]!,
                           ),
-                        ),
-                        tileColor: _selectedPaymentMethod == method
-                            ? AppColors.primary.withValues(alpha: 0.1)
-                            : Colors.transparent,
-                      );
-                    }).toList(),
-                  ),
+                          selected: isSelected,
+                          selectedColor: AppColors.primary,
+                          backgroundColor: Colors.grey[200],
+                          checkmarkColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : Colors.transparent,
+                            ),
+                          ),
+                          onSelected: (selected) {
+                            if (selected) {
+                              setState(() {
+                                _amountController.text = currencyFormat
+                                    .format(amount)
+                                    .replaceAll('Rp ', '')
+                                    .trim();
+                              });
+                            }
+                          },
+                        );
+                      }).toList(),
+                    ),
 
-                  const SizedBox(height: 32),
-                ],
+                    const SizedBox(height: 24),
+
+                    // Anonymous Checkbox
+                    SwitchListTile(
+                      title: const Text('Sembunyikan nama saya (Hamba Allah)'),
+                      value: _isAnonymous,
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (val) {
+                        setState(() {
+                          _isAnonymous = val;
+                        });
+                      },
+                    ),
+
+                    // Name Input (if not anonymous)
+                    if (!_isAnonymous) ...[
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Nama Donatur',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          hintText: 'Nama lengkap Anda',
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // Payment Method
+                    const Text(
+                      'Metode Pembayaran',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
+                    Column(
+                      children: _paymentMethods.map((method) {
+                        return RadioListTile<String>(
+                          title: Row(
+                            children: [
+                              Icon(
+                                method == 'QRIS'
+                                    ? Icons.qr_code
+                                    : Icons.credit_card,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(method),
+                            ],
+                          ),
+                          value: method,
+                          groupValue: _selectedPaymentMethod,
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedPaymentMethod = val;
+                            });
+                          },
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: _selectedPaymentMethod == method
+                                  ? AppColors.primary
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          tileColor: _selectedPaymentMethod == method
+                              ? AppColors.primary.withValues(alpha: 0.1)
+                              : Colors.transparent,
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Submit Button
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: BlocBuilder<DonationDetailBloc, DonationDetailState>(
-              builder: (context, state) {
-                return ElevatedButton(
-                  onPressed: state is TransactionLoading ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            // Submit Button
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: BlocBuilder<DonationDetailBloc, DonationDetailState>(
+                builder: (context, state) {
+                  return ElevatedButton(
+                    onPressed: state is TransactionLoading ? null : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  child: state is TransactionLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text('Lanjut Pembayaran'),
-                );
-              },
+                    child: state is TransactionLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text('Lanjut Pembayaran'),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

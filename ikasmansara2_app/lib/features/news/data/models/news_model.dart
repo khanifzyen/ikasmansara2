@@ -2,6 +2,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../domain/entities/news.dart';
 
 part 'news_model.freezed.dart';
@@ -35,28 +36,31 @@ abstract class NewsModel with _$NewsModel {
   News toEntity() {
     String? authorName;
     String? authorAvatar;
+    String? thumbnailUrl;
+
+    if (thumbnail != null && thumbnail!.isNotEmpty) {
+      thumbnailUrl =
+          '${AppConstants.pocketBaseUrl}/api/files/news/$id/$thumbnail';
+    }
 
     if (expand != null && expand!.containsKey('author')) {
       final authorRecord = expand!['author'];
       if (authorRecord is Map<String, dynamic>) {
         authorName = authorRecord['name'] as String?;
-        // Construct avatar URL manually as it's not directly in record json
-        // We'll handle full URL construction in the UI or Helper
         final avatarFilename = authorRecord['avatar'] as String?;
         final authorId = authorRecord['id'] as String?;
-        final collectionId = authorRecord['collectionId'] as String?;
         if (avatarFilename != null &&
             authorId != null &&
-            collectionId != null &&
             avatarFilename.isNotEmpty) {
-          authorAvatar = '$collectionId/$authorId/$avatarFilename';
+          authorAvatar =
+              '${AppConstants.pocketBaseUrl}/api/files/users/$authorId/$avatarFilename';
         }
       } else if (authorRecord is RecordModel) {
         authorName = authorRecord.getStringValue('name');
         final avatarFilename = authorRecord.getStringValue('avatar');
         if (avatarFilename.isNotEmpty) {
           authorAvatar =
-              '${authorRecord.collectionId}/${authorRecord.id}/$avatarFilename';
+              '${AppConstants.pocketBaseUrl}/api/files/users/${authorRecord.id}/$avatarFilename';
         }
       }
     }
@@ -66,7 +70,7 @@ abstract class NewsModel with _$NewsModel {
       title: title,
       slug: slug,
       category: category,
-      thumbnail: thumbnail,
+      thumbnail: thumbnailUrl,
       summary: summary,
       content: content,
       authorId: authorId,

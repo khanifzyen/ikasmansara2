@@ -24,6 +24,11 @@ import '../../features/news/domain/repositories/news_repository.dart';
 import '../../features/news/domain/usecases/get_news_list.dart';
 import '../../features/news/domain/usecases/get_news_detail.dart';
 import '../../features/news/presentation/bloc/news_bloc.dart';
+import '../../features/events/data/datasources/event_remote_data_source.dart';
+import '../../features/events/data/repositories/event_repository_impl.dart';
+import '../../features/events/domain/repositories/event_repository.dart';
+import '../../features/events/domain/usecases/get_events.dart';
+import '../../features/events/presentation/bloc/events_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -105,4 +110,22 @@ Future<void> configureDependencies() async {
 
   // BLoCs
   getIt.registerFactory(() => NewsBloc(getIt<GetNewsList>()));
+
+  // ===== Event Feature =====
+
+  // Data Sources
+  getIt.registerLazySingleton<EventRemoteDataSource>(
+    () => EventRemoteDataSourceImpl(getIt<PBClient>()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<EventRepository>(
+    () => EventRepositoryImpl(getIt<EventRemoteDataSource>()),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(() => GetEvents(getIt<EventRepository>()));
+
+  // BLoCs
+  getIt.registerFactory(() => EventsBloc(getIt<GetEvents>()));
 }

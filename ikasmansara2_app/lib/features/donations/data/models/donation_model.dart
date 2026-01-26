@@ -2,6 +2,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../domain/entities/donation.dart';
 
 part 'donation_model.freezed.dart';
@@ -49,6 +50,12 @@ abstract class DonationModel with _$DonationModel {
   }
 
   Donation toEntity() {
+    String? bannerUrl;
+    if (banner.isNotEmpty) {
+      bannerUrl =
+          '${AppConstants.pocketBaseUrl}/api/files/donations/$id/$banner';
+    }
+
     return Donation(
       id: id,
       title: title,
@@ -56,7 +63,7 @@ abstract class DonationModel with _$DonationModel {
       targetAmount: targetAmount,
       collectedAmount: collectedAmount,
       deadline: deadline,
-      banner: banner,
+      banner: bannerUrl ?? '',
       organizer: organizer,
       category: category,
       priority: priority,

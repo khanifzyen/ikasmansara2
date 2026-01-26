@@ -47,8 +47,8 @@ abstract class UserModel with _$UserModel {
       isVerified: record.getBoolValue('is_verified'),
       verified: record.getBoolValue('verified'),
       verifiedAt: DateTime.tryParse(record.getStringValue('verified_at')),
-      created: DateTime.tryParse(record.getStringValue('created')),
-      updated: DateTime.tryParse(record.getStringValue('updated')),
+      created: DateTime.tryParse(record.created),
+      updated: DateTime.tryParse(record.updated),
     );
   }
 

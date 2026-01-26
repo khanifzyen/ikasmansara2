@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/constants/app_colors.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -98,10 +99,18 @@ class DonationDetailPage extends StatelessWidget {
                         fit: StackFit.expand,
                         children: [
                           imageUrl.startsWith('http')
-                              ? Image.network(
-                                  imageUrl,
+                              ? CachedNetworkImage(
+                                  imageUrl: imageUrl,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
+                                  placeholder: (context, url) => Container(
+                                    color: Colors.grey[200],
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
                                       Container(color: Colors.grey[200]),
                                 )
                               : Image.asset(
@@ -301,40 +310,42 @@ class DonationDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-              bottomNavigationBar: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<DonationDetailBloc>(),
-                        child: DonationPaymentSheet(donation: donation),
+              bottomNavigationBar: SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, -4),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 8,
+                    ],
                   ),
-                  child: const Text('Donasi Sekarang'),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<DonationDetailBloc>(),
+                          child: DonationPaymentSheet(donation: donation),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 8,
+                    ),
+                    child: const Text('Donasi Sekarang'),
+                  ),
                 ),
               ),
             );
