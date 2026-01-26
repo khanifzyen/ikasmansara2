@@ -105,7 +105,8 @@ lib/
 ### 2.2 Domain Layer
 - [x] `User` entity
 - [x] `AuthRepository` interface
-- [x] UseCases: `Login`, `Register`, `Logout`, `GetCurrentUser` (Implemented in Bloc/Repo)
+- [x] UseCases: `Login`, `Register`, `Logout`, `GetCurrentUser`, `RequestPasswordReset`
+- [x] Forgot Password & Logout features implemented
 
 ### 2.3 Presentation Layer
 
@@ -115,6 +116,7 @@ lib/
 | `OnboardingScreen` | Intro app (first time) | `onboarding.html` |
 | `RoleSelectionScreen` | Pilih Alumni/Umum | `role-selection.html` |
 | `LoginScreen` | Email + Password login | `login.html` |
+| `ForgotPasswordScreen` | Reset password via email | - |
 | `RegisterAlumniScreen` | Form pendaftaran alumni | `register-alumni.html` |
 | `RegisterPublicScreen` | Form pendaftaran umum | `register-public.html` |
 
@@ -189,7 +191,7 @@ lib/
 
 ### 5.2 Features
 - [x] Event detail dengan info lengkap
-- [x] Ticket booking flow (qty, size selection mock)
+- [x] Ticket booking flow (qty, multi-ticket types)
 - [x] Payment integration (UI Simulation)
 - [x] E-ticket dengan QR code (QrImageView)
 - [x] Sub-event registration (Tab Section)
@@ -225,12 +227,18 @@ lib/
 
 ## Phase 7: News & Forum (Week 8-9)
 
-### 7.1 News
+### 7.1 News ✅
 
 | Screen | Deskripsi | Referensi Lofi |
 |--------|-----------|----------------|
 | `NewsListScreen` | List berita | `news-list.html` |
 | `NewsDetailScreen` | Detail berita | `news-detail.html` |
+
+- [x] Domain Layer (Entity, Repository, UseCases)
+- [x] Data Layer (Model, DataSource, RepositoryImpl)
+- [x] Presentation Layer (Bloc, UI Screens)
+- [x] News Carousel in Home
+- [x] News List & Detail Navigation
 
 ### 7.2 Forum
 
@@ -370,6 +378,7 @@ lib/
 POST   /api/collections/users/auth-with-password
 POST   /api/collections/users/records
 POST   /api/collections/users/confirm-verification
+POST   /api/collections/users/request-password-reset
 
 # Users
 GET    /api/collections/users/records
