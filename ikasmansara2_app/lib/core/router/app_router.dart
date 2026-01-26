@@ -221,6 +221,7 @@ class AppRouter {
         state.matchedLocation == '/login' ||
         state.matchedLocation == '/register/alumni' ||
         state.matchedLocation == '/register/public' ||
+        state.matchedLocation == '/forgot-password' ||
         state.matchedLocation == '/role-selection' ||
         state.matchedLocation == '/onboarding' ||
         state.matchedLocation == '/';

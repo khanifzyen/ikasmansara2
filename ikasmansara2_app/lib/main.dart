@@ -6,6 +6,7 @@ import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,11 +30,19 @@ class IkaSmanSaraApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [BlocProvider<AuthBloc>(create: (_) => getIt<AuthBloc>())],
-      child: MaterialApp.router(
-        title: 'IKA SMANSARA',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        routerConfig: AppRouter.router,
+      child: UpgradeAlert(
+        upgrader: Upgrader(
+          // debugDisplayAlways: true,
+        ),
+        showIgnore: false,
+        showLater: false,
+        dialogStyle: UpgradeDialogStyle.cupertino,
+        child: MaterialApp.router(
+          title: 'IKA SMANSARA',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          routerConfig: AppRouter.router,
+        ),
       ),
     );
   }
