@@ -18,6 +18,12 @@ import '../../features/donations/domain/usecases/create_donation_transaction.dar
 import '../../features/donations/presentation/bloc/donation_list_bloc.dart';
 import '../../features/donations/presentation/bloc/donation_detail_bloc.dart';
 import '../../features/donations/presentation/bloc/my_donation_bloc.dart';
+import '../../features/news/data/datasources/news_remote_data_source.dart';
+import '../../features/news/data/repositories/news_repository_impl.dart';
+import '../../features/news/domain/repositories/news_repository.dart';
+import '../../features/news/domain/usecases/get_news_list.dart';
+import '../../features/news/domain/usecases/get_news_detail.dart';
+import '../../features/news/presentation/bloc/news_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -80,4 +86,23 @@ Future<void> configureDependencies() async {
       createDonationTransaction: getIt<CreateDonationTransaction>(),
     ),
   );
+
+  // ===== News Feature =====
+
+  // Data Sources
+  getIt.registerLazySingleton<NewsRemoteDataSource>(
+    () => NewsRemoteDataSourceImpl(getIt<PBClient>()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<NewsRepository>(
+    () => NewsRepositoryImpl(getIt<NewsRemoteDataSource>()),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(() => GetNewsList(getIt<NewsRepository>()));
+  getIt.registerLazySingleton(() => GetNewsDetail(getIt<NewsRepository>()));
+
+  // BLoCs
+  getIt.registerFactory(() => NewsBloc(getIt<GetNewsList>()));
 }

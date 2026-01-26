@@ -22,6 +22,8 @@ import '../../features/events/presentation/pages/event_detail_page.dart';
 import '../../features/events/presentation/pages/ticket_detail_page.dart';
 import '../../features/donations/presentation/pages/donation_detail_page.dart';
 import '../../features/donations/presentation/pages/my_donations_page.dart';
+import '../../features/news/presentation/pages/news_list_page.dart';
+import '../../features/news/presentation/pages/news_detail_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -179,6 +181,23 @@ class AppRouter {
         path: '/my-donations',
         name: 'my-donations',
         builder: (context, state) => const MyDonationsPage(),
+      ),
+
+      // News List
+      GoRoute(
+        path: '/news',
+        name: 'news',
+        builder: (context, state) => const NewsListPage(),
+      ),
+
+      // News Detail
+      GoRoute(
+        path: '/news-detail',
+        name: 'news-detail',
+        builder: (context, state) {
+          final newsId = state.extra as String;
+          return NewsDetailPage(newsId: newsId);
+        },
       ),
     ],
     errorBuilder: (context, state) =>

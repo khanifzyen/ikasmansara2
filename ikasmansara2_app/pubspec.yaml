@@ -54,6 +54,8 @@ dependencies:
   equatable: ^2.0.8
   flutter_dotenv: ^6.0.0
   shared_preferences: ^2.5.4
+  flutter_html: ^3.0.0
+  timeago: ^3.7.1
 
 dev_dependencies:
   flutter_test:
