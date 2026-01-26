@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/network/pb_client.dart';
 import '../models/event_model.dart';
 import '../models/event_ticket_model.dart';
+import '../models/event_ticket_option_model.dart';
 import '../models/event_sub_event_model.dart';
 import '../models/event_sponsor_model.dart';
 
@@ -13,6 +14,7 @@ abstract class EventRemoteDataSource {
   });
   Future<EventModel> getEventDetail(String id);
   Future<List<EventTicketModel>> getEventTickets(String eventId);
+  Future<List<EventTicketOptionModel>> getEventTicketOptions(String eventId);
   Future<List<EventSubEventModel>> getEventSubEvents(String eventId);
   Future<List<EventSponsorModel>> getEventSponsors(String eventId);
 }
@@ -106,6 +108,24 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
           .toList();
     } catch (e) {
       debugPrint('DEBUG: Error fetching event sponsors: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<EventTicketOptionModel>> getEventTicketOptions(
+    String eventId,
+  ) async {
+    debugPrint('DEBUG: Fetching ticket options for event: $eventId...');
+    try {
+      final result = await _pbClient.pb
+          .collection('event_ticket_options')
+          .getList(filter: 'ticket.event = "$eventId"');
+      return result.items
+          .map((record) => EventTicketOptionModel.fromRecord(record))
+          .toList();
+    } catch (e) {
+      debugPrint('DEBUG: Error fetching ticket options: $e');
       return [];
     }
   }

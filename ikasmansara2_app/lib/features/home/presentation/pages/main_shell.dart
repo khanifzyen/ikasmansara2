@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 
 class MainShell extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -30,38 +31,45 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: widget.navigationShell,
-      endDrawer: const _SideDrawer(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: widget.navigationShell.currentIndex > 3
-            ? 3
-            : widget.navigationShell.currentIndex,
-        onTap: _onTap,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.volunteer_activism_outlined),
-            activeIcon: Icon(Icons.volunteer_activism),
-            label: 'Donasiku',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number_outlined),
-            activeIcon: Icon(Icons.confirmation_number),
-            label: 'Tiketku',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            activeIcon: Icon(Icons.work),
-            label: 'Loker',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Lainnya'),
-        ],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthUnauthenticated) {
+          context.go('/login');
+        }
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: widget.navigationShell,
+        endDrawer: const _SideDrawer(),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: widget.navigationShell.currentIndex > 3
+              ? 3
+              : widget.navigationShell.currentIndex,
+          onTap: _onTap,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.volunteer_activism_outlined),
+              activeIcon: Icon(Icons.volunteer_activism),
+              label: 'Donasiku',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.confirmation_number_outlined),
+              activeIcon: Icon(Icons.confirmation_number),
+              label: 'Tiketku',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.work_outline),
+              activeIcon: Icon(Icons.work),
+              label: 'Loker',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Lainnya'),
+          ],
+        ),
       ),
     );
   }
@@ -147,7 +155,6 @@ class _SideDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context); // Close drawer
                     context.read<AuthBloc>().add(AuthLogoutRequested());
-                    context.go('/login');
                   },
                 ),
               ],

@@ -402,13 +402,26 @@ const seededIds = {
 /**
  * Seed Users
  */
+/**
+ * Seed Users
+ */
 async function seedUsers(pb) {
     console.log('\n📦 Seeding Users...');
+
+    // Track counters
+    let globalCounter = 0;
+    const angkatanCounters = {};
+
+    // Sort users data by angkatan to behave somewhat predictably, 
+    // though the requirement is based on registration order. 
+    // We'll iterate the existing array as "registration order".
+
     for (const userData of usersData) {
         try {
             // Check if user already exists
             const existing = await pb.collection('users').getList(1, 1, {
-                filter: `email = "${userData.email}"`
+                filter: `email = "${userData.email}"`,
+                sort: 'created'
             });
 
             if (existing.totalItems > 0) {
@@ -417,9 +430,35 @@ async function seedUsers(pb) {
                 continue;
             }
 
-            const record = await pb.collection('users').create(userData);
+            // Calculate numbers for alumni
+            let noUrutAngkatan = null;
+            let noUrutGlobal = null;
+
+            if (userData.role === 'alumni' && userData.angkatan) {
+                globalCounter++;
+                noUrutGlobal = globalCounter;
+
+                if (!angkatanCounters[userData.angkatan]) {
+                    angkatanCounters[userData.angkatan] = 0;
+                }
+                angkatanCounters[userData.angkatan]++;
+                noUrutAngkatan = angkatanCounters[userData.angkatan];
+            }
+
+            const dataToSeed = {
+                ...userData,
+                no_urut_angkatan: noUrutAngkatan,
+                no_urut_global: noUrutGlobal
+            };
+
+            const record = await pb.collection('users').create(dataToSeed);
             seededIds.users.push(record.id);
-            console.log(`  ✅ Created user: ${userData.name}`);
+
+            const ekta = noUrutGlobal
+                ? `${userData.angkatan}.${String(noUrutAngkatan).padStart(4, '0')}.${noUrutGlobal}`
+                : 'N/A';
+            console.log(`  ✅ Created user: ${userData.name} (EKTA: ${ekta})`);
+
         } catch (error) {
             console.error(`  ❌ Failed to create user "${userData.email}":`, error.message);
         }

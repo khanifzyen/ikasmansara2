@@ -32,8 +32,16 @@ class EventRepositoryImpl implements EventRepository {
 
   @override
   Future<List<EventTicket>> getEventTickets(String eventId) async {
-    final models = await _remoteDataSource.getEventTickets(eventId);
-    return models.map((m) => m.toEntity()).toList();
+    final tickets = await _remoteDataSource.getEventTickets(eventId);
+    final options = await _remoteDataSource.getEventTicketOptions(eventId);
+
+    return tickets.map((ticketModel) {
+      final ticketOptions = options
+          .where((option) => option.ticketId == ticketModel.id)
+          .map((m) => m.toEntity())
+          .toList();
+      return ticketModel.toEntity(options: ticketOptions);
+    }).toList();
   }
 
   @override

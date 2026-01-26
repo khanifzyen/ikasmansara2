@@ -3,6 +3,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../domain/entities/event_ticket.dart';
+import '../../domain/entities/event_ticket_option.dart';
 
 part 'event_ticket_model.freezed.dart';
 part 'event_ticket_model.g.dart';
@@ -44,7 +45,7 @@ abstract class EventTicketModel with _$EventTicketModel {
     );
   }
 
-  EventTicket toEntity() {
+  EventTicket toEntity({List<EventTicketOption> options = const []}) {
     return EventTicket(
       id: id,
       eventId: eventId,
@@ -54,6 +55,7 @@ abstract class EventTicketModel with _$EventTicketModel {
       quota: quota,
       sold: sold,
       quotaStatus: quotaStatus,
+      options: options,
     );
   }
 }

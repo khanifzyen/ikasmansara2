@@ -18,6 +18,8 @@ async function migrateUsers() {
             { name: 'phone', type: 'text', required: false },
             { name: 'avatar', type: 'file', maxSelect: 1, maxSize: 5242880 },
             { name: 'angkatan', type: 'number', required: false, min: 1900, max: 2100 },
+            { name: 'no_urut_angkatan', type: 'number', required: false },
+            { name: 'no_urut_global', type: 'number', required: false },
             {
                 name: 'role',
                 type: 'select',

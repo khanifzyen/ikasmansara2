@@ -41,6 +41,8 @@ Koleksi bawaan PocketBase `users` dengan field tambahan.
 | `phone` | text | ✅ | No. WhatsApp |
 | `avatar` | file | ❌ | Foto profil |
 | `angkatan` | number | ❌ | Tahun lulus (null = Public) |
+| `no_urut_angkatan` | number | ❌ | No urut per angkatan (4 digit) |
+| `no_urut_global` | number | ❌ | No urut global pendaftaran |
 | `role` | select | ✅ | `alumni`, `public`, `admin` |
 | `job_status` | select | ❌ | `swasta`, `pns_bumn`, `wirausaha`, `mahasiswa`, `lainnya` |
 | `company` | text | ❌ | Nama perusahaan/instansi |
@@ -72,6 +74,9 @@ Koleksi bawaan PocketBase `users` dengan field tambahan.
 | `donation_target` | number | ❌ | Target donasi (jika enabled) |
 | `donation_description` | text | ❌ | Deskripsi donasi |
 | `created_by` | relation | ✅ | → users |
+| `booking_id_format` | text | ✅ | Default: "INV-{YEAR}-{SEQ}" |
+| `ticket_id_format` | text | ✅ | Default: "TIX-{SEQ}" |
+| `last_booking_seq` | number | ✅ | Default: 0 |
 
 ---
 

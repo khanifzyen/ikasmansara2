@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Wizard - Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Base Overrides for Premium Feel */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .wizard-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Responsive Wizard Steps */
+        .wizard-steps-wrapper {
+            margin-bottom: 40px;
+            position: relative;
+            padding: 10px 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            /* Hide scrollbar but keep functionality */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .wizard-steps-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .wizard-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            min-width: 600px;
+            /* Ensure structure doesn't collapse on mobile */
+        }
+
+        .wizard-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e2e8f0;
+            z-index: 0;
+            border-radius: 4px;
+        }
+
+        /* Dynamic Progress Bar */
+        .wizard-progress {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            z-index: 0;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 10;
+            padding: 0 10px;
+            text-align: center;
+            flex: 1;
+            /* Clickable area */
+            cursor: default;
+        }
+
+        .step-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #94a3b8;
+            margin: 0 auto 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            font-size: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-item.active .step-circle {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 106, 78, 0.3);
+        }
+
+        .step-item.completed .step-circle {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Checkmark for completed steps */
+        .step-item.completed .step-circle::after {
+            content: '✓';
+            font-size: 20px;
+        }
+
+        .step-item.completed .step-circle span {
+            display: none;
+        }
+
+        .step-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+            background: #f8fafc;
+            /* Match body bg */
+            padding: 4px 12px;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .step-item.active .step-label {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        /* Content Card */
+        .wizard-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-header {
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .step-subtitle {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        /* Enhanced Inputs */
+        .input-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        .input-field {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            background: #fff;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 106, 78, 0.1);
+        }
+
+        /* ID Configuration Tags */
+        .format-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag:hover {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tag::before {
+            content: '+';
+            font-weight: 700;
+        }
+
+        .preview-box {
+            background: #0f172a;
+            color: #10b981;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Dynamic Items Refined */
+        .dynamic-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            margin-bottom: 16px;
+            padding: 24px;
+        }
+
+        .dynamic-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Option Cards (Step 4) */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: #94a3b8;
+        }
+
+        .feature-card.active {
+            border-color: var(--primary);
+            background: #f0fdf4;
+        }
+
+        .feature-card h4 {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        /* Bottom Nav Buttons */
+        .wizard-footer {
+            background: white;
+            padding: 24px 40px;
+            border-top: 1px solid #e2e8f0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        /* Adjust content for fixed footer */
+        .app-container {
+            padding-bottom: 100px;
+        }
+
+        @media (min-width: 1024px) {
+            .wizard-footer {
+                left: var(--sidebar-width);
+                padding: 24px 60px;
+            }
+        }
+
+        /* Mobile Responsive Tweaks */
+        @media (max-width: 640px) {
+            .wizard-content {
+                padding: 24px;
+                border-radius: 16px;
+            }
+
+            .step-title {
+                font-size: 20px;
+            }
+
+            .inline-row {
+                grid-template-columns: 1fr;
+            }
+
+            .wizard-footer {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>🎓 Admin Panel</h2>
+            <p>IKA SMANSARA</p>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="index.html" class="sidebar-menu-item"><span class="menu-icon">🏠</span><span>Dashboard</span></a>
+            <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
+            <a href="events.html" class="sidebar-menu-item active"><span
+                    class="menu-icon">📅</span><span>Events</span></a>
+            <!-- Other links implied -->
+        </nav>
+    </aside>
+
+    <div class="app-container">
+        <!-- New Nav Header (Matches Admin) -->
+        <div class="nav-header">
+            <div class="back-btn" onclick="window.location.href='events.html'">←</div>
+            <h2>Buat Event Baru</h2>
+        </div>
+
+        <div class="wizard-container" style="padding-top: 20px;">
+
+            <!-- Process Steps -->
+            <div class="wizard-steps-wrapper">
+                <div class="wizard-progress" id="progressBar"></div>
+                <div class="wizard-steps">
+                    <div class="step-item active">
+                        <div class="step-circle"><span>1</span></div>
+                        <div class="step-label">Konfigurasi</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle"><span>2</span></div>
+                        <div class="step-label">Info Dasar</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle"><span>3</span></div>
+                        <div class="step-label">Tiket</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle"><span>4</span></div>
+                        <div class="step-label">Fitur</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle"><span>5</span></div>
+                        <div class="step-label">Review</div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="wizardForm">
+                <div class="wizard-content">
+
+                    <!-- STEP 1: CONFIGURATION -->
+                    <div class="step-pane active" id="step1">
+                        <div class="step-header">
+                            <h2 class="step-title">🛠️ Konfigurasi ID</h2>
+                            <p class="step-subtitle">Tentukan format penomoran untuk invoice dan tiket agar sistematis.
+                            </p>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Kode Event (Prefix)</label>
+                            <input type="text" class="input-field" id="eventCode" placeholder="Contoh: REUNI26"
+                                oninput="updatePreviews()"
+                                style="text-transform: uppercase; font-family: monospace; letter-spacing: 1px;">
+                            <p style="font-size: 13px; color: #64748b; margin-top: 6px;">Akan digunakan sebagai prefix
+                                global.</p>
+                        </div>
+
+                        <div class="inline-row" style="margin-top: 24px;">
+                            <div class="input-group">
+                                <label>Format Booking ID</label>
+                                <input type="text" class="input-field" id="bookingFormat" value="{CODE}-{YEAR}-{SEQ}"
+                                    oninput="updatePreviews()">
+                                <div class="format-tags">
+                                    <span class="tag" onclick="insertTag('bookingFormat', '{CODE}')">{CODE}</span>
+                                    <span class="tag" onclick="insertTag('bookingFormat', '{YEAR}')">{YEAR}</span>
+                                    <span class="tag" onclick="insertTag('bookingFormat', '{SEQ}')">{SEQ}</span>
+                                </div>
+                                <div class="preview-box">
+                                    <span style="opacity: 0.7;">OUTPUT:</span> <span id="bookingPreview"
+                                        style="font-weight: 700;">...</span>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Format Ticket ID</label>
+                                <input type="text" class="input-field" id="ticketFormat" value="TIX-{CODE}-{SEQ}"
+                                    oninput="updatePreviews()">
+                                <div class="format-tags">
+                                    <span class="tag" onclick="insertTag('ticketFormat', '{CODE}')">{CODE}</span>
+                                    <span class="tag" onclick="insertTag('ticketFormat', '{SEQ}')">{SEQ}</span>
+                                    <span class="tag" onclick="insertTag('ticketFormat', '{RAND}')">{RAND}</span>
+                                </div>
+                                <div class="preview-box">
+                                    <span style="opacity: 0.7;">OUTPUT:</span> <span id="ticketPreview"
+                                        style="font-weight: 700;">...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: BASIC INFO -->
+                    <div class="step-pane" id="step2">
+                        <div class="step-header">
+                            <h2 class="step-title">📝 Informasi Dasar</h2>
+                            <p class="step-subtitle">Lengkapi detail utama mengenai event yang akan diselenggarakan.</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Judul Event</label>
+                            <input type="text" class="input-field" placeholder="Contoh: Jalan Sehat & Reuni Akbar 2026">
+                        </div>
+
+                        <div class="inline-row">
+                            <div class="input-group">
+                                <label>Tanggal Mulai</label>
+                                <input type="date" class="input-field">
+                            </div>
+                            <div class="input-group">
+                                <label>Waktu</label>
+                                <input type="time" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Lokasi</label>
+                            <input type="text" class="input-field" placeholder="Nama Tempat / Alamat Lengkap">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Deskripsi Event</label>
+                            <textarea class="input-field" rows="5"
+                                placeholder="Jelaskan detail acara menarik Anda di sini..."></textarea>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Banner Event</label>
+                            <div class="upload-zone">
+                                <div class="upload-icon" style="font-size: 40px; margin-bottom: 16px;">🖼️</div>
+                                <h4 style="font-size: 16px; margin-bottom: 4px;">Upload Banner Utama</h4>
+                                <p style="color: #64748b; font-size: 13px;">Rekomendasi: 1200x600px (Max 5MB)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: TICKETING -->
+                    <div class="step-pane" id="step3">
+                        <div class="step-header">
+                            <h2 class="step-title">🎟️ Tiket & Peserta</h2>
+                            <p class="step-subtitle">Atur kuota, harga, dan variasi tiket yang tersedia.</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Desain Tiket / Kaos</label>
+                            <div class="upload-zone" style="padding: 20px;">
+                                <div style="font-size: 24px;">👕</div>
+                                <span style="font-size: 14px; color: #64748b;">Upload Preview Merchandise</span>
+                            </div>
+                        </div>
+
+                        <div class="inline-row">
+                            <div class="input-group">
+                                <label>Harga Tiket (Rp)</label>
+                                <input type="number" class="input-field" value="50000">
+                            </div>
+                            <div class="input-group">
+                                <label>Kuota Peserta</label>
+                                <input type="number" class="input-field" value="1000">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Fasilitas (Include)</label>
+                            <input type="text" class="input-field" placeholder="Contoh: Kaos, Snack, Sticker, Doorprice"
+                                value="Kaos, Snack, Doorprice">
+                            <p style="font-size: 12px; color: #64748b; margin-top: 6px;">Pisahkan dengan koma.</p>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px dashed #e2e8f0; margin: 32px 0;">
+
+                        <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Variasi Tambahan</h4>
+                        <div id="ticketOptionsList">
+                            <div class="dynamic-item">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <label style="margin:0;">Nama Variasi</label>
+                                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                                </div>
+                                <input type="text" class="input-field" value="Ukuran Kaos" style="margin-bottom: 12px;">
+                                <label style="display:block; margin-bottom:8px;">Opsi (Format: Label|ExtraHarga)</label>
+                                <textarea class="input-field" rows="3" style="font-family: monospace;">S|0
+M|0
+L|0
+XL|0
+XXL|10000</textarea>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-outline" onclick="addTicketOption()"
+                            style="border-style: dashed;">+ Tambah Variasi Baru</button>
+                    </div>
+
+                    <!-- STEP 4: FEATURES -->
+                    <div class="step-pane" id="step4">
+                        <div class="step-header">
+                            <h2 class="step-title">⚡ Fitur Tambahan</h2>
+                            <p class="step-subtitle">Aktifkan fitur pendukung untuk memeriahkan event ini.</p>
+                        </div>
+
+                        <div class="features-grid">
+                            <!-- Subevent Feature -->
+                            <div class="feature-card" id="cardSubevent">
+                                <div
+                                    style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: start;">
+                                    <div
+                                        style="font-size: 32px; background: #e0f2fe; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                                        🎈</div>
+                                    <input type="checkbox" class="feature-checkbox" checked
+                                        onchange="toggleFeature('subevent', this)">
+                                </div>
+                                <h4>Sub-Events</h4>
+                                <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Kegiatan pendukung seperti
+                                    donor darah, cek kesehatan, atau lomba mini.</p>
+
+                                <div id="subeventConfig"
+                                    style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                                    <button type="button" class="btn-outline" style="font-size: 13px; padding: 8px;"
+                                        onclick="addSubevent()">+ Tambah Kegiatan</button>
+                                    <div id="subeventList" style="margin-top: 12px;">
+                                        <!-- Items will go here -->
+                                        <div class="dynamic-item" style="padding: 16px;">
+                                            <div style="font-weight: 600; font-size: 14px;">Cek Kesehatan</div>
+                                            <div style="font-size: 12px; color: #64748b;">Kuota: 200</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sponsorship Feature -->
+                            <div class="feature-card" id="cardSponsor">
+                                <div
+                                    style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: start;">
+                                    <div
+                                        style="font-size: 32px; background: #fef3c7; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                                        🤝</div>
+                                    <input type="checkbox" class="feature-checkbox" checked
+                                        onchange="toggleFeature('sponsor', this)">
+                                </div>
+                                <h4>Sponsorship</h4>
+                                <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Buka kesempatan bagi
+                                    sponsor untuk mendukung acara dengan tier Platinum/Gold.</p>
+                            </div>
+
+                            <!-- Donation Feature -->
+                            <div class="feature-card" id="cardDonation">
+                                <div
+                                    style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: start;">
+                                    <div
+                                        style="font-size: 32px; background: #dcfce7; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                                        💰</div>
+                                    <input type="checkbox" class="feature-checkbox" checked
+                                        onchange="toggleFeature('donation', this)">
+                                </div>
+                                <h4>Open Donasi</h4>
+                                <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Fitur penggalangan dana
+                                    sukarela yang terintegrasi langsung dengan event.</p>
+                                <div id="donationConfig" style="margin-top: 20px;">
+                                    <label style="font-size: 12px; font-weight: 600;">Target Donasi (Rp)</label>
+                                    <input type="number" class="input-field" value="5000000"
+                                        style="padding: 8px; font-size: 13px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: REVIEW -->
+                    <div class="step-pane" id="step5">
+                        <div class="step-header" style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">🚀</div>
+                            <h2 class="step-title">Siap untuk Publish?</h2>
+                            <p class="step-subtitle">Pastikan semua data di bawah sudah sesuai sebelum event
+                                diluncurkan.</p>
+                        </div>
+
+                        <div
+                            style="background: #f8fafc; padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; max-width: 600px; margin: 0 auto;">
+                            <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px;">
+                                <div style="width: 80px; height: 80px; background: #cbd5e1; border-radius: 12px;"></div>
+                                <div>
+                                    <h3 style="font-size: 18px; font-weight: 700;">Jalan Sehat & Reuni Akbar 2026</h3>
+                                    <p style="color: #64748b; font-size: 14px;">20 Agustus 2026 • 06:00 WIB</p>
+                                </div>
+                            </div>
+
+                            <div
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                                <div>
+                                    <div
+                                        style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">
+                                        Booking ID Example</div>
+                                    <div id="finalBookingPreview"
+                                        style="font-family: monospace; font-weight: 700; color: #0f172a; margin-top: 4px;">
+                                        -</div>
+                                </div>
+                                <div>
+                                    <div
+                                        style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase;">
+                                        Ticket ID Example</div>
+                                    <div id="finalTicketPreview"
+                                        style="font-family: monospace; font-weight: 700; color: #0f172a; margin-top: 4px;">
+                                        -</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 32px;">
+                            <div class="input-group" style="display: inline-block; text-align: left;">
+                                <label>Status Publikasi</label>
+                                <select class="input-field" style="width: 200px;">
+                                    <option>Simpan sebagai Draft</option>
+                                    <option selected>Publikasikan Sekarang</option>
+                                    <option>Jadwalkan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Fixed Footer -->
+    <div class="wizard-footer">
+        <button class="btn-outline" id="prevBtn" onclick="prevStep()" style="width: auto; padding: 12px 32px;"
+            disabled>Kembali</button>
+        <button class="btn-primary" id="nextBtn" onclick="nextStep()"
+            style="width: auto; padding: 12px 40px; box-shadow: 0 4px 12px rgba(0, 106, 78, 0.2);">Lanjut
+            &rarr;</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function updateStepUI() {
+            // Update pane visibility
+            document.querySelectorAll('.step-pane').forEach((pane, index) => {
+                pane.classList.remove('active');
+                if (index + 1 === currentStep) pane.classList.add('active');
+            });
+
+            // Update step indicators
+            const items = document.querySelectorAll('.step-item');
+            items.forEach((item, index) => {
+                const stepNum = index + 1;
+                item.classList.remove('active', 'completed');
+                if (stepNum === currentStep) {
+                    item.classList.add('active');
+                    // Scroll active step into view on mobile
+                    item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                } else if (stepNum < currentStep) {
+                    item.classList.add('completed');
+                }
+            });
+
+            // Update progress bar
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentStep === 1;
+            document.getElementById('nextBtn').innerHTML = currentStep === totalSteps ? 'Selesai & Publish' : 'Lanjut &rarr;';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepUI();
+                if (currentStep === 5) {
+                    document.getElementById('finalBookingPreview').textContent = document.getElementById('bookingPreview').textContent;
+                    document.getElementById('finalTicketPreview').textContent = document.getElementById('ticketPreview').textContent;
+                }
+            } else {
+                alert('Event Created Successfully!');
+                window.location.href = 'events.html';
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepUI();
+            }
+        }
+
+        function updatePreviews() {
+            const code = document.getElementById('eventCode').value.toUpperCase() || 'CODE';
+            const year = new Date().getFullYear();
+
+            let bookingFmt = document.getElementById('bookingFormat').value;
+            bookingFmt = bookingFmt.replace('{CODE}', code).replace('{YEAR}', year).replace('{SEQ}', '0001');
+            document.getElementById('bookingPreview').textContent = bookingFmt;
+
+            let ticketFmt = document.getElementById('ticketFormat').value;
+            ticketFmt = ticketFmt.replace('{CODE}', code).replace('{SEQ}', '001').replace('{RAND}', 'X7A9');
+            document.getElementById('ticketPreview').textContent = ticketFmt;
+        }
+
+        function insertTag(inputId, tag) {
+            const input = document.getElementById(inputId);
+            input.value += tag;
+            updatePreviews();
+        }
+
+        function toggleFeature(id, checkbox) {
+            // Visual toggle for cards
+            const card = document.getElementById('card' + id.charAt(0).toUpperCase() + id.slice(1));
+            // In a real app, this would enable/disable inputs
+        }
+
+        // Init
+        updateStepUI();
+        updatePreviews();
+    </script>
+</body>
+
+</html>

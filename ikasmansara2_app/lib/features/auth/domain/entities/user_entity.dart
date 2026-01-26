@@ -74,6 +74,8 @@ class UserEntity extends Equatable {
   final JobStatus? jobStatus;
   final String? company;
   final String? domisili;
+  final int? noUrutAngkatan;
+  final int? noUrutGlobal;
   final bool isVerified;
   final bool verified;
   final DateTime? verifiedAt;
@@ -89,6 +91,8 @@ class UserEntity extends Equatable {
     this.jobStatus,
     this.company,
     this.domisili,
+    this.noUrutAngkatan,
+    this.noUrutGlobal,
     this.isVerified = false,
     this.verified = false,
     this.verifiedAt,
@@ -96,6 +100,14 @@ class UserEntity extends Equatable {
 
   bool get isAlumni => role == UserRole.alumni;
   bool get isAdmin => role == UserRole.admin;
+
+  String get nomorEkta {
+    if (angkatan == null || noUrutAngkatan == null || noUrutGlobal == null) {
+      return '-';
+    }
+    final paddedNoUrut = noUrutAngkatan.toString().padLeft(4, '0');
+    return '$angkatan.$paddedNoUrut.$noUrutGlobal';
+  }
 
   @override
   List<Object?> get props => [
@@ -109,6 +121,8 @@ class UserEntity extends Equatable {
     jobStatus,
     company,
     domisili,
+    noUrutAngkatan,
+    noUrutGlobal,
     isVerified,
     verified,
     verifiedAt,

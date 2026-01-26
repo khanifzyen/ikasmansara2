@@ -7,11 +7,13 @@ import '../../domain/entities/user_entity.dart';
 import '../../domain/failures/auth_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../datasources/auth_local_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
+  final AuthLocalDataSource _localDataSource;
 
-  AuthRepositoryImpl(this._remoteDataSource);
+  AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
   bool get isAuthenticated => _remoteDataSource.isAuthenticated;
@@ -23,6 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (user == null) {
         return (data: null, failure: const UserNotFoundFailure());
       }
+      await _localDataSource.cacheUser(user);
       return (data: user.toEntity(), failure: null);
     } catch (e) {
       return (data: null, failure: _mapException(e));
@@ -48,6 +51,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       await _remoteDataSource.saveAuth();
+      await _localDataSource.cacheUser(user);
       return (data: user.toEntity(), failure: null);
     } catch (e) {
       return (data: null, failure: _mapException(e));
@@ -116,6 +120,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthResult<void>> logout() async {
     try {
       await _remoteDataSource.logout();
+      await _localDataSource.clearUser();
       return (data: null, failure: null);
     } catch (e) {
       return (data: null, failure: _mapException(e));
@@ -127,6 +132,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final user = await _remoteDataSource.refreshAuth();
       await _remoteDataSource.saveAuth();
+      await _localDataSource.cacheUser(user);
       return (data: user.toEntity(), failure: null);
     } catch (e) {
       return (data: null, failure: _mapException(e));
@@ -154,7 +160,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // Handle specific error codes
       if (statusCode == 400) {
         final data = response['data'];
-        if (data != null && data is Map) {
+        if (data != null && data is Map && data.isNotEmpty) {
           // Email already exists
           if (data['email'] != null) {
             final emailError = data['email'];

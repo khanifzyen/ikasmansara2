@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'event_ticket_option.dart';
 
 class EventTicket extends Equatable {
   final String id;
@@ -9,6 +10,7 @@ class EventTicket extends Equatable {
   final int quota;
   final int sold;
   final String? quotaStatus; // 'available', 'sold_out', 'limited'
+  final List<EventTicketOption> options;
 
   const EventTicket({
     required this.id,
@@ -19,6 +21,7 @@ class EventTicket extends Equatable {
     required this.quota,
     required this.sold,
     this.quotaStatus,
+    this.options = const [],
   });
 
   @override
@@ -31,5 +34,6 @@ class EventTicket extends Equatable {
     quota,
     sold,
     quotaStatus,
+    options,
   ];
 }

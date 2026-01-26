@@ -43,10 +43,12 @@ async function migrateEvents() {
             {
                 name: 'created_by',
                 type: 'relation',
-                required: true,
                 collectionId: usersId,
                 maxSelect: 1
-            }
+            },
+            { name: 'booking_id_format', type: 'text', required: true },
+            { name: 'ticket_id_format', type: 'text', required: true },
+            { name: 'last_booking_seq', type: 'number', required: false }
         ]
     });
 

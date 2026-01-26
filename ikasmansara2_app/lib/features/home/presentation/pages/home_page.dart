@@ -339,26 +339,65 @@ class _MenuGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return layoutGrid([
+    final menuItems = [
       _MenuItem(
         icon: Icons.volunteer_activism_outlined,
         label: 'Donasi',
-        onTap: () {},
+        onTap: () => context.push('/donations'),
       ),
-      _MenuItem(icon: Icons.campaign_outlined, label: 'Berita', onTap: () {}),
-      _MenuItem(icon: Icons.work_outline, label: 'Loker', onTap: () {}),
+      _MenuItem(
+        icon: Icons.confirmation_number_outlined,
+        label: 'Kegiatan',
+        onTap: () => context.push('/tickets'),
+      ),
+      _MenuItem(
+        icon: Icons.newspaper_outlined,
+        label: 'Berita',
+        onTap: () => context.push('/news'),
+      ),
+      _MenuItem(
+        icon: Icons.work_outline,
+        label: 'Loker',
+        onTap: () => context.push('/loker'),
+      ),
       _MenuItem(
         icon: Icons.shopping_bag_outlined,
         label: 'Market',
-        onTap: () {},
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fitur Market akan segera hadir!')),
+          );
+        },
       ),
-    ]);
-  }
+      _MenuItem(
+        icon: Icons.forum_outlined,
+        label: 'Forum',
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fitur Forum akan segera hadir!')),
+          );
+        },
+      ),
+      _MenuItem(
+        icon: Icons.people_outline,
+        label: 'Direktori',
+        onTap: () => context.push('/directory'),
+      ),
+      _MenuItem(
+        icon: Icons.person_outline,
+        label: 'Profil',
+        onTap: () => context.push('/profile'),
+      ),
+    ];
 
-  Widget layoutGrid(List<Widget> children) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: children,
+    return GridView.count(
+      crossAxisCount: 4,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      childAspectRatio: 0.75,
+      children: menuItems,
     );
   }
 }
