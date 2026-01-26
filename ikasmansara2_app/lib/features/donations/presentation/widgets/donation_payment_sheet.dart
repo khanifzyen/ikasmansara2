@@ -249,7 +249,9 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                             ],
                           ),
                           value: method,
+                          // ignore: deprecated_member_use
                           groupValue: _selectedPaymentMethod,
+                          // ignore: deprecated_member_use
                           onChanged: (val) {
                             setState(() {
                               _selectedPaymentMethod = val;

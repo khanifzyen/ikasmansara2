@@ -93,6 +93,11 @@ class AuthRemoteDataSource {
     await _pb.collection('users').requestVerification(email);
   }
 
+  /// Request password reset email
+  Future<void> requestPasswordReset(String email) async {
+    await _pb.collection('users').requestPasswordReset(email);
+  }
+
   /// Save auth to secure storage
   Future<void> saveAuth() async {
     await _pbClient.saveAuth();

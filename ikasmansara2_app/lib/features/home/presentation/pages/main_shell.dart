@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_event.dart';
 
 class MainShell extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -135,6 +138,16 @@ class _SideDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     context.push('/profile');
+                  },
+                ),
+                const Divider(height: 32, color: AppColors.border),
+                _DrawerItem(
+                  icon: Icons.logout,
+                  label: 'Keluar',
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    context.read<AuthBloc>().add(AuthLogoutRequested());
+                    context.go('/login');
                   },
                 ),
               ],

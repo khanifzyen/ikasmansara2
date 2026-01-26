@@ -180,13 +180,64 @@ class HomePage extends StatelessWidget {
                     const _MenuGrid(),
 
                     const SizedBox(height: 30),
+                    // Agenda Section
+                    _SectionHeader(
+                      title: 'Agenda Kegiatan',
+                      onViewAll: () {
+                        context.push('/tickets');
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    BlocBuilder<EventsBloc, EventsState>(
+                      builder: (context, state) {
+                        if (state is EventsLoaded) {
+                          if (state.events.isEmpty) {
+                            return const Center(
+                              child: Text('Belum ada agenda kegiatan'),
+                            );
+                          }
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: state.events.map((event) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 16),
+                                  child: InkWell(
+                                    onTap: () => context.push(
+                                      '/event-detail',
+                                      extra: event.id,
+                                    ),
+                                    child: _AgendaCard(
+                                      day: DateFormat(
+                                        'EEEE',
+                                        'id',
+                                      ).format(event.date),
+                                      time: event.time,
+                                      title: event.title,
+                                      date: DateFormat(
+                                        'dd MMMM yyyy',
+                                        'id',
+                                      ).format(event.date),
+                                      location: event.location,
+                                      isRegisterOpen: event.isRegistrationOpen,
+                                      imageUrl: event.banner,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          );
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
+
+                    const SizedBox(height: 30),
+
                     // Donation Slider
                     _SectionHeader(
                       title: 'Program Donasi',
                       onViewAll: () {
-                        // Navigate to Donasi branch in Shell
-                        // Assuming index 1 is Donations
-                        // (Usually context.go('/donations'))
                         context.push('/donations');
                       },
                     ),
@@ -220,55 +271,6 @@ class HomePage extends StatelessWidget {
                                       percent: donation.progress,
                                       isUrgent: donation.priority == 'urgent',
                                       imageUrl: donation.banner,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          );
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // Agenda Section
-                    _SectionHeader(
-                      title: 'Agenda Kegiatan',
-                      onViewAll: () {
-                        // TODO: Navigate to events list if exists
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    BlocBuilder<EventsBloc, EventsState>(
-                      builder: (context, state) {
-                        if (state is EventsLoaded) {
-                          if (state.events.isEmpty) {
-                            return const Center(
-                              child: Text('Belum ada agenda kegiatan'),
-                            );
-                          }
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: state.events.map((event) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 16),
-                                  child: InkWell(
-                                    onTap: () => context.push(
-                                      '/event-detail',
-                                      extra: event.id,
-                                    ),
-                                    child: _AgendaCard(
-                                      title: event.title,
-                                      date: DateFormat(
-                                        'dd MMMM yyyy',
-                                        'id',
-                                      ).format(event.date),
-                                      location: event.location,
-                                      isRegisterOpen: event.isRegistrationOpen,
-                                      imageUrl: event.banner,
                                     ),
                                   ),
                                 );
@@ -437,6 +439,8 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _AgendaCard extends StatelessWidget {
+  final String day;
+  final String time;
   final String title;
   final String date;
   final String location;
@@ -444,6 +448,8 @@ class _AgendaCard extends StatelessWidget {
   final String? imageUrl;
 
   const _AgendaCard({
+    required this.day,
+    required this.time,
     required this.title,
     required this.date,
     required this.location,
@@ -539,7 +545,7 @@ class _AgendaCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  date,
+                  '$day, $date • $time',
                   style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -629,10 +635,9 @@ class _NewsCard extends StatelessWidget {
                     child: Image.asset(
                       imageUrl ?? 'assets/images/placeholder_news.png',
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.newspaper,
-                        size: 20,
-                        color: Colors.grey,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'assets/images/placeholder_news.png',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

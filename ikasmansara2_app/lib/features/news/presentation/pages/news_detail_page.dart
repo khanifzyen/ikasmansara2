@@ -59,12 +59,14 @@ class NewsDetailPage extends StatelessWidget {
                           fit: BoxFit.cover,
                           placeholder: (context, url) =>
                               Container(color: Colors.grey[200]),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/images/placeholder_news.png',
+                            fit: BoxFit.cover,
+                          ),
                         )
-                      : Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image, size: 50),
+                      : Image.asset(
+                          'assets/images/placeholder_news.png',
+                          fit: BoxFit.cover,
                         ),
                 ),
               ),

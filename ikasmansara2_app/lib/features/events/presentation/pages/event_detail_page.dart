@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
+import 'package:get_it/get_it.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../domain/entities/event.dart';
+import '../../domain/entities/event_ticket.dart';
+import '../../domain/entities/event_sub_event.dart';
+import '../../domain/entities/event_sponsor.dart';
+import '../../domain/usecases/get_event_detail.dart';
+import '../../domain/usecases/get_event_tickets.dart';
+import '../../domain/usecases/get_event_sub_events.dart';
+import '../../domain/usecases/get_event_sponsors.dart';
+import '../widgets/ticket_tab.dart';
+import '../widgets/sub_event_tab.dart';
+import '../widgets/sponsor_tab.dart';
+import '../widgets/event_donation_tab.dart';
 
 class EventDetailPage extends StatefulWidget {
-  const EventDetailPage({super.key});
+  final String eventId;
+
+  const EventDetailPage({super.key, required this.eventId});
 
   @override
   State<EventDetailPage> createState() => _EventDetailPageState();
@@ -11,13 +28,30 @@ class EventDetailPage extends StatefulWidget {
 class _EventDetailPageState extends State<EventDetailPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _ticketCount = 1;
-  static const int _ticketPrice = 50000;
+  late Future<_EventData> _dataFuture;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _dataFuture = _fetchData();
+  }
+
+  Future<_EventData> _fetchData() async {
+    final eventId = widget.eventId;
+    final results = await Future.wait([
+      GetIt.I<GetEventDetail>().call(eventId),
+      GetIt.I<GetEventTickets>().call(eventId),
+      GetIt.I<GetEventSubEvents>().call(eventId),
+      GetIt.I<GetEventSponsors>().call(eventId),
+    ]);
+
+    return _EventData(
+      event: results[0] as Event,
+      tickets: results[1] as List<EventTicket>,
+      subEvents: results[2] as List<EventSubEvent>,
+      sponsors: results[3] as List<EventSponsor>,
+    );
   }
 
   @override
@@ -26,339 +60,208 @@ class _EventDetailPageState extends State<EventDetailPage>
     super.dispose();
   }
 
-  void _incrementTicket() {
-    setState(() {
-      _ticketCount++;
-    });
-  }
-
-  void _decrementTicket() {
-    if (_ticketCount > 1) {
-      setState(() {
-        _ticketCount--;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 220,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                  size: 20,
-                ),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(
-                'assets/images/logo-ika.png', // Placeholder for event banner
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+      body: FutureBuilder<_EventData>(
+        future: _dataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('Event not found'));
+          }
 
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          final data = snapshot.data!;
+          final event = data.event;
+          final dayName = DateFormat('EEEE', 'id').format(event.date);
+          final dateStr = DateFormat('d MMMM yyyy', 'id').format(event.date);
+          final fullDateString = '$dayName, $dateStr';
+
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 220,
+                leading: IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: event.banner != null && event.banner!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: event.banner!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/images/placeholder_event.png',
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/images/placeholder_event.png',
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
-              // margin: const EdgeInsets.top: -20, // Negative margin logic handled by structure
-              transform: Matrix4.translationValues(0, -20, 0),
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLight.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Text(
-                      'MINGGU, 20 AGUSTUS 2026',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
+              SliverToBoxAdapter(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Jalan Sehat & Reuni Akbar 2026',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Row(
+                  transform: Matrix4.translationValues(0, -20, 0),
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                        color: AppColors.textGrey,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Lapangan Utama SMAN 1 Jepara',
-                        style: TextStyle(
-                          color: AppColors.textGrey,
-                          fontSize: 13,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          fullDateString.toUpperCase(),
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Mari meriahkan acara tahunan kita! Reuni akbar sekaligus jalan sehat keliling kota Jepara. Tersedia ratusan doorprize menarik, hiburan musik dari band alumni, dan nostalgia masa sekolah.',
-                    style: TextStyle(
-                      color: AppColors.textGrey,
-                      fontSize: 14,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Tabs
-                  TabBar(
-                    controller: _tabController,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: AppColors.textGrey,
-                    indicatorColor: AppColors.primary,
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-                    tabs: const [
-                      Tab(text: 'Tiket'),
-                      Tab(text: 'Sub-event'),
-                      Tab(text: 'Sponsorship'),
-                      Tab(text: 'Donasi'),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  SizedBox(
-                    height: 600, // Fixed height for tab view content
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        // Ticket Tab
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(height: 8),
+                      Text(
+                        event.title,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time,
+                            size: 16,
+                            color: AppColors.textGrey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            event.time,
+                            style: const TextStyle(
+                              color: AppColors.textGrey,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 16,
+                            color: AppColors.textGrey,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              event.location,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.textGrey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        event.description,
+                        style: const TextStyle(
+                          color: AppColors.textGrey,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Tabs
+                      TabBar(
+                        controller: _tabController,
+                        labelColor: AppColors.primary,
+                        unselectedLabelColor: AppColors.textGrey,
+                        indicatorColor: AppColors.primary,
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        labelStyle: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        tabs: const [
+                          Tab(text: 'Tiket'),
+                          Tab(text: 'Sub-event'),
+                          Tab(text: 'Sponsorship'),
+                          Tab(text: 'Donasi'),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        height: 600,
+                        child: TabBarView(
+                          controller: _tabController,
                           children: [
-                            const Text(
-                              'Pesan Tiket Baru',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColors.background,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Tiket Jalan Sehat',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Include: Kaos, Snack, Kupon',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColors.textGrey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      InkWell(
-                                        onTap: _decrementTicket,
-                                        child: Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.grey[300]!,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            color: Colors.white,
-                                          ),
-                                          child: const Icon(
-                                            Icons.remove,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        '$_ticketCount',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      InkWell(
-                                        onTap: _incrementTicket,
-                                        child: Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.grey[300]!,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            color: Colors.white,
-                                          ),
-                                          child: const Icon(
-                                            Icons.add,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryLight.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                children: [
-                                  const Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Harga Satuan'),
-                                      Text('Rp 50.000'),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text('Jumlah Tiket'),
-                                      Text('$_ticketCount'),
-                                    ],
-                                  ),
-                                  const Divider(height: 24),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Total Pembayaran',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors
-                                              .secondary, // Assuming secondary is a dark enough text color or use primary
-                                        ),
-                                      ),
-                                      Text(
-                                        'Rp ${(_ticketCount * _ticketPrice).toString()}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: const Text('Beli Tiket Sekarang'),
-                              ),
-                            ),
+                            TicketTab(tickets: data.tickets),
+                            SubEventTab(subEvents: data.subEvents),
+                            SponsorTab(sponsors: data.sponsors),
+                            const EventDonationTab(),
                           ],
                         ),
-
-                        // Sub-event Tab (Placeholder)
-                        const Center(child: Text('Sub-events Coming Soon')),
-
-                        // Sponsors Tab (Placeholder)
-                        const Center(child: Text('Sponsorship Coming Soon')),
-
-                        // Donation Tab (Placeholder)
-                        const Center(
-                          child: Text('Donation for Event Coming Soon'),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
+}
+
+class _EventData {
+  final Event event;
+  final List<EventTicket> tickets;
+  final List<EventSubEvent> subEvents;
+  final List<EventSponsor> sponsors;
+
+  _EventData({
+    required this.event,
+    required this.tickets,
+    required this.subEvents,
+    required this.sponsors,
+  });
 }

@@ -53,12 +53,15 @@ class NewsCard extends StatelessWidget {
                       placeholder: (context, url) => const Center(
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      errorWidget: (context, url, error) => const Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey,
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/images/placeholder_news.png',
+                        fit: BoxFit.cover,
                       ),
                     )
-                  : const Icon(Icons.image, color: Colors.grey),
+                  : Image.asset(
+                      'assets/images/placeholder_news.png',
+                      fit: BoxFit.cover,
+                    ),
             ),
             const SizedBox(width: 12),
             // Content

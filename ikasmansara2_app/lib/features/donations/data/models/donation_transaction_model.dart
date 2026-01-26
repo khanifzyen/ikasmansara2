@@ -42,7 +42,8 @@ abstract class DonationTransactionModel with _$DonationTransactionModel {
       paymentStatus: record.getStringValue('payment_status'),
       paymentMethod: record.getStringValue('payment_method'),
       transactionId: record.getStringValue('transaction_id'),
-      created: DateTime.parse(record.get<String>('created')),
+      created:
+          DateTime.tryParse(record.getStringValue('created')) ?? DateTime.now(),
     );
   }
 

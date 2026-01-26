@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/di/injection.dart';
 import '../bloc/donation_list_bloc.dart';
 
@@ -47,7 +46,7 @@ class DonationListPage extends StatelessWidget {
                   final donation = state.donations[index];
                   // Use a helper to resolve image URL
                   final imageUrl = donation.banner.isNotEmpty
-                      ? '${AppConstants.pocketBaseUrl}/api/files/donations/${donation.id}/${donation.banner}'
+                      ? donation.banner
                       : 'assets/images/placeholder_donation.png';
 
                   return _CampaignCard(

@@ -10,9 +10,9 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/role_selection_page.dart';
 import '../../features/auth/presentation/pages/register_alumni_page.dart';
 import '../../features/auth/presentation/pages/register_public_page.dart';
+import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/main_shell.dart';
-import '../../features/donations/presentation/pages/donation_list_page.dart';
 import '../../features/events/presentation/pages/ticket_list_page.dart';
 import '../../features/loker/presentation/pages/loker_list_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
@@ -64,6 +64,13 @@ class AppRouter {
         builder: (context, state) => const LoginPage(),
       ),
 
+      // Forgot Password
+      GoRoute(
+        path: '/forgot-password',
+        name: 'forgot-password',
+        builder: (context, state) => const ForgotPasswordPage(),
+      ),
+
       // Register Alumni
       GoRoute(
         path: '/register/alumni',
@@ -101,7 +108,7 @@ class AppRouter {
               GoRoute(
                 path: '/donations',
                 name: 'donations',
-                builder: (context, state) => const DonationListPage(),
+                builder: (context, state) => const MyDonationsPage(),
               ),
             ],
           ),
@@ -156,7 +163,10 @@ class AppRouter {
       GoRoute(
         path: '/event-detail',
         name: 'event-detail',
-        builder: (context, state) => const EventDetailPage(),
+        builder: (context, state) {
+          final eventId = state.extra as String;
+          return EventDetailPage(eventId: eventId);
+        },
       ),
 
       // Ticket Detail (Phase 5)

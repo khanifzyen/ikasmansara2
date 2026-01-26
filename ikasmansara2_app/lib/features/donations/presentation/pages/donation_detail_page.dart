@@ -4,7 +4,6 @@ import '../../../../core/constants/app_colors.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/di/injection.dart';
 import '../bloc/donation_detail_bloc.dart';
 import '../widgets/donation_payment_sheet.dart';
@@ -63,7 +62,7 @@ class DonationDetailPage extends StatelessWidget {
           } else if (state is DonationDetailLoaded) {
             final donation = state.donation;
             final imageUrl = donation.banner.isNotEmpty
-                ? '${AppConstants.pocketBaseUrl}/api/files/donations/${donation.id}/${donation.banner}'
+                ? donation.banner
                 : 'assets/images/placeholder_donation.png';
 
             final currencyFormat = NumberFormat.currency(

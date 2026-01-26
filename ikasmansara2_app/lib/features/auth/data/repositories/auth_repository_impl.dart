@@ -133,6 +133,16 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<AuthResult<void>> requestPasswordReset(String email) async {
+    try {
+      await _remoteDataSource.requestPasswordReset(email);
+      return (data: null, failure: null);
+    } catch (e) {
+      return (data: null, failure: _mapException(e));
+    }
+  }
+
   /// Map PocketBase exceptions to domain failures
   AuthFailure _mapException(dynamic e) {
     debugPrint('AuthRepository: _mapException: $e');

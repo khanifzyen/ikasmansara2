@@ -72,4 +72,7 @@ abstract class AuthRepository {
 
   /// Refresh auth token
   Future<AuthResult<UserEntity>> refreshAuth();
+
+  /// Request password reset email
+  Future<AuthResult<void>> requestPasswordReset(String email);
 }

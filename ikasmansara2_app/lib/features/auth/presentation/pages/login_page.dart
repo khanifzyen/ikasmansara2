@@ -167,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // TODO: Forgot password
+                        context.push('/forgot-password');
                       },
                       child: const Text('Lupa Password?'),
                     ),

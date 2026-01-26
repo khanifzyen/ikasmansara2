@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import '../../../../core/network/pb_client.dart';
 import '../models/event_model.dart';
+import '../models/event_ticket_model.dart';
+import '../models/event_sub_event_model.dart';
+import '../models/event_sponsor_model.dart';
 
 abstract class EventRemoteDataSource {
   Future<List<EventModel>> getEvents({
@@ -9,6 +12,9 @@ abstract class EventRemoteDataSource {
     String? category,
   });
   Future<EventModel> getEventDetail(String id);
+  Future<List<EventTicketModel>> getEventTickets(String eventId);
+  Future<List<EventSubEventModel>> getEventSubEvents(String eventId);
+  Future<List<EventSponsorModel>> getEventSponsors(String eventId);
 }
 
 class EventRemoteDataSourceImpl implements EventRemoteDataSource {
@@ -52,6 +58,55 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     } catch (e) {
       debugPrint('DEBUG: Error fetching event detail: $e');
       rethrow;
+    }
+  }
+
+  @override
+  Future<List<EventTicketModel>> getEventTickets(String eventId) async {
+    debugPrint('DEBUG: Fetching tickets for event: $eventId...');
+    try {
+      final result = await _pbClient.pb
+          .collection('event_tickets')
+          .getList(filter: 'event = "$eventId"');
+      return result.items
+          .map((record) => EventTicketModel.fromRecord(record))
+          .toList();
+    } catch (e) {
+      debugPrint('DEBUG: Error fetching event tickets: $e');
+      // Return empty list instead of throwing if collection doesn't exist yet
+      return [];
+    }
+  }
+
+  @override
+  Future<List<EventSubEventModel>> getEventSubEvents(String eventId) async {
+    debugPrint('DEBUG: Fetching sub-events for event: $eventId...');
+    try {
+      final result = await _pbClient.pb
+          .collection('event_sub_events')
+          .getList(filter: 'event = "$eventId"');
+      return result.items
+          .map((record) => EventSubEventModel.fromRecord(record))
+          .toList();
+    } catch (e) {
+      debugPrint('DEBUG: Error fetching event sub-events: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<EventSponsorModel>> getEventSponsors(String eventId) async {
+    debugPrint('DEBUG: Fetching sponsors for event: $eventId...');
+    try {
+      final result = await _pbClient.pb
+          .collection('event_sponsors')
+          .getList(filter: 'event = "$eventId"');
+      return result.items
+          .map((record) => EventSponsorModel.fromRecord(record))
+          .toList();
+    } catch (e) {
+      debugPrint('DEBUG: Error fetching event sponsors: $e');
+      return [];
     }
   }
 }

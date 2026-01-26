@@ -28,6 +28,10 @@ import '../../features/events/data/datasources/event_remote_data_source.dart';
 import '../../features/events/data/repositories/event_repository_impl.dart';
 import '../../features/events/domain/repositories/event_repository.dart';
 import '../../features/events/domain/usecases/get_events.dart';
+import '../../features/events/domain/usecases/get_event_detail.dart';
+import '../../features/events/domain/usecases/get_event_tickets.dart';
+import '../../features/events/domain/usecases/get_event_sub_events.dart';
+import '../../features/events/domain/usecases/get_event_sponsors.dart';
 import '../../features/events/presentation/bloc/events_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -124,7 +128,14 @@ Future<void> configureDependencies() async {
   );
 
   // Use Cases
+  // Use Cases
   getIt.registerLazySingleton(() => GetEvents(getIt<EventRepository>()));
+  getIt.registerLazySingleton(() => GetEventDetail(getIt<EventRepository>()));
+  getIt.registerLazySingleton(() => GetEventTickets(getIt<EventRepository>()));
+  getIt.registerLazySingleton(
+    () => GetEventSubEvents(getIt<EventRepository>()),
+  );
+  getIt.registerLazySingleton(() => GetEventSponsors(getIt<EventRepository>()));
 
   // BLoCs
   getIt.registerFactory(() => EventsBloc(getIt<GetEvents>()));

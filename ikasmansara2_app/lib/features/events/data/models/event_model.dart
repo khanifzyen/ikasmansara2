@@ -35,13 +35,18 @@ abstract class EventModel with _$EventModel {
         id: record.id,
         title: record.getStringValue('title'),
         description: record.getStringValue('description'),
-        date: DateTime.parse(record.getStringValue('date')),
+        date:
+            DateTime.tryParse(record.getStringValue('date')) ?? DateTime.now(),
         time: record.getStringValue('time'),
         location: record.getStringValue('location'),
         banner: record.getStringValue('banner'),
         status: record.getStringValue('status'),
-        created: DateTime.parse(record.created),
-        updated: DateTime.parse(record.updated),
+        created:
+            DateTime.tryParse(record.getStringValue('created')) ??
+            DateTime.now(),
+        updated:
+            DateTime.tryParse(record.getStringValue('updated')) ??
+            DateTime.now(),
       );
     } catch (e) {
       debugPrint('DEBUG: Error parsing dates for event ${record.id}: $e');
