@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../domain/entities/event_ticket.dart';
 import '../../domain/entities/event_ticket_option.dart';
 
@@ -115,6 +116,7 @@ class _TicketTabState extends State<TicketTab> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Column(
@@ -133,9 +135,22 @@ class _TicketTabState extends State<TicketTab> {
                                     color: Colors.grey[600],
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 2),
+                                if (ticket.includes.isNotEmpty)
+                                  Text(
+                                    'Include: ${ticket.includes.join(", ")}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
                                 Text(
-                                  'Rp ${ticket.price}',
+                                  NumberFormat.currency(
+                                    locale: 'id_ID',
+                                    symbol: 'Rp ',
+                                    decimalDigits: 0,
+                                  ).format(ticket.price),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF006D4E),
@@ -319,7 +334,11 @@ class _TicketTabState extends State<TicketTab> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'Rp ${_calculateTotal()}',
+                      NumberFormat.currency(
+                        locale: 'id_ID',
+                        symbol: 'Rp ',
+                        decimalDigits: 0,
+                      ).format(_calculateTotal()),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF006D4E),

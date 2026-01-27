@@ -21,6 +21,7 @@ abstract class EventTicketModel with _$EventTicketModel {
     required int quota,
     required int sold,
     @JsonKey(name: 'quota_status') String? quotaStatus,
+    @Default([]) @JsonKey(name: 'includes') List<String> includes,
     required DateTime created,
     required DateTime updated,
   }) = _EventTicketModel;
@@ -38,6 +39,7 @@ abstract class EventTicketModel with _$EventTicketModel {
       quota: record.getIntValue('quota'),
       sold: record.getIntValue('sold'),
       quotaStatus: record.getStringValue('quota_status'),
+      includes: record.getListValue<String>('includes'),
       created:
           DateTime.tryParse(record.getStringValue('created')) ?? DateTime.now(),
       updated:
@@ -55,6 +57,7 @@ abstract class EventTicketModel with _$EventTicketModel {
       quota: quota,
       sold: sold,
       quotaStatus: quotaStatus,
+      includes: includes,
       options: options,
     );
   }

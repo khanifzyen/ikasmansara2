@@ -21,12 +21,24 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthResult<UserEntity>> getCurrentUser() async {
     try {
-      final user = await _remoteDataSource.getCurrentUser();
-      if (user == null) {
-        return (data: null, failure: const UserNotFoundFailure());
+      try {
+        final user = await _remoteDataSource.getCurrentUser();
+        if (user != null) {
+          await _localDataSource.cacheUser(user);
+          return (data: user.toEntity(), failure: null);
+        }
+      } catch (e) {
+        debugPrint('AuthRepository: Remote get current user failed: $e');
       }
-      await _localDataSource.cacheUser(user);
-      return (data: user.toEntity(), failure: null);
+
+      // Fallback to local cache
+      final localUser = await _localDataSource.getLastUser();
+      if (localUser != null) {
+        debugPrint('AuthRepository: Using cached user data');
+        return (data: localUser.toEntity(), failure: null);
+      }
+
+      return (data: null, failure: const UserNotFoundFailure());
     } catch (e) {
       return (data: null, failure: _mapException(e));
     }

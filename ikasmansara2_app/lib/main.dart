@@ -6,6 +6,7 @@ import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/bloc/auth_event.dart';
 import 'package:upgrader/upgrader.dart';
 
 void main() async {
@@ -29,7 +30,11 @@ class IkaSmanSaraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider<AuthBloc>(create: (_) => getIt<AuthBloc>())],
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
+        ),
+      ],
       child: UpgradeAlert(
         upgrader: Upgrader(
           // debugDisplayAlways: true,

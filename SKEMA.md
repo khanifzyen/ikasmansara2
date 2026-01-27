@@ -188,12 +188,13 @@ Satu record = satu pesanan (bisa berisi banyak tiket).
 | `booking_id` | text | ✅ | ID unik, e.g., `REUNI26-2026-0001` |
 | `event` | relation | ✅ | → events |
 | `user` | relation | ✅ | → users |
-| `ticket_type` | relation | ✅ | → event_tickets |
-| `quantity` | number | ✅ | Jumlah tiket dipesan |
+| `metadata` | json | ✅ | Snapshot item tiket (array of `{ticket_id, quantity, options}`) |
 | `total_price` | number | ✅ | Total harga (tiket + opsi) |
 | `payment_status` | select | ✅ | `pending`, `paid`, `expired`, `refunded` |
 | `payment_method` | text | ❌ | Metode pembayaran |
 | `payment_date` | date | ❌ | Tanggal bayar |
+| `snap_token` | text | ❌ | Midtrans Snap Token |
+| `snap_redirect_url` | text | ❌ | Midtrans Snap Redirect URL |
 
 > **QR Booking ID**: Generate dari field `booking_id`. Tidak perlu disimpan.
 
@@ -207,6 +208,7 @@ Satu record = satu tiket fisik. Child dari `event_bookings`.
 |-------|------|----------|-------|
 | `ticket_id` | text | ✅ | ID unik, e.g., `TIX-REUNI26-001` |
 | `booking` | relation | ✅ | → event_bookings |
+| `ticket_type` | relation | ✅ | → event_tickets |
 | `selected_options` | json | ❌ | Opsi untuk tiket ini (e.g., `{size: "XL"}`) |
 | `shirt_picked_up` | bool | ✅ | Default: false |
 | `shirt_pickup_time` | date | ❌ | Waktu ambil kaos |
@@ -268,6 +270,8 @@ Satu record = satu tiket mendaftar satu sub-event.
 | `payment_status` | select | ✅ | `pending`, `success`, `failed` |
 | `payment_method` | text | ❌ | Metode pembayaran |
 | `transaction_id` | text | ✅ | ID transaksi unik |
+| `snap_token` | text | ❌ | Midtrans Snap Token |
+| `snap_redirect_url` | text | ❌ | Midtrans Snap Redirect URL |
 
 > **Note:** Transaksi harus memiliki salah satu dari `donation` ATAU `event`, tidak boleh keduanya kosong.
 

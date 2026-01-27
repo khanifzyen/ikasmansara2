@@ -11,6 +11,7 @@ class EventTicket extends Equatable {
   final int sold;
   final String? quotaStatus; // 'available', 'sold_out', 'limited'
   final List<EventTicketOption> options;
+  final List<String> includes;
 
   const EventTicket({
     required this.id,
@@ -22,6 +23,7 @@ class EventTicket extends Equatable {
     required this.sold,
     this.quotaStatus,
     this.options = const [],
+    this.includes = const [],
   });
 
   @override
@@ -35,5 +37,6 @@ class EventTicket extends Equatable {
     sold,
     quotaStatus,
     options,
+    includes,
   ];
 }

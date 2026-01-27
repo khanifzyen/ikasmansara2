@@ -105,13 +105,17 @@ class HomePage extends StatelessWidget {
                     BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         String angkatanText = 'ANGKATAN -';
-                        String idSuffix = 'XXXX.XXXX.XXX.XXXX';
+                        String ektaDisplay =
+                            'XXXX.XXXX.XXX'; // Placeholder matching schema structure
+
                         if (state is AuthAuthenticated) {
                           angkatanText =
                               'ANGKATAN ${state.user.angkatan ?? '-'}';
-                          // Simple mock logic for ID display
-                          idSuffix =
-                              '1992.${state.user.angkatan ?? '20XX'}.045.8821';
+
+                          // UserEntity.nomorEkta returns '-' if data is incomplete
+                          if (state.user.nomorEkta != '-') {
+                            ektaDisplay = state.user.nomorEkta;
+                          }
                         }
                         return Container(
                           width: double.infinity,
@@ -159,7 +163,7 @@ class HomePage extends StatelessWidget {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                idSuffix,
+                                ektaDisplay,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
