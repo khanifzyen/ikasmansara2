@@ -160,6 +160,7 @@ const usersData = [
 const eventsData = [
     {
         title: 'Jalan Sehat & Reuni Akbar 2026',
+        code: 'REUNI26',
         description: 'Acara tahunan jalan sehat dan reuni akbar alumni SMAN 1 Jepara dengan berbagai doorprize menarik.',
         date: '2026-08-20 08:00:00.000Z',
         time: '08:00 WIB',
@@ -168,7 +169,91 @@ const eventsData = [
         enable_sponsorship: true,
         enable_donation: true,
         donation_target: 50000000,
-        donation_description: 'Donasi untuk kegiatan reuni akbar'
+        donation_description: 'Donasi untuk kegiatan reuni akbar',
+        booking_id_format: '{CODE}-{YEAR}-{SEQ}',
+        ticket_id_format: 'TIX-{CODE}-{SEQ}',
+        last_booking_seq: 0,
+        last_ticket_seq: 0
+    }
+];
+
+// Ticket Types Data
+const ticketsData = [
+    {
+        name: 'Early Bird (Alumni)',
+        price: 150000,
+        quota: 200,
+        includes: ['Kaos Reuni', 'Snack Box', 'Souvenir'],
+    },
+    {
+        name: 'Regular (Alumni)',
+        price: 200000,
+        quota: 500,
+        includes: ['Kaos Reuni', 'Snack Box'],
+    },
+    {
+        name: 'Tiket Umum',
+        price: 50000,
+        quota: 300,
+        includes: ['Snack Box'],
+    }
+];
+
+// Ticket Options Data (e.g. Shirt Sizes)
+const ticketOptionsData = [
+    {
+        name: 'Ukuran Kaos',
+        choices: [
+            { label: 'S', extra_price: 0 },
+            { label: 'M', extra_price: 0 },
+            { label: 'L', extra_price: 0 },
+            { label: 'XL', extra_price: 5000 },
+            { label: 'XXL', extra_price: 10000 }
+        ]
+    }
+];
+
+// Sub-Events Data
+const subEventsData = [
+    {
+        name: 'Cek Kesehatan Gratis',
+        description: 'Cek kolesterol, asam urat, dan gula darah oleh alumni tenaga kesehatan.',
+        quota: 150,
+        location: 'Stand A-01'
+    },
+    {
+        name: 'Donor Darah',
+        description: 'Kegiatan sosial donor darah bekerja sama dengan PMI Jepara.',
+        quota: 100,
+        location: 'Stand B-05'
+    },
+    {
+        name: 'Pemeriksaan Mata',
+        description: 'Pemeriksaan mata dan pembagian kacamata gratis bagi yang membutuhkan.',
+        quota: 50,
+        location: 'Stand A-03'
+    }
+];
+
+// Sponsorship Tiers Data
+const sponsorsData = [
+    {
+        tier_name: 'Platinum',
+        price: 10000000,
+        benefits: ['Logo besar di banner utama', 'Booth premium', 'Ad lips di panggung utama', 'Logo di kaos peserta'],
+        is_filled: false
+    },
+    {
+        tier_name: 'Gold',
+        price: 5000000,
+        benefits: ['Logo di banner samping', 'Booth reguler', 'Logo di web'],
+        is_filled: false
+    },
+    {
+        tier_name: 'Silver',
+        price: 2500000,
+        benefits: ['Logo di banner sponsor', 'Logo di web'],
+        is_filled: false
     }
 ];
 
@@ -390,13 +475,18 @@ const memoryData = [
 const seededIds = {
     users: [],
     events: [],
+    event_tickets: [],
+    event_ticket_options: [],
+    event_sub_events: [],
+    event_sponsors: [],
     donations: [],
     news: [],
     forum_posts: [],
     forum_comments: [],
     loker: [],
     market_products: [],
-    memories: []
+    memories: [],
+    registration_sequences: []
 };
 
 /**
@@ -466,6 +556,50 @@ async function seedUsers(pb) {
 }
 
 /**
+ * Seed Registration Sequences based on seeded users
+ */
+async function seedRegistrationSequences(pb) {
+    console.log('\n🔢 Seeding Registration Sequences...');
+
+    // 1. Initialize Global Counter (year 0)
+    try {
+        const globalSeq = await pb.collection('registration_sequences').create({
+            year: 0,
+            last_number: seededIds.users.length
+        });
+        seededIds.registration_sequences.push(globalSeq.id);
+        console.log(`  ✅ Initialized global sequence (year: 0, count: ${seededIds.users.length})`);
+    } catch (error) {
+        console.error(`  ❌ Failed to seed global sequence:`, error.message);
+    }
+
+    // 2. Initialize Angkatan Counters
+    const users = await pb.collection('users').getFullList({
+        filter: 'role = "alumni"'
+    });
+
+    const angkatanCounts = {};
+    users.forEach(u => {
+        if (u.angkatan) {
+            angkatanCounts[u.angkatan] = (angkatanCounts[u.angkatan] || 0) + 1;
+        }
+    });
+
+    for (const [year, count] of Object.entries(angkatanCounts)) {
+        try {
+            const seq = await pb.collection('registration_sequences').create({
+                year: parseInt(year),
+                last_number: count
+            });
+            seededIds.registration_sequences.push(seq.id);
+            console.log(`  ✅ Initialized angkatan sequence (year: ${year}, count: ${count})`);
+        } catch (error) {
+            console.error(`  ❌ Failed to seed sequence for year ${year}:`, error.message);
+        }
+    }
+}
+
+/**
  * Seed Events
  */
 async function seedEvents(pb, adminUserId) {
@@ -480,6 +614,82 @@ async function seedEvents(pb, adminUserId) {
             console.log(`  ✅ Created event: ${eventData.title}`);
         } catch (error) {
             console.error(`  ❌ Failed to create event:`, error.message);
+        }
+    }
+}
+
+/**
+ * Seed Event Tickets and Options
+ */
+async function seedTickets(pb, eventIds) {
+    console.log('\n🎟️  Seeding Event Tickets...');
+    for (const eventId of eventIds) {
+        for (const ticketData of ticketsData) {
+            try {
+                const record = await pb.collection('event_tickets').create({
+                    ...ticketData,
+                    event: eventId
+                });
+                seededIds.event_tickets.push(record.id);
+                console.log(`  ✅ Created ticket "${ticketData.name}" for event ${eventId}`);
+
+                // Seed Options for this ticket (if it's an alumni ticket)
+                if (ticketData.name.includes('Alumni')) {
+                    for (const optionData of ticketOptionsData) {
+                        const optRecord = await pb.collection('event_ticket_options').create({
+                            ...optionData,
+                            ticket: record.id
+                        });
+                        seededIds.event_ticket_options.push(optRecord.id);
+                        console.log(`    ✅ Created option "${optionData.name}"`);
+                    }
+                }
+            } catch (error) {
+                console.error(`  ❌ Failed to create ticket:`, error.message);
+            }
+        }
+    }
+}
+
+/**
+ * Seed Event Sub-Events
+ */
+async function seedSubEvents(pb, eventIds) {
+    console.log('\n🪁 Seeding Sub-Events...');
+    for (const eventId of eventIds) {
+        for (const subEventData of subEventsData) {
+            try {
+                const record = await pb.collection('event_sub_events').create({
+                    ...subEventData,
+                    event: eventId,
+                    registered: 0
+                });
+                seededIds.event_sub_events.push(record.id);
+                console.log(`  ✅ Created sub-event "${subEventData.name}"`);
+            } catch (error) {
+                console.error(`  ❌ Failed to create sub-event:`, error.message);
+            }
+        }
+    }
+}
+
+/**
+ * Seed Event Sponsors
+ */
+async function seedSponsors(pb, eventIds) {
+    console.log('\n🤝 Seeding Event Sponsors...');
+    for (const eventId of eventIds) {
+        for (const sponsorData of sponsorsData) {
+            try {
+                const record = await pb.collection('event_sponsors').create({
+                    ...sponsorData,
+                    event: eventId
+                });
+                seededIds.event_sponsors.push(record.id);
+                console.log(`  ✅ Created sponsor tier "${sponsorData.tier_name}"`);
+            } catch (error) {
+                console.error(`  ❌ Failed to create sponsor tier:`, error.message);
+            }
         }
     }
 }
@@ -647,6 +857,9 @@ async function seedUp() {
         // 1. Seed Users first
         await seedUsers(pb);
 
+        // 2. Seed Registration Sequences based on users
+        await seedRegistrationSequences(pb);
+
         // Get admin user ID for relations
         const adminUser = await pb.collection('users').getList(1, 1, {
             filter: 'role = "admin"'
@@ -657,25 +870,30 @@ async function seedUp() {
             throw new Error('Admin user not found. Please run seed users first.');
         }
 
-        // 2. Seed Events
+        // 3. Seed Events
         await seedEvents(pb, adminUserId);
 
-        // 3. Seed Donations
+        // 4. Seed Event Related Data (Tickets, Sub-events, Sponsors)
+        await seedTickets(pb, seededIds.events);
+        await seedSubEvents(pb, seededIds.events);
+        await seedSponsors(pb, seededIds.events);
+
+        // 5. Seed Donations
         await seedDonations(pb, adminUserId);
 
-        // 4. Seed News
+        // 6. Seed News
         await seedNews(pb, adminUserId);
 
-        // 5. Seed Forum
+        // 7. Seed Forum
         await seedForum(pb, seededIds.users);
 
-        // 6. Seed Loker
+        // 8. Seed Loker
         await seedLoker(pb, seededIds.users);
 
-        // 7. Seed Market
+        // 9. Seed Market
         await seedMarket(pb, seededIds.users);
 
-        // 8. Seed Memories
+        // 10. Seed Memories
         await seedMemories(pb, seededIds.users);
 
         console.log('\n' + '═'.repeat(50));
@@ -686,6 +904,10 @@ async function seedUp() {
         console.log('\n📊 Seeding Summary:');
         console.log(`   Users:         ${seededIds.users.length}`);
         console.log(`   Events:        ${seededIds.events.length}`);
+        console.log(`   Tickets:       ${seededIds.event_tickets.length}`);
+        console.log(`   Ticket Options:${seededIds.event_ticket_options.length}`);
+        console.log(`   Sub-Events:    ${seededIds.event_sub_events.length}`);
+        console.log(`   Sponsors:      ${seededIds.event_sponsors.length}`);
         console.log(`   Donations:     ${seededIds.donations.length}`);
         console.log(`   News:          ${seededIds.news.length}`);
         console.log(`   Forum Posts:   ${seededIds.forum_posts.length}`);
@@ -693,6 +915,7 @@ async function seedUp() {
         console.log(`   Loker:         ${seededIds.loker.length}`);
         console.log(`   Market:        ${seededIds.market_products.length}`);
         console.log(`   Memories:      ${seededIds.memories.length}`);
+        console.log(`   Sequences:     ${seededIds.registration_sequences.length}`);
 
     } catch (error) {
         console.error('\n❌ Seeding failed:', error.message);
@@ -712,6 +935,14 @@ async function seedDown() {
 
         // Delete in reverse order (to respect foreign key constraints)
         const collectionsToClean = [
+            'event_sub_event_registrations',
+            'event_booking_tickets',
+            'event_bookings',
+            'event_sponsors',
+            'event_sub_events',
+            'event_ticket_options',
+            'event_tickets',
+            'registration_sequences',
             'memories',
             'market',
             'loker',
@@ -719,7 +950,6 @@ async function seedDown() {
             'forum_comments',
             'forum_posts',
             'donation_transactions',
-            'event_tickets',
             'news',
             'donations',
             'events'

@@ -100,59 +100,83 @@ export async function upsertCollection(pb, schema) {
             throw error;
         }
     } else {
-        // UPDATE existing collection - check for missing fields
+        // UPDATE existing collection - check for missing or changed fields
         console.log(`   📦 Collection "${name}" exists. Checking fields...`);
 
-        const existingFieldNames = existing.fields?.map(f => f.name) || [];
-        const newFields = fields.filter(f => !existingFieldNames.includes(f.name));
+        const existingFields = existing.fields || [];
+        const updatedFields = [...existingFields];
+        let hasChanges = false;
 
-        if (newFields.length === 0 && indexes.length === 0) {
-            console.log(`   ⏭️  No new fields to add.`);
+        for (const schemaField of fields) {
+            const existingFieldIndex = updatedFields.findIndex(f => f.name === schemaField.name);
 
-            // Still update rules if different
-            try {
-                await pb.collections.update(name, rules);
-                console.log(`   🔄 Updated rules for "${name}"`);
-            } catch (error) {
-                console.log(`   ⚠️  Could not update rules: ${error.message}`);
+            if (existingFieldIndex === -1) {
+                // New field
+                console.log(`      + New field: ${schemaField.name} (${schemaField.type})`);
+                updatedFields.push(schemaField);
+                hasChanges = true;
+            } else {
+                // Existing field - check if properties changed
+                const existingField = updatedFields[existingFieldIndex];
+                let fieldChanged = false;
+
+                // Check key properties
+                if (existingField.required !== schemaField.required) {
+                    console.log(`      * Update field "${schemaField.name}": required ${existingField.required} -> ${schemaField.required}`);
+                    existingField.required = schemaField.required;
+                    fieldChanged = true;
+                }
+
+                if (schemaField.type && existingField.type !== schemaField.type) {
+                    console.log(`      * Update field "${schemaField.name}": type ${existingField.type} -> ${schemaField.type}`);
+                    existingField.type = schemaField.type;
+                    fieldChanged = true;
+                }
+
+                if (fieldChanged) hasChanges = true;
             }
-
-            return existing;
         }
-
-        // Merge existing fields with new fields
-        const mergedFields = [...existing.fields, ...newFields];
 
         // Merge indexes (avoid duplicates by name)
         const existingIndexes = existing.indexes || [];
         const newIndexes = indexes.filter(idx => {
-            // Extract index name from CREATE INDEX statement
             const match = idx.match(/CREATE\s+(?:UNIQUE\s+)?INDEX\s+(\w+)/i);
             if (!match) return true;
             const indexName = match[1];
             return !existingIndexes.some(ei => ei.includes(indexName));
         });
+
+        if (newIndexes.length > 0) hasChanges = true;
         const mergedIndexes = [...existingIndexes, ...newIndexes];
 
+        // Always check rules
+        const rulesChanged = JSON.stringify({
+            listRule: existing.listRule,
+            viewRule: existing.viewRule,
+            createRule: existing.createRule,
+            updateRule: existing.updateRule,
+            deleteRule: existing.deleteRule
+        }) !== JSON.stringify({
+            listRule: rules.listRule !== undefined ? rules.listRule : existing.listRule,
+            viewRule: rules.viewRule !== undefined ? rules.viewRule : existing.viewRule,
+            createRule: rules.createRule !== undefined ? rules.createRule : existing.createRule,
+            updateRule: rules.updateRule !== undefined ? rules.updateRule : existing.updateRule,
+            deleteRule: rules.deleteRule !== undefined ? rules.deleteRule : existing.deleteRule
+        });
+
+        if (!hasChanges && !rulesChanged) {
+            console.log(`   ⏭️  No changes detected for "${name}".`);
+            return existing;
+        }
+
         try {
-            const updated = await pb.collections.update(name, {
-                fields: mergedFields,
+            const updated = await pb.collections.update(existing.id, {
+                fields: updatedFields,
                 indexes: mergedIndexes,
                 ...rules
             });
 
-            console.log(`   🔄 Updated collection "${name}"`);
-            if (newFields.length > 0) {
-                console.log(`   ➕ Added ${newFields.length} new fields:`);
-                newFields.forEach(f => console.log(`      + ${f.name} (${f.type})`));
-
-                // Verify new fields were added
-                await verifyFields(pb, name, newFields.map(f => f.name));
-            }
-            if (newIndexes.length > 0) {
-                console.log(`   📑 Added ${newIndexes.length} new indexes`);
-            }
-
+            console.log(`   🔄 Updated collection "${name}" successfully!`);
             return updated;
         } catch (error) {
             console.error(`   ❌ Failed to update "${name}":`, error.message);

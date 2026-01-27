@@ -15,7 +15,7 @@ const registrationSequencesSchema = {
         {
             name: 'year',
             type: 'number',
-            required: true,
+            required: false, // Set to false to allow value 0
             options: {
                 min: 0,
                 noDecimal: true
@@ -24,7 +24,7 @@ const registrationSequencesSchema = {
         {
             name: 'last_number',
             type: 'number',
-            required: true,
+            required: false, // Set to false to allow value 0
             options: {
                 min: 0,
                 noDecimal: true
@@ -65,7 +65,11 @@ export async function migrateRegistrationSequences() {
             });
             console.log('   ✅ Created global counter (year=0) with last_number=0');
         } else {
-            console.log('   ⚠️  Could not check global counter:', error.message);
+            console.error('   ❌ Failed to initialized global counter:', error.message);
+            if (error.response?.data) {
+                console.error('      Details:', JSON.stringify(error.response.data, null, 2));
+            }
+            throw error;
         }
     }
 
