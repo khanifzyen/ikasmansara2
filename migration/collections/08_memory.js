@@ -1,14 +1,24 @@
 /**
  * Migration: Memories (Photo Gallery) Collection
+ * Based on SKEMA.md
  */
 
-import { authenticateAdmin, createCollection, getCollectionId } from '../pb-client.js';
+import { authenticateAdmin, upsertCollection, getCollectionId } from '../pb-client.js';
 
 async function migrateMemory() {
+    console.log('\n========================================');
+    console.log('🎯 Starting Memories Migration...');
+    console.log('========================================');
+
     const pb = await authenticateAdmin();
     const usersId = await getCollectionId(pb, 'users');
 
-    await createCollection(pb, {
+    if (!usersId) {
+        console.error('❌ Users collection not found. Run 01_users.js first.');
+        process.exit(1);
+    }
+
+    await upsertCollection(pb, {
         name: 'memories',
         type: 'base',
         listRule: 'is_approved = true',
@@ -42,9 +52,14 @@ async function migrateMemory() {
         ]
     });
 
-    console.log('✅ Memories collection created successfully');
+    console.log('\n========================================');
+    console.log('✅ Memories migration completed!');
+    console.log('========================================\n');
 }
 
-migrateMemory().catch(console.error);
+// Only run if executed directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+    migrateMemory().catch(console.error);
+}
 
 export { migrateMemory };

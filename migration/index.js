@@ -17,6 +17,7 @@ import { migrateForum } from './collections/05_forum.js';
 import { migrateLoker } from './collections/06_loker.js';
 import { migrateMarket } from './collections/07_market.js';
 import { migrateMemory } from './collections/08_memory.js';
+import { migrateRegistrationSequences } from './collections/09_registration_sequences.js';
 
 async function runAllMigrations() {
     console.log('🚀 Starting PocketBase migrations...\n');
@@ -24,29 +25,32 @@ async function runAllMigrations() {
 
     try {
         // Run migrations in order (some depend on others)
-        console.log('\n📦 [1/8] Migrating Users...');
+        console.log('\n📦 [1/9] Migrating Users...');
         await migrateUsers();
 
-        console.log('\n📅 [2/8] Migrating Events...');
+        console.log('\n📅 [2/9] Migrating Events...');
         await migrateEvents();
 
-        console.log('\n💰 [3/8] Migrating Donations...');
+        console.log('\n💰 [3/9] Migrating Donations...');
         await migrateDonations();
 
-        console.log('\n📰 [4/8] Migrating News...');
+        console.log('\n📰 [4/9] Migrating News...');
         await migrateNews();
 
-        console.log('\n💬 [5/8] Migrating Forum...');
+        console.log('\n💬 [5/9] Migrating Forum...');
         await migrateForum();
 
-        console.log('\n💼 [6/8] Migrating Loker...');
+        console.log('\n💼 [6/9] Migrating Loker...');
         await migrateLoker();
 
-        console.log('\n🛒 [7/8] Migrating Market...');
+        console.log('\n🛒 [7/9] Migrating Market...');
         await migrateMarket();
 
-        console.log('\n📷 [8/8] Migrating Memory...');
+        console.log('\n📷 [8/9] Migrating Memory...');
         await migrateMemory();
+
+        console.log('\n🔢 [9/9] Migrating Registration Sequences...');
+        await migrateRegistrationSequences();
 
         console.log('\n' + '═'.repeat(50));
         console.log('✅ All migrations completed successfully!');
@@ -59,3 +63,4 @@ async function runAllMigrations() {
 }
 
 runAllMigrations();
+

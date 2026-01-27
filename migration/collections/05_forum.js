@@ -1,18 +1,28 @@
 /**
  * Migration: Forum Collections
+ * Based on SKEMA.md
  * - forum_posts
  * - forum_comments
  * - forum_likes
  */
 
-import { authenticateAdmin, createCollection, getCollectionId } from '../pb-client.js';
+import { authenticateAdmin, upsertCollection, getCollectionId, getCollection } from '../pb-client.js';
 
 async function migrateForum() {
+    console.log('\n========================================');
+    console.log('🎯 Starting Forum Migration...');
+    console.log('========================================');
+
     const pb = await authenticateAdmin();
     const usersId = await getCollectionId(pb, 'users');
 
+    if (!usersId) {
+        console.error('❌ Users collection not found. Run 01_users.js first.');
+        process.exit(1);
+    }
+
     // 1. Forum Posts Collection
-    await createCollection(pb, {
+    await upsertCollection(pb, {
         name: 'forum_posts',
         type: 'base',
         listRule: 'status = "active" && (visibility = "public" || @request.auth.role = "alumni")',
@@ -61,8 +71,8 @@ async function migrateForum() {
 
     const postsId = await getCollectionId(pb, 'forum_posts');
 
-    // 2. Forum Comments Collection (create without parent first)
-    await createCollection(pb, {
+    // 2. Forum Comments Collection
+    await upsertCollection(pb, {
         name: 'forum_comments',
         type: 'base',
         listRule: '',
@@ -90,29 +100,36 @@ async function migrateForum() {
         ]
     });
 
-    // Get the forum_comments collection ID and add self-reference for parent
+    // Add self-reference for parent comment (for replies)
     const commentsId = await getCollectionId(pb, 'forum_comments');
-    try {
-        const commentsCollection = await pb.collections.getOne('forum_comments');
-        await pb.collections.update('forum_comments', {
-            fields: [
-                ...commentsCollection.fields,
-                {
-                    name: 'parent',
-                    type: 'relation',
-                    required: false,
-                    collectionId: commentsId,
-                    maxSelect: 1
-                }
-            ]
-        });
-        console.log('✅ Added parent field to forum_comments');
-    } catch (error) {
-        console.log('⚠️  Could not add parent field:', error.message);
+    if (commentsId) {
+        const commentsCollection = await getCollection(pb, 'forum_comments');
+        const hasParent = commentsCollection.fields?.some(f => f.name === 'parent');
+
+        if (!hasParent) {
+            console.log(`   ➕ Adding parent self-reference to forum_comments...`);
+            try {
+                await pb.collections.update('forum_comments', {
+                    fields: [
+                        ...commentsCollection.fields,
+                        {
+                            name: 'parent',
+                            type: 'relation',
+                            required: false,
+                            collectionId: commentsId,
+                            maxSelect: 1
+                        }
+                    ]
+                });
+                console.log(`   ✅ Added parent field to forum_comments`);
+            } catch (error) {
+                console.log(`   ⚠️  Could not add parent field: ${error.message}`);
+            }
+        }
     }
 
     // 3. Forum Likes Collection
-    await createCollection(pb, {
+    await upsertCollection(pb, {
         name: 'forum_likes',
         type: 'base',
         listRule: '',
@@ -142,9 +159,14 @@ async function migrateForum() {
         ]
     });
 
-    console.log('✅ Forum collections created successfully');
+    console.log('\n========================================');
+    console.log('✅ Forum migration completed!');
+    console.log('========================================\n');
 }
 
-migrateForum().catch(console.error);
+// Only run if executed directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+    migrateForum().catch(console.error);
+}
 
 export { migrateForum };

@@ -1,14 +1,24 @@
 /**
  * Migration: News Collection
+ * Based on SKEMA.md
  */
 
-import { authenticateAdmin, createCollection, getCollectionId } from '../pb-client.js';
+import { authenticateAdmin, upsertCollection, getCollectionId } from '../pb-client.js';
 
 async function migrateNews() {
+    console.log('\n========================================');
+    console.log('🎯 Starting News Migration...');
+    console.log('========================================');
+
     const pb = await authenticateAdmin();
     const usersId = await getCollectionId(pb, 'users');
 
-    await createCollection(pb, {
+    if (!usersId) {
+        console.error('❌ Users collection not found. Run 01_users.js first.');
+        process.exit(1);
+    }
+
+    await upsertCollection(pb, {
         name: 'news',
         type: 'base',
         listRule: 'status = "published"',
@@ -51,9 +61,14 @@ async function migrateNews() {
         ]
     });
 
-    console.log('✅ News collection created successfully');
+    console.log('\n========================================');
+    console.log('✅ News migration completed!');
+    console.log('========================================\n');
 }
 
-migrateNews().catch(console.error);
+// Only run if executed directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+    migrateNews().catch(console.error);
+}
 
 export { migrateNews };

@@ -8,7 +8,7 @@ Skema database untuk aplikasi IKA SMANSARA menggunakan PocketBase.
 
 ```mermaid
 erDiagram
-    users ||--o{ event_registrations : registers
+    users ||--o{ event_bookings : orders
     users ||--o{ donation_transactions : donates
     users ||--o{ forum_posts : creates
     users ||--o{ forum_comments : writes
@@ -16,11 +16,20 @@ erDiagram
     users ||--o{ market : sells
     users ||--o{ memories : uploads
     
+    registration_sequences ||--|| users : "tracks sequence"
+    
     events ||--o{ event_tickets : has
+    events ||--o{ event_ticket_options : has
     events ||--o{ event_sub_events : includes
     events ||--o{ event_sponsors : receives
-    events ||--o{ event_registrations : has
+    events ||--o{ event_bookings : has
     events ||--o{ donation_transactions : "receives donations"
+    
+    event_bookings ||--o{ event_booking_tickets : contains
+    event_tickets ||--o{ event_bookings : "ticket type"
+    
+    event_booking_tickets ||--o{ event_sub_event_registrations : registers
+    event_sub_events ||--o{ event_sub_event_registrations : has
     
     donations ||--o{ donation_transactions : receives
     
@@ -56,13 +65,43 @@ Koleksi bawaan PocketBase `users` dengan field tambahan.
 - Update: Owner or Admin
 - Delete: Admin only
 
+**Nomor EKTA Format:** `{angkatan}.{no_urut_angkatan:4d}.{no_urut_global}`
+- Contoh: `2010.0010.121` = Angkatan 2010, urut ke-10 di angkatan, urut ke-121 global
+
 ---
 
-## 2. Events
+## 2. Registration Sequences (Helper)
+
+Collection pembantu untuk menyimpan counter sequence nomor EKTA per angkatan.
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `year` | number | ✅ | Tahun angkatan (unique) |
+| `last_number` | number | ✅ | Counter terakhir untuk angkatan ini (default: 0) |
+
+**Special Record:** Satu record dengan `year = 0` untuk menyimpan `last_number` sebagai counter global.
+
+**API Rules:**
+- Create: Admin only
+- List/View: Admin only
+- Update: Admin only (increment saat user register)
+- Delete: Admin only
+
+**Usage Flow:**
+1. User register dengan `angkatan = 2010`
+2. System cari/buat record `registration_sequences` dengan `year = 2010`
+3. Increment `last_number` untuk angkatan tersebut → dapat `no_urut_angkatan`
+4. Increment record `year = 0` → dapat `no_urut_global`
+5. Format EKTA: `2010.{no_urut_angkatan:04d}.{no_urut_global}`
+
+---
+
+## 3. Events
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `title` | text | ✅ | Judul event |
+| `code` | text | ✅ | Kode prefix event (uppercase, e.g., `REUNI26`) |
 | `date` | date | ✅ | Tanggal event |
 | `time` | text | ✅ | Format: HH:mm |
 | `location` | text | ✅ | Lokasi event |
@@ -71,16 +110,19 @@ Koleksi bawaan PocketBase `users` dengan field tambahan.
 | `status` | select | ✅ | `draft`, `active`, `completed` |
 | `enable_sponsorship` | bool | ✅ | Default: false |
 | `enable_donation` | bool | ✅ | Default: false |
-| `donation_target` | number | ❌ | Target donasi (jika enabled) |
+| `donation_target` | number | ❌ | Target donasi (opsional) |
 | `donation_description` | text | ❌ | Deskripsi donasi |
+| `booking_id_format` | text | ✅ | Default: `{CODE}-{YEAR}-{SEQ}` |
+| `ticket_id_format` | text | ✅ | Default: `TIX-{CODE}-{SEQ}` |
+| `last_booking_seq` | number | ✅ | Counter untuk SEQ (default: 0) |
+| `last_ticket_seq` | number | ✅ | Counter untuk ticket SEQ (default: 0) |
 | `created_by` | relation | ✅ | → users |
-| `booking_id_format` | text | ✅ | Default: "INV-{YEAR}-{SEQ}" |
-| `ticket_id_format` | text | ✅ | Default: "TIX-{SEQ}" |
-| `last_booking_seq` | number | ✅ | Default: 0 |
 
 ---
 
-## 3. Event Tickets
+## 4. Event Tickets (Tipe Tiket)
+
+Jenis/paket tiket yang tersedia untuk event.
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -89,12 +131,12 @@ Koleksi bawaan PocketBase `users` dengan field tambahan.
 | `price` | number | ✅ | Harga tiket (Rp) |
 | `quota` | number | ✅ | Kuota peserta |
 | `sold` | number | ✅ | Terjual (default: 0) |
-| `includes` | json | ❌ | Array of string (contoh: ["Kaos", "Snack"]) |
+| `includes` | json | ❌ | Array of string (contoh: `["Kaos", "Snack"]`) |
 | `image` | file | ❌ | Preview kaos/tiket |
 
 ---
 
-## 4. Event Ticket Options
+## 5. Event Ticket Options
 
 Opsi tambahan tiket (misal: ukuran kaos).
 
@@ -106,7 +148,7 @@ Opsi tambahan tiket (misal: ukuran kaos).
 
 ---
 
-## 5. Event Sub-Events
+## 6. Event Sub-Events
 
 Kegiatan pendukung (cek kesehatan, donor darah, dll).
 
@@ -121,7 +163,7 @@ Kegiatan pendukung (cek kesehatan, donor darah, dll).
 
 ---
 
-## 6. Event Sponsors
+## 7. Event Sponsors
 
 Paket sponsorship untuk event.
 
@@ -137,30 +179,63 @@ Paket sponsorship untuk event.
 
 ---
 
-## 7. Event Registrations
+## 8. Event Bookings (Order/Invoice)
 
-Pendaftaran peserta event.
+Satu record = satu pesanan (bisa berisi banyak tiket).
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
+| `booking_id` | text | ✅ | ID unik, e.g., `REUNI26-2026-0001` |
 | `event` | relation | ✅ | → events |
-| `ticket` | relation | ✅ | → event_tickets |
 | `user` | relation | ✅ | → users |
-| `ticket_code` | text | ✅ | Kode QR unik |
-| `selected_options` | json | ❌ | Opsi yang dipilih |
-| `sub_events` | relation[] | ❌ | → event_sub_events |
-| `total_price` | number | ✅ | Total harga |
+| `ticket_type` | relation | ✅ | → event_tickets |
+| `quantity` | number | ✅ | Jumlah tiket dipesan |
+| `total_price` | number | ✅ | Total harga (tiket + opsi) |
 | `payment_status` | select | ✅ | `pending`, `paid`, `expired`, `refunded` |
 | `payment_method` | text | ❌ | Metode pembayaran |
 | `payment_date` | date | ❌ | Tanggal bayar |
-| `shirt_picked_up` | bool | ✅ | Default: false |
-| `shirt_pickup_time` | date | ❌ | Waktu ambil kaos |
-| `checked_in` | bool | ✅ | Default: false |
-| `checkin_time` | date | ❌ | Waktu check-in |
+
+> **QR Booking ID**: Generate dari field `booking_id`. Tidak perlu disimpan.
 
 ---
 
-## 8. Donations (Campaigns)
+## 9. Event Booking Tickets (Tiket Individual)
+
+Satu record = satu tiket fisik. Child dari `event_bookings`.
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `ticket_id` | text | ✅ | ID unik, e.g., `TIX-REUNI26-001` |
+| `booking` | relation | ✅ | → event_bookings |
+| `selected_options` | json | ❌ | Opsi untuk tiket ini (e.g., `{size: "XL"}`) |
+| `shirt_picked_up` | bool | ✅ | Default: false |
+| `shirt_pickup_time` | date | ❌ | Waktu ambil kaos |
+| `checked_in` | bool | ✅ | Default: false |
+| `checkin_time` | date | ❌ | Waktu check-in event utama |
+
+> **QR Ticket ID**: Generate dari field `ticket_id`. Tidak perlu disimpan.
+
+---
+
+## 10. Event Sub-Event Registrations
+
+Satu record = satu tiket mendaftar satu sub-event.
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `sub_event_ticket_id` | text | ✅ | ID unik, e.g., `REUNI26-CEK-001` |
+| `booking_ticket` | relation | ✅ | → event_booking_tickets |
+| `sub_event` | relation | ✅ | → event_sub_events |
+| `checked_in` | bool | ✅ | Default: false |
+| `checkin_time` | date | ❌ | Waktu check-in sub-event |
+
+> **Constraint**: Total pendaftaran sub-event per booking ≤ jumlah tiket di booking.
+
+> **QR Sub-Event Ticket ID**: Generate dari field `sub_event_ticket_id`. Tidak perlu disimpan.
+
+---
+
+## 11. Donations (Campaigns)
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -179,7 +254,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 9. Donation Transactions
+## 12. Donation Transactions
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -198,7 +273,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 10. News
+## 13. News
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -215,7 +290,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 11. Forum Posts
+## 14. Forum Posts
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -231,7 +306,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 12. Forum Comments
+## 15. Forum Comments
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -242,7 +317,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 13. Forum Likes
+## 16. Forum Likes
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -253,7 +328,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 14. Loker (Lowongan Kerja)
+## 17. Loker (Lowongan Kerja)
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -270,7 +345,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 15. Market (Iklan Jual-Beli)
+## 18. Market (Iklan Jual-Beli)
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -286,7 +361,7 @@ Pendaftaran peserta event.
 
 ---
 
-## 16. Memories (Galeri Kenangan)
+## 19. Memories (Galeri Kenangan)
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -302,10 +377,20 @@ Pendaftaran peserta event.
 ## Indexes & Performance
 
 ```sql
--- Event Registrations
-CREATE INDEX idx_reg_user ON event_registrations(user);
-CREATE INDEX idx_reg_event ON event_registrations(event);
-CREATE INDEX idx_reg_status ON event_registrations(payment_status);
+-- Event Bookings
+CREATE INDEX idx_booking_user ON event_bookings(user);
+CREATE INDEX idx_booking_event ON event_bookings(event);
+CREATE INDEX idx_booking_status ON event_bookings(payment_status);
+CREATE UNIQUE INDEX idx_booking_id ON event_bookings(booking_id);
+
+-- Event Booking Tickets
+CREATE INDEX idx_ticket_booking ON event_booking_tickets(booking);
+CREATE UNIQUE INDEX idx_ticket_id ON event_booking_tickets(ticket_id);
+
+-- Event Sub-Event Registrations
+CREATE INDEX idx_subevent_reg_ticket ON event_sub_event_registrations(booking_ticket);
+CREATE INDEX idx_subevent_reg_subevent ON event_sub_event_registrations(sub_event);
+CREATE UNIQUE INDEX idx_subevent_ticket_id ON event_sub_event_registrations(sub_event_ticket_id);
 
 -- Donation Transactions
 CREATE INDEX idx_donation_trx ON donation_transactions(donation);
@@ -322,7 +407,7 @@ CREATE INDEX idx_market_status ON market(status);
 
 ---
 
-## PocketBase Hooks (Optional)
+## PocketBase Hooks
 
 ```javascript
 // Auto-update donation collected_amount after successful transaction
@@ -330,24 +415,51 @@ onRecordAfterCreateRequest((e) => {
     const record = e.record;
     if (record.collection() === 'donation_transactions' && record.getString('payment_status') === 'success') {
         const donationId = record.getString('donation');
-        const amount = record.getInt('amount');
-        
-        const donation = $app.dao().findRecordById('donations', donationId);
-        donation.set('collected_amount', donation.getInt('collected_amount') + amount);
-        donation.set('donor_count', donation.getInt('donor_count') + 1);
-        $app.dao().saveRecord(donation);
+        if (donationId) {
+            const donation = $app.dao().findRecordById('donations', donationId);
+            donation.set('collected_amount', donation.getInt('collected_amount') + record.getInt('amount'));
+            donation.set('donor_count', donation.getInt('donor_count') + 1);
+            $app.dao().saveRecord(donation);
+        }
     }
 });
 
-// Auto-update event ticket sold count
-onRecordAfterCreateRequest((e) => {
+// Auto-update event ticket sold count when booking is paid
+onRecordAfterUpdateRequest((e) => {
     const record = e.record;
-    if (record.collection() === 'event_registrations' && record.getString('payment_status') === 'paid') {
-        const ticketId = record.getString('ticket');
+    if (record.collection() === 'event_bookings' && record.getString('payment_status') === 'paid') {
+        const ticketId = record.getString('ticket_type');
+        const quantity = record.getInt('quantity');
         
         const ticket = $app.dao().findRecordById('event_tickets', ticketId);
-        ticket.set('sold', ticket.getInt('sold') + 1);
+        ticket.set('sold', ticket.getInt('sold') + quantity);
         $app.dao().saveRecord(ticket);
     }
 });
+
+// Auto-update sub-event registered count
+onRecordAfterCreateRequest((e) => {
+    const record = e.record;
+    if (record.collection() === 'event_sub_event_registrations') {
+        const subEventId = record.getString('sub_event');
+        
+        const subEvent = $app.dao().findRecordById('event_sub_events', subEventId);
+        subEvent.set('registered', subEvent.getInt('registered') + 1);
+        $app.dao().saveRecord(subEvent);
+    }
+});
 ```
+
+---
+
+## QR Code Generation Strategy
+
+> **QR codes are NOT stored in the database.** They are generated client-side from the unique ID fields.
+
+| QR Type | Source Field | Example Value |
+|---------|--------------|---------------|
+| Booking QR | `event_bookings.booking_id` | `REUNI26-2026-0001` |
+| Ticket QR | `event_booking_tickets.ticket_id` | `TIX-REUNI26-001` |
+| Sub-Event QR | `event_sub_event_registrations.sub_event_ticket_id` | `REUNI26-CEK-001` |
+
+**Client-side generation**: Use a library like `qrcode.js` to encode the ID string into a QR image on demand.

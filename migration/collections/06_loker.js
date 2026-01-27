@@ -1,14 +1,24 @@
 /**
  * Migration: Loker (Job Listings) Collection
+ * Based on SKEMA.md
  */
 
-import { authenticateAdmin, createCollection, getCollectionId } from '../pb-client.js';
+import { authenticateAdmin, upsertCollection, getCollectionId } from '../pb-client.js';
 
 async function migrateLoker() {
+    console.log('\n========================================');
+    console.log('🎯 Starting Loker Migration...');
+    console.log('========================================');
+
     const pb = await authenticateAdmin();
     const usersId = await getCollectionId(pb, 'users');
 
-    await createCollection(pb, {
+    if (!usersId) {
+        console.error('❌ Users collection not found. Run 01_users.js first.');
+        process.exit(1);
+    }
+
+    await upsertCollection(pb, {
         name: 'loker',
         type: 'base',
         listRule: 'status = "approved"',
@@ -51,9 +61,14 @@ async function migrateLoker() {
         ]
     });
 
-    console.log('✅ Loker collection created successfully');
+    console.log('\n========================================');
+    console.log('✅ Loker migration completed!');
+    console.log('========================================\n');
 }
 
-migrateLoker().catch(console.error);
+// Only run if executed directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+    migrateLoker().catch(console.error);
+}
 
 export { migrateLoker };

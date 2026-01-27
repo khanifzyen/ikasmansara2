@@ -16,9 +16,31 @@
         }
 
         .wizard-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
+            width: 100%;
+            margin: 0;
+            padding: 24px;
+        }
+
+        /* Step Pane Visibility Logic */
+        .step-pane {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Responsive Wizard Steps */
@@ -300,13 +322,22 @@
             padding: 24px 40px;
             border-top: 1px solid #e2e8f0;
             position: fixed;
-            bottom: 0;
+            bottom: 80px;
+            /* Space for mobile nav */
             left: 0;
             right: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 50;
+        }
+
+        @media (min-width: 1024px) {
+            .wizard-footer {
+                bottom: 0;
+                left: var(--sidebar-width);
+                padding: 24px 60px;
+            }
         }
 
         /* Adjust content for fixed footer */
@@ -354,18 +385,33 @@
             <a href="users.html" class="sidebar-menu-item"><span class="menu-icon">👥</span><span>Users</span></a>
             <a href="events.html" class="sidebar-menu-item active"><span
                     class="menu-icon">📅</span><span>Events</span></a>
-            <!-- Other links implied -->
+            <a href="donations.html" class="sidebar-menu-item"><span class="menu-icon">💰</span><span>Donasi</span></a>
+            <a href="donation-transactions.html" class="sidebar-menu-item"><span
+                    class="menu-icon">📋</span><span>Transaksi</span></a>
+            <a href="news.html" class="sidebar-menu-item"><span class="menu-icon">📰</span><span>Berita</span></a>
+            <a href="forum.html" class="sidebar-menu-item"><span class="menu-icon">💬</span><span>Forum</span></a>
+            <a href="loker.html" class="sidebar-menu-item"><span class="menu-icon">💼</span><span>Loker</span></a>
+            <a href="market.html" class="sidebar-menu-item"><span class="menu-icon">🛒</span><span>Market</span></a>
+            <a href="memory.html" class="sidebar-menu-item"><span class="menu-icon">📷</span><span>Memory</span></a>
         </nav>
     </aside>
 
     <div class="app-container">
-        <!-- New Nav Header (Matches Admin) -->
-        <div class="nav-header">
-            <div class="back-btn" onclick="window.location.href='events.html'">←</div>
-            <h2>Buat Event Baru</h2>
+        <!-- Admin Header (Standardized) -->
+        <div class="admin-header">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button onclick="window.location.href='events.html'" class="btn-outline"
+                    style="width: auto; padding: 8px 12px; display: flex; align-items: center; justify-content: center; color: white; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05);">
+                    ←
+                </button>
+                <div>
+                    <h1>Buat Event Baru</h1>
+                    <p>Admin Panel / Events / Create Wizard</p>
+                </div>
+            </div>
         </div>
 
-        <div class="wizard-container" style="padding-top: 20px;">
+        <div class="wizard-container">
 
             <!-- Process Steps -->
             <div class="wizard-steps-wrapper">
@@ -500,9 +546,14 @@
 
                         <div class="input-group">
                             <label>Desain Tiket / Kaos</label>
-                            <div class="upload-zone" style="padding: 20px;">
-                                <div style="font-size: 24px;">👕</div>
-                                <span style="font-size: 14px; color: #64748b;">Upload Preview Merchandise</span>
+                            <div class="upload-zone" style="padding: 20px;"
+                                onclick="document.getElementById('merchUpload').click()">
+                                <input type="file" id="merchUpload" style="display: none;"
+                                    onchange="handleFileUpload(this, 'merchPreview')">
+                                <div id="merchPreview">
+                                    <div style="font-size: 24px;">👕</div>
+                                    <span style="font-size: 14px; color: #64748b;">Upload Preview Merchandise</span>
+                                </div>
                             </div>
                         </div>
 
@@ -576,8 +627,29 @@ XXL|10000</textarea>
                                     <div id="subeventList" style="margin-top: 12px;">
                                         <!-- Items will go here -->
                                         <div class="dynamic-item" style="padding: 16px;">
-                                            <div style="font-weight: 600; font-size: 14px;">Cek Kesehatan</div>
-                                            <div style="font-size: 12px; color: #64748b;">Kuota: 200</div>
+                                            <div
+                                                style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                                <label style="margin:0;">Nama Kegiatan</label>
+                                                <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                                                    style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                                            </div>
+                                            <input type="text" class="input-field" value="🩺 Cek Kesehatan Gratis"
+                                                style="margin-bottom: 12px;">
+
+                                            <label style="display:block; margin-bottom:8px;">Deskripsi Singkat</label>
+                                            <input type="text" class="input-field" value="Tensi, Gula Darah, Asam Urat"
+                                                style="margin-bottom: 12px;">
+
+                                            <div class="inline-row">
+                                                <div class="input-group" style="margin-bottom: 0;">
+                                                    <label>Kuota</label>
+                                                    <input type="number" class="input-field" value="200">
+                                                </div>
+                                                <div class="input-group" style="margin-bottom: 0;">
+                                                    <label>Lokasi Stand</label>
+                                                    <input type="text" class="input-field" value="Meja A">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -596,6 +668,34 @@ XXL|10000</textarea>
                                 <h4>Sponsorship</h4>
                                 <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Buka kesempatan bagi
                                     sponsor untuk mendukung acara dengan tier Platinum/Gold.</p>
+
+                                <div id="sponsorConfig"
+                                    style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                                    <button type="button" class="btn-outline" style="font-size: 13px; padding: 8px;"
+                                        onclick="addSponsorTier()">+ Tambah Tier</button>
+                                    <div id="sponsorTiersList" style="margin-top: 12px;">
+                                        <!-- Items will go here -->
+                                        <div class="dynamic-item" style="padding: 16px;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                                <label style="margin:0;">Nama Tier</label>
+                                                <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                                                    style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                                            </div>
+                                            <input type="text" class="input-field" value="Platinum"
+                                                style="margin-bottom: 12px;">
+
+                                            <label style="display:block; margin-bottom:8px;">Harga (Rp)</label>
+                                            <input type="number" class="input-field" value="10000000"
+                                                style="margin-bottom: 12px;">
+
+                                            <label style="display:block; margin-bottom:8px;">Benefit (pisah
+                                                baris)</label>
+                                            <textarea class="input-field"
+                                                rows="3">Logo Besar di Backdrop Utama\nLogo di Punggung Kaos\nBooth Ukuran 3x3m</textarea>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Donation Feature -->
@@ -612,7 +712,15 @@ XXL|10000</textarea>
                                 <p style="font-size: 13px; color: #64748b; line-height: 1.5;">Fitur penggalangan dana
                                     sukarela yang terintegrasi langsung dengan event.</p>
                                 <div id="donationConfig" style="margin-top: 20px;">
-                                    <label style="font-size: 12px; font-weight: 600;">Target Donasi (Rp)</label>
+                                    <label
+                                        style="font-size: 12px; font-weight: 600; display:block; margin-bottom: 8px;">Deskripsi
+                                        Donasi</label>
+                                    <textarea class="input-field" rows="2" placeholder="Contoh: Dukungan sukarela..."
+                                        style="margin-bottom: 12px;">Dukungan sukarela untuk operasional acara.</textarea>
+
+                                    <label
+                                        style="font-size: 12px; font-weight: 600; display:block; margin-bottom: 8px;">Target
+                                        Donasi (Opsional) (Rp)</label>
                                     <input type="number" class="input-field" value="5000000"
                                         style="padding: 8px; font-size: 13px;">
                                 </div>
@@ -683,6 +791,26 @@ XXL|10000</textarea>
         <button class="btn-primary" id="nextBtn" onclick="nextStep()"
             style="width: auto; padding: 12px 40px; box-shadow: 0 4px 12px rgba(0, 106, 78, 0.2);">Lanjut
             &rarr;</button>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <div class="admin-bottom-nav">
+        <a href="index.html" class="admin-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="users.html" class="admin-nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Users</span>
+        </a>
+        <a href="donations.html" class="admin-nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Donasi</span>
+        </a>
+        <a href="events.html" class="admin-nav-item active">
+            <span class="nav-icon">📅</span>
+            <span>Events</span>
+        </a>
     </div>
 
     <script src="script.js"></script>
@@ -763,9 +891,101 @@ XXL|10000</textarea>
         }
 
         function toggleFeature(id, checkbox) {
-            // Visual toggle for cards
+            // Toggle visibility of the config section
+            const configId = id + 'Config';
+            const configEl = document.getElementById(configId);
+            if (configEl) {
+                configEl.style.display = checkbox.checked ? 'block' : 'none';
+            }
+
+            // Visual toggle for cards (optional, keeping existing logic if any)
             const card = document.getElementById('card' + id.charAt(0).toUpperCase() + id.slice(1));
-            // In a real app, this would enable/disable inputs
+            if (checkbox.checked) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        }
+
+        // Mockup File Upload
+        function handleFileUpload(input, previewId) {
+            if (input.files && input.files[0]) {
+                const filename = input.files[0].name;
+                const preview = document.getElementById(previewId);
+                preview.innerHTML = `
+                    <div style="font-size: 24px;">✅</div>
+                    <span style="font-size: 14px; color: var(--primary); font-weight: 600;">${filename}</span>
+                `;
+            }
+        }
+
+        function addTicketOption() {
+            const list = document.getElementById('ticketOptionsList');
+            const item = document.createElement('div');
+            item.className = 'dynamic-item';
+            item.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <label style="margin:0;">Nama Variasi</label>
+                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                </div>
+                <input type="text" class="input-field" placeholder="Contoh: Ukuran Hoodie" style="margin-bottom: 12px;">
+                <label style="display:block; margin-bottom:8px;">Opsi (Format: Label|ExtraHarga)</label>
+                <textarea class="input-field" rows="3" style="font-family: monospace;">S|0\nM|0\nL|0</textarea>
+            `;
+            list.appendChild(item);
+        }
+
+        function addSubevent() {
+            const list = document.getElementById('subeventList');
+            const item = document.createElement('div');
+            item.className = 'dynamic-item';
+            item.style.padding = '16px';
+            item.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <label style="margin:0;">Nama Kegiatan</label>
+                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                </div>
+                <input type="text" class="input-field" placeholder="Contoh: 🎤 Karaoke Challenge" style="margin-bottom: 12px;">
+                
+                <label style="display:block; margin-bottom:8px;">Deskripsi Singkat</label>
+                <input type="text" class="input-field" placeholder="Deskripsi kegiatan..." style="margin-bottom: 12px;">
+
+                <div class="inline-row">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Kuota</label>
+                        <input type="number" class="input-field" placeholder="Kosong = unlimited">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Lokasi Stand</label>
+                        <input type="text" class="input-field" placeholder="Contoh: Stage Utama">
+                    </div>
+                </div>
+            `;
+            list.appendChild(item);
+        }
+
+        function addSponsorTier() {
+            const list = document.getElementById('sponsorTiersList');
+            const item = document.createElement('div');
+            item.className = 'dynamic-item';
+            item.style.padding = '16px';
+            item.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <label style="margin:0;">Nama Tier</label>
+                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                </div>
+                <input type="text" class="input-field" placeholder="Contoh: Bronze" style="margin-bottom: 12px;">
+                
+                <label style="display:block; margin-bottom:8px;">Harga (Rp)</label>
+                <input type="number" class="input-field" placeholder="1000000" style="margin-bottom: 12px;">
+
+                <label style="display:block; margin-bottom:8px;">Benefit (pisah baris)</label>
+                <textarea class="input-field" rows="2" placeholder="Benefit 1\\nBenefit 2"></textarea>
+            `;
+            list.appendChild(item);
         }
 
         // Init
