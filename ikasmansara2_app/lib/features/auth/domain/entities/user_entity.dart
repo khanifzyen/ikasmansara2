@@ -67,7 +67,7 @@ class UserEntity extends Equatable {
   final String id;
   final String email;
   final String name;
-  final String? phone;
+  final String phone;
   final String? avatar;
   final int? angkatan;
   final UserRole role;
@@ -84,7 +84,7 @@ class UserEntity extends Equatable {
     required this.id,
     required this.email,
     required this.name,
-    this.phone,
+    required this.phone,
     this.avatar,
     this.angkatan,
     required this.role,
@@ -123,6 +123,7 @@ class UserEntity extends Equatable {
     domisili,
     noUrutAngkatan,
     noUrutGlobal,
+    isVerified,
     isVerified,
     verified,
     verifiedAt,

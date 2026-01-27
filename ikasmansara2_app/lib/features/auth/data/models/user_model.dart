@@ -15,7 +15,7 @@ abstract class UserModel with _$UserModel {
     required String id,
     required String email,
     required String name,
-    String? phone,
+    required String phone,
     String? avatar,
     int? angkatan,
     required String role,

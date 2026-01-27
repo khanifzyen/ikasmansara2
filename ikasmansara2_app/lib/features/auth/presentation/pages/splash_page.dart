@@ -60,23 +60,14 @@ class _SplashPageState extends State<SplashPage> {
             // Logo
             Image.asset(
               'assets/images/logo-ika.png',
-              width: 150,
-              height: 150,
+              width: 350,
+              //height: 200,
               fit: BoxFit.contain,
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'IKA SMANSARA',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 14),
             const Text(
               'Ikatan Alumni SMA Negeri 1 Jepara',
-              style: TextStyle(fontSize: 14, color: AppColors.textGrey),
+              style: TextStyle(fontSize: 18, color: AppColors.textGrey),
             ),
             const SizedBox(height: 48),
             const CircularProgressIndicator(

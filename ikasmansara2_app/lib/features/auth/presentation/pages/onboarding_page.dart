@@ -24,7 +24,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       image: 'assets/images/onboarding/connect.png',
       title: 'Terhubung dengan Alumni',
       description:
-          'Temukan dan terhubung dengan alumni SMANSA dari berbagai angkatan.',
+          'Temukan dan terhubung dengan alumni SMANSARA dari berbagai angkatan.',
     ),
     _OnboardingItem(
       image: 'assets/images/onboarding/event.png',

@@ -24,6 +24,7 @@ class _RegisterPublicPageState extends State<RegisterPublicPage> {
 
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -31,6 +32,7 @@ class _RegisterPublicPageState extends State<RegisterPublicPage> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -44,6 +46,7 @@ class _RegisterPublicPageState extends State<RegisterPublicPage> {
         RegisterPublicParams(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
           password: _passwordController.text,
           passwordConfirm: _confirmPasswordController.text,
         ),
@@ -136,6 +139,23 @@ class _RegisterPublicPageState extends State<RegisterPublicPage> {
                       }
                       if (!value.contains('@')) {
                         return 'Email tidak valid';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  AppTextField(
+                    label: 'No WhatsApp',
+                    hint: '08123456789',
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    prefixIcon: const Icon(Icons.phone_outlined),
+                    textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'No WhatsApp wajib diisi';
                       }
                       return null;
                     },

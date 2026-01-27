@@ -103,7 +103,7 @@ class AuthRepositoryImpl implements AuthRepository {
         password: params.password,
         passwordConfirm: params.passwordConfirm,
         name: params.name,
-        phone: '',
+        phone: params.phone,
         role: 'public',
       );
 
