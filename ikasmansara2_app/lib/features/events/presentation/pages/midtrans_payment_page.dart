@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MidtransPaymentPage extends StatefulWidget {
   final String paymentUrl;
@@ -30,6 +36,12 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        'BlobDownloader',
+        onMessageReceived: (JavaScriptMessage message) {
+          _saveAndShareFile(message.message);
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
@@ -49,6 +61,12 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
           },
           onNavigationRequest: (NavigationRequest request) {
             final url = request.url.toLowerCase();
+
+            // Handle Blob URLs (QRIS Image)
+            if (url.startsWith('blob:')) {
+              _handleBlobUrl(request.url);
+              return NavigationDecision.prevent;
+            }
 
             // Check for success/finish callback
             if (url.contains('status_code=200') ||
@@ -73,6 +91,22 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
               return NavigationDecision.prevent;
             }
 
+            // Handle Image Links / Deep Links
+            if (url.endsWith('.png') ||
+                url.endsWith('.jpg') ||
+                url.endsWith('.jpeg') ||
+                url.contains('/qr-code') ||
+                url.contains('gojek://') || // Deep links
+                url.contains('shopeeid://') ||
+                url.contains('wikibit://')) {
+              // Open in external app/browser
+              launchUrl(
+                Uri.parse(request.url),
+                mode: LaunchMode.externalApplication,
+              );
+              return NavigationDecision.prevent;
+            }
+
             return NavigationDecision.navigate;
           },
           onWebResourceError: (WebResourceError error) {
@@ -81,6 +115,54 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
         ),
       )
       ..loadRequest(Uri.parse(widget.paymentUrl));
+  }
+
+  Future<void> _handleBlobUrl(String url) async {
+    final script =
+        '''
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '$url', true);
+      xhr.responseType = 'blob';
+      xhr.onload = function(e) {
+        if (this.status == 200) {
+          var blob = this.response;
+          var reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = function() {
+            var base64data = reader.result;
+            BlobDownloader.postMessage(base64data);
+          }
+        }
+      };
+      xhr.send();
+    ''';
+    await _controller.runJavaScript(script);
+  }
+
+  Future<void> _saveAndShareFile(String dataUrl) async {
+    try {
+      // Data URL format: "data:image/png;base64,....."
+      final commaIndex = dataUrl.indexOf(',');
+      if (commaIndex == -1) return;
+
+      final base64Data = dataUrl.substring(commaIndex + 1);
+      final bytes = base64Decode(base64Data);
+
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/payment_qris.png');
+      await file.writeAsBytes(bytes);
+
+      if (mounted) {
+        await Share.shareXFiles([XFile(file.path)], text: 'QRIS Pembayaran');
+      }
+    } catch (e) {
+      debugPrint('Error saving blob: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Gagal mengunduh gambar')));
+      }
+    }
   }
 
   void _handlePaymentSuccess() {
@@ -121,12 +203,12 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
 
   void _navigateToMyTickets() {
     if (widget.fromEventDetail) {
-      context.go('/tiketku');
+      context.go('/tickets');
     } else {
       if (context.canPop()) {
         context.pop(true);
       } else {
-        context.go('/tiketku');
+        context.go('/tickets');
       }
     }
   }

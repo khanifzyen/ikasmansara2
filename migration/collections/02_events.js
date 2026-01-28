@@ -226,7 +226,7 @@ async function migrateEvents() {
                 name: 'payment_status',
                 type: 'select',
                 required: true,
-                values: ['pending', 'paid', 'expired', 'refunded']
+                values: ['pending', 'paid', 'expired', 'refunded', 'cancelled']
             },
             { name: 'payment_method', type: 'text', required: false },
             { name: 'payment_date', type: 'date', required: false }

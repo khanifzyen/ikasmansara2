@@ -314,6 +314,51 @@ class _TicketTabState extends State<TicketTab> {
           );
         }),
 
+        // Payment Method Section
+        const Text(
+          'Metode Pembayaran',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              RadioListTile<String>(
+                value: 'qris',
+                groupValue: 'qris', // Only QRIS available for now
+                onChanged: (val) {},
+                title: Row(
+                  children: [
+                    const Icon(Icons.qr_code, color: Colors.black),
+                    const SizedBox(width: 12),
+                    const Text('QRIS'),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        'Instant',
+                        style: TextStyle(fontSize: 10, color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
         // Summary
         Container(
           padding: const EdgeInsets.all(16),
@@ -326,20 +371,56 @@ class _TicketTabState extends State<TicketTab> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Total Pembayaran',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    'Total Harga Tiket',
+                    style: TextStyle(color: Colors.grey[700]),
                   ),
                   Text(
                     NumberFormat.currency(
                       locale: 'id_ID',
                       symbol: 'Rp ',
                       decimalDigits: 0,
-                    ).format(_calculateTotal()),
+                    ).format(_calculateTicketTotal()),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Biaya Layanan',
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                  Text(
+                    NumberFormat.currency(
+                      locale: 'id_ID',
+                      symbol: 'Rp ',
+                      decimalDigits: 0,
+                    ).format(_calculateServiceFee()),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total Pembayaran',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Text(
+                    NumberFormat.currency(
+                      locale: 'id_ID',
+                      symbol: 'Rp ',
+                      decimalDigits: 0,
+                    ).format(_calculateGrandTotal()),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF006D4E),
-                      fontSize: 16,
+                      fontSize: 18,
                     ),
                   ),
                 ],
@@ -353,8 +434,8 @@ class _TicketTabState extends State<TicketTab> {
           child: ElevatedButton(
             child: const Text('Beli Tiket Sekarang'),
             onPressed: () {
-              final total = _calculateTotal();
-              if (total == 0) {
+              final total = _calculateGrandTotal();
+              if (_calculateTicketTotal() == 0) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Pilih minimal 1 tiket')),
                 );
@@ -412,7 +493,7 @@ class _TicketTabState extends State<TicketTab> {
     return content;
   }
 
-  int _calculateTotal() {
+  int _calculateTicketTotal() {
     int total = 0;
     for (var ticket in widget.tickets) {
       final quantity = _quantities[ticket.id] ?? 0;
@@ -430,5 +511,14 @@ class _TicketTabState extends State<TicketTab> {
       }
     }
     return total;
+  }
+
+  int _calculateServiceFee() {
+    // 1.5% service fee
+    return (_calculateTicketTotal() * 0.015).ceil();
+  }
+
+  int _calculateGrandTotal() {
+    return _calculateTicketTotal() + _calculateServiceFee();
   }
 }

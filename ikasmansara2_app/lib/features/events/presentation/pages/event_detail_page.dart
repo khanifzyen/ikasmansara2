@@ -336,7 +336,7 @@ class _EventDetailPageState extends State<EventDetailPage>
     String url,
     String bookingId,
   ) async {
-    final result = await context.push<bool>(
+    await context.push<bool>(
       '/payment',
       extra: {
         'paymentUrl': url,

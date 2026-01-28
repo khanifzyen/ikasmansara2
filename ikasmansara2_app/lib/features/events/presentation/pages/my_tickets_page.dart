@@ -116,7 +116,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Order ID: ${booking.id}',
+                    'Booking ID: ${booking.bookingId}',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                   Container(
@@ -125,7 +125,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
+                      color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -247,7 +247,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
             onPressed: () {
               Navigator.pop(dialogContext);
               context.read<MyTicketsBloc>().add(
-                CancelEventBooking(booking.bookingId, widget.userId),
+                CancelEventBooking(booking.id, widget.userId),
               );
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -275,7 +275,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
             onPressed: () {
               Navigator.pop(dialogContext);
               context.read<MyTicketsBloc>().add(
-                DeleteEventBooking(booking.bookingId, widget.userId),
+                DeleteEventBooking(booking.id, widget.userId),
               );
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),

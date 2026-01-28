@@ -35,8 +35,10 @@ class EventBookingModel extends EventBooking {
       snapRedirectUrl: record.getStringValue('snap_redirect_url').isNotEmpty
           ? record.getStringValue('snap_redirect_url')
           : null,
+      // ignore: deprecated_member_use
       event:
           record.expand['event'] != null && record.expand['event']!.isNotEmpty
+          // ignore: deprecated_member_use
           ? EventModel.fromRecord(record.expand['event']!.first).toEntity()
           : null,
     );
