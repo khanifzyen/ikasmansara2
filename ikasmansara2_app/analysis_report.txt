@@ -1,0 +1,32 @@
+Analyzing ikasmansara2_app...                                   
+
+warning • Duplicate import • lib/core/di/injection.dart:37:8 • duplicate_import
+   info • 'model' is deprecated and shouldn't be used. use record • lib/core/router/app_router.dart:127:65 • deprecated_member_use
+warning • Unused import: '../../domain/entities/user_entity.dart' • lib/features/auth/data/datasources/auth_local_data_source.dart:4:8 • unused_import
+   info • 'model' is deprecated and shouldn't be used. use record • lib/features/events/data/datasources/event_remote_data_source.dart:149:43 • deprecated_member_use
+   info • 'expand' is deprecated and shouldn't be used. This field is superseded by the more generic get<T>(keyPath) method.
+You can access the expanded record models and fields using dot-notation similar to the regular record fields:
+record.get<String>("expand.user.email");
+record.get<RecordModel>("expand.user");
+record.get<List<RecordModel>>("expand.products"); • lib/features/events/data/models/event_booking_ticket_model.dart:18:31 • deprecated_member_use
+  error • Expected to find ')' • lib/features/events/presentation/pages/event_detail_page.dart:311:12 • expected_token
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/events/presentation/pages/my_ticket_detail_page.dart:89:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/features/events/presentation/pages/my_ticket_detail_page.dart:122:49 • deprecated_member_use
+   info • 'Share' is deprecated and shouldn't be used. Use SharePlus instead • lib/features/events/presentation/pages/my_ticket_detail_page.dart:217:15 • deprecated_member_use
+   info • 'shareXFiles' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead • lib/features/events/presentation/pages/my_ticket_detail_page.dart:217:21 • deprecated_member_use
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre • lib/features/events/presentation/widgets/ticket_tab.dart:256:45 • deprecated_member_use
+   info • 'model' is deprecated and shouldn't be used. use record • lib/features/forum/data/datasources/forum_remote_data_source.dart:61:38 • deprecated_member_use
+   info • 'model' is deprecated and shouldn't be used. use record • lib/features/forum/data/datasources/forum_remote_data_source.dart:103:38 • deprecated_member_use
+   info • 'model' is deprecated and shouldn't be used. use record • lib/features/forum/data/datasources/forum_remote_data_source.dart:119:43 • deprecated_member_use
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_comment_model.dart:11:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_comment_model.dart:13:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:11:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:12:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:13:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:14:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:20:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:21:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:22:6 • invalid_annotation_target
+warning • The annotation 'JsonKey.new' can only be used on fields or getters • lib/features/forum/data/models/forum_post_model.dart:24:6 • invalid_annotation_target
+   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre • lib/features/forum/presentation/pages/create_post_page.dart:211:17 • deprecated_member_use
+

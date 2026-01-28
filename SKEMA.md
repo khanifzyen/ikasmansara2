@@ -467,3 +467,20 @@ onRecordAfterCreateRequest((e) => {
 | Sub-Event QR | `event_sub_event_registrations.sub_event_ticket_id` | `REUNI26-CEK-001` |
 
 **Client-side generation**: Use a library like `qrcode.js` to encode the ID string into a QR image on demand.
+
+## 13. Midtrans Logs (Audit Trail)
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `order_id` | text | ✅ | Booking ID |
+| `transaction_id` | text | ✅ | Midtrans Transaction ID |
+| `transaction_status` | text | ✅ | e.g. settlement, pending |
+| `payment_type` | text | ❌ | e.g. bank_transfer |
+| `gross_amount` | text | ❌ | Amount paid (Text to support various currencies/formats) |
+| `fraud_status` | text | ❌ | e.g. accept, challenge |
+| `status_code` | text | ❌ | e.g. 200, 201 |
+| `raw_body` | json | ✅ | Full JSON Request Body |
+
+**API Rules:**
+- `list`, `view`: Admin only.
+- `create`, `update`, `delete`: Disabled (System only via Hook).

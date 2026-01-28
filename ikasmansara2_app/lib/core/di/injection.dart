@@ -34,8 +34,16 @@ import '../../features/events/domain/usecases/get_event_detail.dart';
 import '../../features/events/domain/usecases/get_event_tickets.dart';
 import '../../features/events/domain/usecases/get_event_sub_events.dart';
 import '../../features/events/domain/usecases/get_event_sponsors.dart';
+
+import '../../features/events/domain/usecases/create_event_booking.dart';
+import '../../features/events/domain/usecases/get_user_event_bookings.dart';
+import '../../features/events/domain/usecases/get_event_booking_tickets.dart';
 import '../../features/events/presentation/bloc/events_bloc.dart';
+import '../../features/events/presentation/bloc/event_booking_bloc.dart';
+import '../../features/events/presentation/bloc/my_tickets_bloc.dart';
+
 import '../../features/forum/data/datasources/forum_remote_data_source.dart';
+
 import '../../features/forum/data/repositories/forum_repository_impl.dart';
 import '../../features/forum/domain/repositories/forum_repository.dart';
 
@@ -155,9 +163,26 @@ Future<void> configureDependencies() async {
     () => GetEventSubEvents(getIt<EventRepository>()),
   );
   getIt.registerLazySingleton(() => GetEventSponsors(getIt<EventRepository>()));
+  getIt.registerLazySingleton(() => GetEventSponsors(getIt<EventRepository>()));
+  getIt.registerLazySingleton(
+    () => CreateEventBooking(getIt<EventRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetUserEventBookings(getIt<EventRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetEventBookingTickets(getIt<EventRepository>()),
+  );
 
   // BLoCs
   getIt.registerFactory(() => EventsBloc(getIt<GetEvents>()));
+  getIt.registerFactory(() => EventBookingBloc(getIt<CreateEventBooking>()));
+  getIt.registerFactory(
+    () => MyTicketsBloc(
+      getUserEventBookings: getIt<GetUserEventBookings>(),
+      getEventBookingTickets: getIt<GetEventBookingTickets>(),
+    ),
+  );
 
   // ===== Forum Feature =====
 

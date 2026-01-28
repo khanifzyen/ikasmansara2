@@ -2,6 +2,8 @@ import '../entities/event.dart';
 import '../entities/event_ticket.dart';
 import '../entities/event_sub_event.dart';
 import '../entities/event_sponsor.dart';
+import '../entities/event_booking.dart';
+import '../entities/event_booking_ticket.dart';
 
 abstract class EventRepository {
   Future<List<Event>> getEvents({
@@ -13,4 +15,11 @@ abstract class EventRepository {
   Future<List<EventTicket>> getEventTickets(String eventId);
   Future<List<EventSubEvent>> getEventSubEvents(String eventId);
   Future<List<EventSponsor>> getEventSponsors(String eventId);
+  Future<EventBooking> createBooking({
+    required String eventId,
+    required List<Map<String, dynamic>> metadata,
+    required int totalPrice,
+  });
+  Future<List<EventBooking>> getUserBookings(String userId);
+  Future<List<EventBookingTicket>> getBookingTickets(String bookingId);
 }

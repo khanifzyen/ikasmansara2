@@ -13,7 +13,7 @@ import '../../features/auth/presentation/pages/register_public_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/main_shell.dart';
-import '../../features/events/presentation/pages/ticket_list_page.dart';
+
 import '../../features/loker/presentation/pages/loker_list_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/directory/presentation/pages/directory_page.dart';
@@ -27,6 +27,7 @@ import '../../features/news/presentation/pages/news_detail_page.dart';
 import '../../features/forum/presentation/pages/forum_page.dart';
 import '../../features/forum/presentation/pages/create_post_page.dart';
 import '../../features/forum/presentation/pages/forum_detail_page.dart';
+import '../../features/events/presentation/pages/my_tickets_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -122,7 +123,11 @@ class AppRouter {
               GoRoute(
                 path: '/tickets',
                 name: 'tickets',
-                builder: (context, state) => const TicketListPage(),
+                builder: (context, state) {
+                  final userId =
+                      PBClient.instance.pb.authStore.record?.id ?? '';
+                  return MyTicketsPage(userId: userId);
+                },
               ),
             ],
           ),
@@ -233,6 +238,7 @@ class AppRouter {
         },
       ),
     ],
+
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),
   );

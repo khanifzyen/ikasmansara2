@@ -2,7 +2,10 @@ import '../../domain/entities/event.dart';
 import '../../domain/entities/event_ticket.dart';
 import '../../domain/entities/event_sub_event.dart';
 import '../../domain/entities/event_sponsor.dart';
+import '../../domain/entities/event_booking.dart';
+import '../../domain/entities/event_booking_ticket.dart';
 import '../../domain/repositories/event_repository.dart';
+
 import '../datasources/event_remote_data_source.dart';
 
 class EventRepositoryImpl implements EventRepository {
@@ -54,5 +57,28 @@ class EventRepositoryImpl implements EventRepository {
   Future<List<EventSponsor>> getEventSponsors(String eventId) async {
     final models = await _remoteDataSource.getEventSponsors(eventId);
     return models.map((m) => m.toEntity()).toList();
+  }
+
+  @override
+  Future<EventBooking> createBooking({
+    required String eventId,
+    required List<Map<String, dynamic>> metadata,
+    required int totalPrice,
+  }) async {
+    return await _remoteDataSource.createBooking(
+      eventId: eventId,
+      metadata: metadata,
+      totalPrice: totalPrice,
+    );
+  }
+
+  @override
+  Future<List<EventBooking>> getUserBookings(String userId) async {
+    return await _remoteDataSource.getUserBookings(userId);
+  }
+
+  @override
+  Future<List<EventBookingTicket>> getBookingTickets(String bookingId) async {
+    return await _remoteDataSource.getBookingTickets(bookingId);
   }
 }

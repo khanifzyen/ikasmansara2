@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/event_ticket.dart';
 import '../../domain/entities/event_ticket_option.dart';
+import '../bloc/event_booking_bloc.dart';
 
 class TicketTab extends StatefulWidget {
   final List<EventTicket> tickets;
@@ -348,21 +350,54 @@ class _TicketTabState extends State<TicketTab> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
+            child: const Text('Beli Tiket Sekarang'),
             onPressed: () {
-              // TODO: Implement buy logic with options
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur Pembayaran segera hadir')),
+              final total = _calculateTotal();
+              if (total == 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Pilih minimal 1 tiket')),
+                );
+                return;
+              }
+
+              // Build Metadata
+              final List<Map<String, dynamic>> metadata = [];
+              for (var ticket in widget.tickets) {
+                final quantity = _quantities[ticket.id] ?? 0;
+                if (quantity > 0) {
+                  // For each item of this ticket type
+                  for (int i = 0; i < quantity; i++) {
+                    final options = <String, String>{};
+                    if (_selectedOptions.containsKey(ticket.id) &&
+                        _selectedOptions[ticket.id]!.containsKey(i)) {
+                      _selectedOptions[ticket.id]![i]!.forEach((key, choice) {
+                        // We use the option ID as key, and choice label as value
+                        options[key] = choice.label;
+                      });
+                    }
+
+                    metadata.add({
+                      'ticket_type_id': ticket.id,
+                      'quantity':
+                          1, // We break down per item for easier handling
+                      'options': options,
+                    });
+                  }
+                }
+              }
+
+              // Determine Event ID
+              final eventId = widget.tickets.first.eventId;
+
+              // Dispatch
+              context.read<EventBookingBloc>().add(
+                CreateBooking(
+                  eventId: eventId,
+                  metadata: metadata,
+                  totalPrice: total,
+                ),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF006D4E),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text('Beli Tiket Sekarang'),
           ),
         ),
         const SizedBox(height: 32),

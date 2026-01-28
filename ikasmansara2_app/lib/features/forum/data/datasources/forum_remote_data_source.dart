@@ -58,7 +58,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
         'content': content,
         'category': category,
         'visibility': visibility,
-        'user': _client.pb.authStore.model.id,
+        'user': _client.pb.authStore.record?.id,
         'status':
             'active', // Direct active for now, change if moderation needed
         'images':
@@ -100,7 +100,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
       final body = {
         'post': postId,
         'content': content,
-        'user': _client.pb.authStore.model.id,
+        'user': _client.pb.authStore.record?.id,
       };
 
       final record = await _client.pb
@@ -116,7 +116,7 @@ class ForumRemoteDataSourceImpl implements ForumRemoteDataSource {
   @override
   Future<bool> toggleLike(String postId) async {
     try {
-      final userId = _client.pb.authStore.model.id;
+      final userId = _client.pb.authStore.record?.id;
       // Check if already liked
       final existingLikes = await _client.pb
           .collection('forum_likes')

@@ -14,7 +14,11 @@ import '../../domain/usecases/get_event_sponsors.dart';
 import '../widgets/ticket_tab.dart';
 import '../widgets/sub_event_tab.dart';
 import '../widgets/sponsor_tab.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../bloc/event_booking_bloc.dart';
 import '../widgets/event_donation_tab.dart';
+
 
 class EventDetailPage extends StatefulWidget {
   final String eventId;
@@ -109,7 +113,29 @@ class _EventDetailPageState extends State<EventDetailPage>
           final dateStr = DateFormat('d MMMM yyyy', 'id').format(event.date);
           final fullDateString = '$dayName, $dateStr';
 
-          return CustomScrollView(
+          return BlocProvider(
+            create: (_) => GetIt.I<EventBookingBloc>(),
+            child: BlocListener<EventBookingBloc, EventBookingState>(
+              listener: (context, state) {
+                if (state is EventBookingSuccess) {
+                  // Navigate to payment
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Pesanan berhasil dibuat, membuka pembayaran...')),
+                  );
+                  if (state.booking.snapRedirectUrl != null) {
+                       // Using a helper method or direct url launch. 
+                       // Since we can't import url_launcher here yet (dart analysis), let's assume we implement a method 
+                       // or import it at top (replace_file_content specific).
+                       // I will add import in next step or use separate method.
+                       _launchPaymentUrl(context, state.booking.snapRedirectUrl!);
+                  }
+                } else if (state is EventBookingFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Gagal membuat pesanan: ${state.message}')),
+                  );
+                }
+              },
+              child: CustomScrollView(
             controller: _scrollController,
             slivers: [
               SliverAppBar(
@@ -286,6 +312,19 @@ class _EventDetailPageState extends State<EventDetailPage>
         },
       ),
     );
+  }
+
+  Future<void> _launchPaymentUrl(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch payment URL')),
+        );
+      }
+    }
   }
 
   Widget _buildTabContent(_EventData data) {
