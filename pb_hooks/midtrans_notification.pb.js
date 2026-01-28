@@ -90,6 +90,35 @@ routerAdd("POST", "/midtrans/notification", (c) => {
             }
             booking.set("payment_date", new Date());
 
+            // --- Update Ticket Sold Count ---
+            try {
+                // Metadata is stored as JSON field, in JSVM it might need parsing if it comes as string,
+                // but usually PocketBase returns it as object/array if it's a json field.
+                // Assuming metadata structure: [{ "ticket_id": "RECORD_ID", "quantity": 1, ... }]
+                const metadata = booking.get("metadata"); // getValue() might be safer depending on PB version, usually .get() works for field access
+
+                // If metadata is null or empty, skip
+                if (metadata && Array.isArray(metadata)) {
+                    for (let i = 0; i < metadata.length; i++) {
+                        const item = metadata[i];
+                        if (item.ticket_id && item.quantity) {
+                            try {
+                                const ticket = $app.dao().findRecordById("event_tickets", item.ticket_id);
+                                const currentSold = ticket.getInt("sold");
+                                ticket.set("sold", currentSold + parseInt(item.quantity));
+                                $app.dao().saveRecord(ticket);
+                                console.log(`[Midtrans Webhook] Incremented sold count for ticket ${item.ticket_id} by ${item.quantity}`);
+                            } catch (ticketErr) {
+                                console.error(`[Midtrans Webhook] Failed to update ticket ${item.ticket_id}: ${ticketErr.message}`);
+                            }
+                        }
+                    }
+                }
+            } catch (metaErr) {
+                console.error(`[Midtrans Webhook] Failed to process metadata for ticket updates: ${metaErr.message}`);
+            }
+            // --------------------------------
+
             $app.dao().saveRecord(booking);
         } else if (newStatus !== currentStatus && newStatus === "failed") {
             console.log(`[Midtrans Webhook] Updating ${orderId} status to FAILED/EXPIRED`);

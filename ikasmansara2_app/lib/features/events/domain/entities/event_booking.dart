@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'event.dart';
 
 class EventBooking extends Equatable {
   final String id;
@@ -13,6 +14,7 @@ class EventBooking extends Equatable {
   final String paymentStatus;
   final String? snapToken;
   final String? snapRedirectUrl;
+  final Event? event;
 
   const EventBooking({
     required this.id,
@@ -26,6 +28,7 @@ class EventBooking extends Equatable {
     required this.paymentStatus,
     this.snapToken,
     this.snapRedirectUrl,
+    this.event,
   });
 
   @override
@@ -41,5 +44,6 @@ class EventBooking extends Equatable {
     paymentStatus,
     snapToken,
     snapRedirectUrl,
+    event,
   ];
 }

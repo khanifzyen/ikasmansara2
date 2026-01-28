@@ -4,6 +4,8 @@ import '../../domain/entities/event_booking.dart';
 import '../../domain/entities/event_booking_ticket.dart';
 import '../../domain/usecases/get_user_event_bookings.dart';
 import '../../domain/usecases/get_event_booking_tickets.dart';
+import '../../domain/usecases/cancel_booking.dart';
+import '../../domain/usecases/delete_booking.dart';
 
 // Events
 abstract class MyTicketsEvent extends Equatable {
@@ -24,6 +26,22 @@ class GetMyBookingTickets extends MyTicketsEvent {
   const GetMyBookingTickets(this.bookingId);
   @override
   List<Object?> get props => [bookingId];
+}
+
+class CancelEventBooking extends MyTicketsEvent {
+  final String bookingId;
+  final String userId;
+  const CancelEventBooking(this.bookingId, this.userId);
+  @override
+  List<Object?> get props => [bookingId, userId];
+}
+
+class DeleteEventBooking extends MyTicketsEvent {
+  final String bookingId;
+  final String userId;
+  const DeleteEventBooking(this.bookingId, this.userId);
+  @override
+  List<Object?> get props => [bookingId, userId];
 }
 
 // States
@@ -62,13 +80,19 @@ class MyTicketsFailure extends MyTicketsState {
 class MyTicketsBloc extends Bloc<MyTicketsEvent, MyTicketsState> {
   final GetUserEventBookings getUserEventBookings;
   final GetEventBookingTickets getEventBookingTickets;
+  final CancelBooking cancelBooking;
+  final DeleteBooking deleteBooking;
 
   MyTicketsBloc({
     required this.getUserEventBookings,
     required this.getEventBookingTickets,
+    required this.cancelBooking,
+    required this.deleteBooking,
   }) : super(MyTicketsInitial()) {
     on<GetMyBookings>(_onGetMyBookings);
     on<GetMyBookingTickets>(_onGetMyBookingTickets);
+    on<CancelEventBooking>(_onCancelEventBooking);
+    on<DeleteEventBooking>(_onDeleteEventBooking);
   }
 
   Future<void> _onGetMyBookings(
@@ -92,6 +116,35 @@ class MyTicketsBloc extends Bloc<MyTicketsEvent, MyTicketsState> {
     try {
       final tickets = await getEventBookingTickets(event.bookingId);
       emit(MyBookingTicketsLoaded(tickets));
+    } catch (e) {
+      emit(MyTicketsFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onCancelEventBooking(
+    CancelEventBooking event,
+    Emitter<MyTicketsState> emit,
+  ) async {
+    // Optimistic or loading state? For simple lists, just reloading is safer.
+    emit(MyTicketsLoading());
+    try {
+      await cancelBooking(event.bookingId);
+      // Reload list
+      add(GetMyBookings(event.userId));
+    } catch (e) {
+      emit(MyTicketsFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteEventBooking(
+    DeleteEventBooking event,
+    Emitter<MyTicketsState> emit,
+  ) async {
+    emit(MyTicketsLoading());
+    try {
+      await deleteBooking(event.bookingId);
+      // Reload list
+      add(GetMyBookings(event.userId));
     } catch (e) {
       emit(MyTicketsFailure(e.toString()));
     }

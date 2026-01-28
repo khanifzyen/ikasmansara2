@@ -22,4 +22,6 @@ abstract class EventRepository {
   });
   Future<List<EventBooking>> getUserBookings(String userId);
   Future<List<EventBookingTicket>> getBookingTickets(String bookingId);
+  Future<void> cancelBooking(String id);
+  Future<void> deleteBooking(String id);
 }

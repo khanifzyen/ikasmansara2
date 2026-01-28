@@ -26,6 +26,8 @@ abstract class EventRemoteDataSource {
   });
   Future<List<EventBookingModel>> getUserBookings(String userId);
   Future<List<EventBookingTicketModel>> getBookingTickets(String bookingId);
+  Future<void> cancelBooking(String id);
+  Future<void> deleteBooking(String id);
 }
 
 class EventRemoteDataSourceImpl implements EventRemoteDataSource {
@@ -205,6 +207,28 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     } catch (e) {
       debugPrint('DEBUG: Error fetching booking tickets: $e');
       return [];
+    }
+  }
+
+  @override
+  Future<void> cancelBooking(String id) async {
+    try {
+      await _pbClient.pb
+          .collection('event_bookings')
+          .update(id, body: {'payment_status': 'cancelled'});
+    } catch (e) {
+      debugPrint('DEBUG: Error cancelling booking: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteBooking(String id) async {
+    try {
+      await _pbClient.pb.collection('event_bookings').delete(id);
+    } catch (e) {
+      debugPrint('DEBUG: Error deleting booking: $e');
+      rethrow;
     }
   }
 }

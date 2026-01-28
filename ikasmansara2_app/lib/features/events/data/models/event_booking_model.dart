@@ -1,5 +1,6 @@
 import '../../domain/entities/event_booking.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'event_model.dart';
 
 class EventBookingModel extends EventBooking {
   const EventBookingModel({
@@ -14,6 +15,7 @@ class EventBookingModel extends EventBooking {
     required super.paymentStatus,
     super.snapToken,
     super.snapRedirectUrl,
+    super.event,
   });
 
   factory EventBookingModel.fromRecord(RecordModel record) {
@@ -32,6 +34,10 @@ class EventBookingModel extends EventBooking {
           : null,
       snapRedirectUrl: record.getStringValue('snap_redirect_url').isNotEmpty
           ? record.getStringValue('snap_redirect_url')
+          : null,
+      event:
+          record.expand['event'] != null && record.expand['event']!.isNotEmpty
+          ? EventModel.fromRecord(record.expand['event']!.first).toEntity()
           : null,
     );
   }

@@ -81,4 +81,14 @@ class EventRepositoryImpl implements EventRepository {
   Future<List<EventBookingTicket>> getBookingTickets(String bookingId) async {
     return await _remoteDataSource.getBookingTickets(bookingId);
   }
+
+  @override
+  Future<void> cancelBooking(String id) async {
+    await _remoteDataSource.cancelBooking(id);
+  }
+
+  @override
+  Future<void> deleteBooking(String id) async {
+    await _remoteDataSource.deleteBooking(id);
+  }
 }

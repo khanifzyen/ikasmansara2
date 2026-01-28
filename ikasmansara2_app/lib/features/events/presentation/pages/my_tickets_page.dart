@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import '../../domain/entities/event_booking.dart';
 import '../../presentation/bloc/my_tickets_bloc.dart';
 import '../../presentation/pages/my_ticket_detail_page.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import 'package:go_router/go_router.dart';
 
 class MyTicketsPage extends StatefulWidget {
   final String userId;
@@ -78,6 +79,14 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
         statusColor = Colors.red;
         statusText = 'Gagal';
         break;
+      case 'cancelled':
+        statusColor = Colors.grey;
+        statusText = 'Dibatalkan';
+        break;
+      case 'expired':
+        statusColor = Colors.grey;
+        statusText = 'Kedaluwarsa';
+        break;
       default:
         statusColor = Colors.grey;
         statusText = booking.paymentStatus;
@@ -87,19 +96,16 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () {
-          if (booking.paymentStatus == 'pending' &&
-              booking.snapRedirectUrl != null) {
-            _launchPaymentUrl(booking.snapRedirectUrl!);
-          } else if (booking.paymentStatus == 'paid') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MyTicketDetailPage(bookingId: booking.id),
-              ),
-            );
-          }
-        },
+        onTap: booking.paymentStatus == 'paid'
+            ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MyTicketDetailPage(bookingId: booking.id),
+                  ),
+                );
+              }
+            : null,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -119,7 +125,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
+                      color: statusColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -135,23 +141,79 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
               ),
               const SizedBox(height: 12),
               Text(
-                currencyFormat.format(booking.totalPrice),
+                booking.event?.title ?? 'Event Tidak Dikenal',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
-              if (booking.paymentStatus == 'pending')
-                const Text(
-                  'Tap untuk melanjutkan pembayaran',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.orange,
-                    fontStyle: FontStyle.italic,
+              const SizedBox(height: 4),
+              Text(
+                currencyFormat.format(booking.totalPrice),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Action Buttons
+              if (booking.paymentStatus == 'pending') ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => _showCancelDialog(context, booking),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
+                        ),
+                        child: const Text('Batal'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (booking.snapRedirectUrl != null) {
+                            final result = await context.push<bool>(
+                              '/payment',
+                              extra: {
+                                'paymentUrl': booking.snapRedirectUrl!,
+                                'bookingId': booking.bookingId,
+                                'fromEventDetail': false,
+                              },
+                            );
+
+                            if (result == true && context.mounted) {
+                              context.read<MyTicketsBloc>().add(
+                                GetMyBookings(widget.userId),
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Bayar'),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else if (booking.paymentStatus == 'failed' ||
+                  booking.paymentStatus == 'cancelled' ||
+                  booking.paymentStatus == 'expired') ...[
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () => _showDeleteDialog(context, booking),
+                    icon: const Icon(Icons.delete_outline, size: 18),
+                    label: const Text('Hapus'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
                   ),
                 ),
-              if (booking.paymentStatus == 'paid')
+              ] else if (booking.paymentStatus == 'paid') ...[
                 const Text(
                   'Tap untuk lihat tiket & QR Code',
                   style: TextStyle(
@@ -160,6 +222,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
+              ],
             ],
           ),
         ),
@@ -167,10 +230,59 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
     );
   }
 
-  Future<void> _launchPaymentUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+  void _showCancelDialog(BuildContext context, EventBooking booking) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Batalkan Pesanan?'),
+        content: const Text(
+          'Apakah Anda yakin ingin membatalkan pesanan ini? Pesanan yang dibatalkan tidak dapat dikembalikan.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Tidak'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<MyTicketsBloc>().add(
+                CancelEventBooking(booking.bookingId, widget.userId),
+              );
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Ya, Batalkan'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, EventBooking booking) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Hapus Riwayat?'),
+        content: const Text(
+          'Apakah Anda yakin ingin menghapus riwayat pesanan ini?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Tidak'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<MyTicketsBloc>().add(
+                DeleteEventBooking(booking.bookingId, widget.userId),
+              );
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Ya, Hapus'),
+          ),
+        ],
+      ),
+    );
   }
 }

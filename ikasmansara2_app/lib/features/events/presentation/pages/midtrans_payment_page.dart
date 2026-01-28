@@ -7,11 +7,13 @@ import 'package:go_router/go_router.dart';
 class MidtransPaymentPage extends StatefulWidget {
   final String paymentUrl;
   final String bookingId;
+  final bool fromEventDetail;
 
   const MidtransPaymentPage({
     super.key,
     required this.paymentUrl,
     required this.bookingId,
+    this.fromEventDetail = false,
   });
 
   @override
@@ -118,8 +120,15 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
   }
 
   void _navigateToMyTickets() {
-    // Pop back to root and navigate to Tiketku
-    context.go('/tiketku');
+    if (widget.fromEventDetail) {
+      context.go('/tiketku');
+    } else {
+      if (context.canPop()) {
+        context.pop(true);
+      } else {
+        context.go('/tiketku');
+      }
+    }
   }
 
   @override

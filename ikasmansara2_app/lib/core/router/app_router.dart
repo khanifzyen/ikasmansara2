@@ -28,6 +28,7 @@ import '../../features/forum/presentation/pages/forum_page.dart';
 import '../../features/forum/presentation/pages/create_post_page.dart';
 import '../../features/forum/presentation/pages/forum_detail_page.dart';
 import '../../features/events/presentation/pages/my_tickets_page.dart';
+import '../../features/events/presentation/pages/midtrans_payment_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -235,6 +236,18 @@ class AppRouter {
         builder: (context, state) {
           final postId = state.extra as String;
           return ForumDetailPage(postId: postId);
+        },
+      ),
+      GoRoute(
+        path: '/payment',
+        name: 'payment',
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>;
+          return MidtransPaymentPage(
+            paymentUrl: extras['paymentUrl'] as String,
+            bookingId: extras['bookingId'] as String,
+            fromEventDetail: extras['fromEventDetail'] as bool? ?? false,
+          );
         },
       ),
     ],

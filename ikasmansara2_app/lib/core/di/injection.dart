@@ -38,6 +38,8 @@ import '../../features/events/domain/usecases/get_event_sponsors.dart';
 import '../../features/events/domain/usecases/create_event_booking.dart';
 import '../../features/events/domain/usecases/get_user_event_bookings.dart';
 import '../../features/events/domain/usecases/get_event_booking_tickets.dart';
+import '../../features/events/domain/usecases/cancel_booking.dart';
+import '../../features/events/domain/usecases/delete_booking.dart';
 import '../../features/events/presentation/bloc/events_bloc.dart';
 import '../../features/events/presentation/bloc/event_booking_bloc.dart';
 import '../../features/events/presentation/bloc/my_tickets_bloc.dart';
@@ -172,6 +174,8 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(
     () => GetEventBookingTickets(getIt<EventRepository>()),
   );
+  getIt.registerLazySingleton(() => CancelBooking(getIt<EventRepository>()));
+  getIt.registerLazySingleton(() => DeleteBooking(getIt<EventRepository>()));
 
   // BLoCs
   getIt.registerFactory(() => EventsBloc(getIt<GetEvents>()));
@@ -180,6 +184,8 @@ Future<void> configureDependencies() async {
     () => MyTicketsBloc(
       getUserEventBookings: getIt<GetUserEventBookings>(),
       getEventBookingTickets: getIt<GetEventBookingTickets>(),
+      cancelBooking: getIt<CancelBooking>(),
+      deleteBooking: getIt<DeleteBooking>(),
     ),
   );
 

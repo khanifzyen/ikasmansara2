@@ -15,7 +15,7 @@ import '../widgets/ticket_tab.dart';
 import '../widgets/sub_event_tab.dart';
 import '../widgets/sponsor_tab.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'midtrans_payment_page.dart';
+import 'package:go_router/go_router.dart';
 import '../bloc/event_booking_bloc.dart';
 import '../widgets/event_donation_tab.dart';
 
@@ -115,7 +115,8 @@ class _EventDetailPageState extends State<EventDetailPage>
           return BlocProvider(
             create: (_) => GetIt.I<EventBookingBloc>(),
             child: BlocListener<EventBookingBloc, EventBookingState>(
-              listener: (context, state) {
+              listener: (context, state) async {
+                // Added async here
                 if (state is EventBookingSuccess) {
                   // Navigate to payment
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -335,24 +336,14 @@ class _EventDetailPageState extends State<EventDetailPage>
     String url,
     String bookingId,
   ) async {
-    final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute(
-        builder: (_) =>
-            MidtransPaymentPage(paymentUrl: url, bookingId: bookingId),
-      ),
+    final result = await context.push<bool>(
+      '/payment',
+      extra: {
+        'paymentUrl': url,
+        'bookingId': bookingId,
+        'fromEventDetail': true,
+      },
     );
-
-    if (result != null && context.mounted) {
-      final status = result['status'];
-      if (status == 'success') {
-        // Refresh data or navigate to ticket page
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Pembayaran berhasil! Tiket Anda sudah tersedia.'),
-          ),
-        );
-      }
-    }
   }
 
   Widget _buildTabContent(_EventData data) {
