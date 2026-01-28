@@ -214,11 +214,12 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
       await imagePath.writeAsBytes(image);
 
       if (mounted) {
-        // ignore: deprecated_member_use
-        await Share.shareXFiles(
-          [XFile(imagePath.path)],
-          text:
-              'Ini tiket saya untuk event ini: ${ticket.ticketName} (${ticket.ticketCode})',
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(imagePath.path)],
+            text:
+                'Ini tiket saya untuk event ini: ${ticket.ticketName} (${ticket.ticketCode})',
+          ),
         );
       }
     } catch (e) {
