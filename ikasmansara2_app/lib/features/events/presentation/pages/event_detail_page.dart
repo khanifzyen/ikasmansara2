@@ -15,7 +15,7 @@ import '../widgets/ticket_tab.dart';
 import '../widgets/sub_event_tab.dart';
 import '../widgets/sponsor_tab.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'midtrans_payment_page.dart';
 import '../bloc/event_booking_bloc.dart';
 import '../widgets/event_donation_tab.dart';
 
@@ -130,7 +130,11 @@ class _EventDetailPageState extends State<EventDetailPage>
                     // Since we can't import url_launcher here yet (dart analysis), let's assume we implement a method
                     // or import it at top (replace_file_content specific).
                     // I will add import in next step or use separate method.
-                    _launchPaymentUrl(context, state.booking.snapRedirectUrl!);
+                    _launchPaymentUrl(
+                      context,
+                      state.booking.snapRedirectUrl!,
+                      state.booking.bookingId,
+                    );
                   }
                 } else if (state is EventBookingFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -326,14 +330,26 @@ class _EventDetailPageState extends State<EventDetailPage>
     );
   }
 
-  Future<void> _launchPaymentUrl(BuildContext context, String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (context.mounted) {
+  Future<void> _launchPaymentUrl(
+    BuildContext context,
+    String url,
+    String bookingId,
+  ) async {
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute(
+        builder: (_) =>
+            MidtransPaymentPage(paymentUrl: url, bookingId: bookingId),
+      ),
+    );
+
+    if (result != null && context.mounted) {
+      final status = result['status'];
+      if (status == 'success') {
+        // Refresh data or navigate to ticket page
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch payment URL')),
+          const SnackBar(
+            content: Text('Pembayaran berhasil! Tiket Anda sudah tersedia.'),
+          ),
         );
       }
     }

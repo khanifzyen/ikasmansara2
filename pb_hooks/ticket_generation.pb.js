@@ -3,7 +3,7 @@
 /**
  * Ticket Generation Hook
  * 
- * Trigger: onRecordUpdate (event_bookings)
+ * Trigger: onRecordAfterUpdateSuccess (event_bookings)
  * Condition: payment_status BECOMES 'paid'
  * Action:
  * 1. Verify if tickets already exist (Idempotency)
@@ -13,18 +13,13 @@
  * 5. Update 'event_tickets.sold'
  */
 
-onRecordAfterUpdateRequest((e) => {
-    const COLLECTION = "event_bookings";
-
-    if (e.record.collection().name !== COLLECTION) return;
-
+onRecordAfterUpdateSuccess((e) => {
     // Only proceed if status is 'paid'
     if (e.record.getString("payment_status") !== "paid") return;
 
     console.log(`[Hook] 🎫 processing ticket generation for Booking ${e.record.getId()}...`);
 
     try {
-        const dao = $app.dao();
         const bookingId = e.record.getId();
         const eventId = e.record.getString("event");
 
@@ -32,7 +27,7 @@ onRecordAfterUpdateRequest((e) => {
         // 1. Idempotency Check
         // -----------------------------------------------------------------
         // Check if we already have tickets for this booking
-        const existingTickets = dao.findRecordsByFilter(
+        const existingTickets = $app.findRecordsByFilter(
             "event_booking_tickets",
             `booking = '${bookingId}'`,
             "-created",
@@ -66,7 +61,7 @@ onRecordAfterUpdateRequest((e) => {
         // -----------------------------------------------------------------
         // 3. Prepare Event & sequences
         // -----------------------------------------------------------------
-        const event = dao.findRecordById("events", eventId);
+        const event = $app.findRecordById("events", eventId);
         let eventLastSeq = event.getInt("last_ticket_seq") || 0;
 
         const ticketFormat = event.getString("ticket_id_format") || "TIX-{CODE}-{SEQ}";
@@ -76,8 +71,7 @@ onRecordAfterUpdateRequest((e) => {
         // 4. Generate Tickets
         // -----------------------------------------------------------------
         $app.runInTransaction((txApp) => {
-            const txDao = txApp.dao();
-            const bookingsTicketsCollection = txDao.findCollectionByNameOrId("event_booking_tickets");
+            const bookingsTicketsCollection = txApp.findCollectionByNameOrId("event_booking_tickets");
 
             items.forEach(item => {
                 const ticketTypeId = item.ticket_type_id;
@@ -88,10 +82,10 @@ onRecordAfterUpdateRequest((e) => {
 
                 // Update 'sold' count for this ticket type
                 try {
-                    const ticketTypeRecord = txDao.findRecordById("event_tickets", ticketTypeId);
+                    const ticketTypeRecord = txApp.findRecordById("event_tickets", ticketTypeId);
                     const currentSold = ticketTypeRecord.getInt("sold");
                     ticketTypeRecord.set("sold", currentSold + qty);
-                    txDao.saveRecord(ticketTypeRecord);
+                    txApp.save(ticketTypeRecord);
                 } catch (err) {
                     console.error(`[Hook] ❌ Failed to update sold count for ticket ${ticketTypeId}: ${err.message}`);
                     throw err; // Propagate error to rollback transaction
@@ -116,23 +110,22 @@ onRecordAfterUpdateRequest((e) => {
                     newTicket.set("shirt_picked_up", false);
                     newTicket.set("checked_in", false);
 
-                    txDao.saveRecord(newTicket);
+                    txApp.save(newTicket);
                     console.log(`[Hook] -> Generated Ticket: ${ticketIdStr}`);
                 }
             });
 
             // Update Event's last_ticket_seq
             event.set("last_ticket_seq", eventLastSeq);
-            txDao.saveRecord(event);
+            txApp.save(event);
         });
 
         console.log(`[Hook] ✅ Successfully generated tickets for Booking ${bookingId}`);
 
     } catch (err) {
         console.error(`[Hook] ❌ Ticket Generation Failed: ${err.message}`);
-        // Consider if we should revert 'paid' status or just log error?
-        // For now, logging is safer than breaking the transaction commit if it was already committed.
-        // But since we use runInTransaction, the ticket creation should be atomic.
     }
+
+    e.next();
 
 }, "event_bookings");

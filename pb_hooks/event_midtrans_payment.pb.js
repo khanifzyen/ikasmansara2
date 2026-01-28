@@ -2,93 +2,82 @@
 
 /**
  * Midtrans Payment Hook (PocketBase v0.36+)
- * 
- * Logic in onRecordCreate (runs before persistence):
- * 1. AUTO-GENERATE Booking ID ({CODE}-{YEAR}-{SEQ})
- * 2. REQUEST Snap Token from Midtrans
- * 3. UPDATE Record with Token & Booking ID
  */
 
-onRecordCreate((e) => {
-    // ---------------------------------------------------------------------
-    // Configuration & Helpers
-    // ---------------------------------------------------------------------
-    const COLLECTION = "event_bookings";
-
-    // Only run for event_bookings
-    if (e.record.collection().name !== COLLECTION) return;
-
-    console.log(`[Hook] onRecordCreate triggered for ${COLLECTION}`);
-    console.log("[Hook] Record data preview:", JSON.stringify(e.record.publicExport()));
+onRecordCreateRequest((e) => {
+    console.log("[Hook] onRecordCreateRequest triggered for event_bookings");
 
     try {
+        // Load .env file inline
+        let serverKey = "";
+        try {
+            const envPath = __hooks + "/.env";
+            const content = $os.readFile(envPath);
+            const lines = toString(content).split("\n");
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith("MIDTRANS_SERVER_KEY=")) {
+                    serverKey = line.substring("MIDTRANS_SERVER_KEY=".length).trim();
+                    if ((serverKey.startsWith('"') && serverKey.endsWith('"')) ||
+                        (serverKey.startsWith("'") && serverKey.endsWith("'"))) {
+                        serverKey = serverKey.slice(1, -1);
+                    }
+                    break;
+                }
+            }
+            console.log("[Hook] ✅ .env loaded, key: " + (serverKey ? serverKey.substring(0, 10) + "..." : "EMPTY"));
+        } catch (envErr) {
+            console.error("[Hook] ⚠️ .env load failed:", envErr.message);
+            serverKey = $os.getenv("MIDTRANS_SERVER_KEY") || "";
+        }
+
         const eventId = e.record.getString("event");
         if (!eventId) throw new BadRequestError("Event ID is required");
 
-        // -----------------------------------------------------------------
-        // 1. Generate Booking ID
-        // -----------------------------------------------------------------
-        console.log(`[Hook] strict: Generating Booking ID for Event ${eventId}...`);
-
+        // Generate Booking ID
         const event = $app.findRecordById("events", eventId);
-
-        // Concurrency Lock usually needed? JSVM is single-threaded per request, but let's assume simple increment is safe enough for low volume.
-        // Get current sequence
         const currentSeq = event.getInt("last_booking_seq") || 0;
         const nextSeq = currentSeq + 1;
 
         const format = event.getString("booking_id_format") || "{CODE}-{YEAR}-{SEQ}";
         const eventCode = event.getString("code") || "EVT";
         const year = new Date().getFullYear();
-        const seqStr = nextSeq.toString().padStart(4, "0"); // 0001
+        const seqStr = nextSeq.toString().padStart(4, "0");
 
         const newBookingId = format
             .replace("{CODE}", eventCode)
             .replace("{YEAR}", year)
             .replace("{SEQ}", seqStr);
 
-        console.log(`[Hook] Generated Booking ID: ${newBookingId}`);
+        console.log("[Hook] Generated Booking ID: " + newBookingId);
 
-        // Update Event Sequence immediately
-        // Note: If transaction fails later, we have a gap in sequence. Generally acceptable.
         event.set("last_booking_seq", nextSeq);
         $app.save(event);
-
-        // Set ID to current record
         e.record.set("booking_id", newBookingId);
 
-        // -----------------------------------------------------------------
-        // 2. Request Midtrans Snap Token
-        // -----------------------------------------------------------------
-        // Only if status is pending and we have a price
+        // Request Midtrans Snap Token
         if (e.record.getString("payment_status") === "pending" && e.record.getInt("total_price") > 0) {
-            console.log("[Hook] Requesting Midtrans Snap Token...");
-
-            const serverKey = $os.getenv("MIDTRANS_SERVER_KEY");
             if (!serverKey) {
-                console.warn("[Hook] ⚠️ MIDTRANS_SERVER_KEY is missing! Skipping Snap generation.");
+                console.warn("[Hook] ⚠️ MIDTRANS_SERVER_KEY missing!");
             } else {
                 const totalPrice = e.record.getInt("total_price");
                 const userId = e.record.getString("user");
 
-                // Fetch user details for Midtrans
                 let user;
                 try {
                     user = $app.findRecordById("users", userId);
                 } catch (uErr) {
-                    console.warn("[Hook] User not found, sending minimal data.");
+                    console.warn("[Hook] User not found");
                 }
 
-                // Determine Environment
                 const isSandbox = serverKey.startsWith("SB-");
                 const midtransUrl = isSandbox
                     ? "https://app.sandbox.midtrans.com/snap/v1/transactions"
                     : "https://app.midtrans.com/snap/v1/transactions";
 
-                console.log(`[Hook] Env: ${isSandbox ? "Sandbox" : "Production"}`);
-
-                // Basic Auth Header
-                const authString = toBase64(serverKey + ":");
+                // Use Buffer for base64 encoding (PocketBase JSVM compatible)
+                const authString = Buffer.from(serverKey + ":").toString("base64");
 
                 const payload = {
                     transaction_details: {
@@ -101,9 +90,7 @@ onRecordCreate((e) => {
                         email: user.getString("email"),
                         phone: user.getString("phone")
                     } : undefined,
-                    enabled_payments: [
-                        "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"
-                    ]
+                    enabled_payments: ["gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"]
                 };
 
                 const res = $http.send({
@@ -120,50 +107,20 @@ onRecordCreate((e) => {
 
                 if (res.statusCode === 201 || res.statusCode === 200) {
                     const data = res.json;
-                    console.log("[Hook] ✅ Midtrans Snap Success. Token:", data.token);
-
-                    // Set fields to record (will be saved when e.next() is called)
+                    console.log("[Hook] ✅ Midtrans Success. Token: " + data.token);
                     e.record.set("snap_token", data.token);
                     e.record.set("snap_redirect_url", data.redirect_url);
                 } else {
-                    console.error(`[Hook] ❌ Midtrans Failed: ${res.statusCode} - ${res.raw}`);
-                    // Optional: Throw error to prevent booking creation if payment init fails?
-                    // throw new BadRequestError("Payment gateway initialization failed.");
+                    console.error("[Hook] ❌ Midtrans Failed: " + res.statusCode);
                 }
             }
         }
 
-        // Proceed data persistence
         e.next();
 
     } catch (err) {
-        console.error("[Hook] ❌ ERROR:", err.message);
+        console.error("[Hook] ❌ ERROR: " + err.message);
         throw new BadRequestError("Booking creation failed: " + err.message);
     }
 
 }, "event_bookings");
-
-
-// -------------------------------------------------------------------------
-// Helper: Base64 Encoder
-// -------------------------------------------------------------------------
-function toBase64(input) {
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-    var str = String(input);
-    var output = '';
-
-    for (var block = 0, charCode, i = 0, map = chars;
-        str.charAt(i | 0) || (map = '=', i % 1);
-        output += map.charAt(63 & block >> 8 - i % 1 * 8)) {
-
-        charCode = str.charCodeAt(i += 3 / 4);
-
-        if (charCode > 0xFF) {
-            throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-        }
-
-        block = block << 8 | charCode;
-    }
-
-    return output;
-}
