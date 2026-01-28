@@ -163,7 +163,6 @@ Future<void> configureDependencies() async {
     () => GetEventSubEvents(getIt<EventRepository>()),
   );
   getIt.registerLazySingleton(() => GetEventSponsors(getIt<EventRepository>()));
-  getIt.registerLazySingleton(() => GetEventSponsors(getIt<EventRepository>()));
   getIt.registerLazySingleton(
     () => CreateEventBooking(getIt<EventRepository>()),
   );

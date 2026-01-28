@@ -10,18 +10,40 @@ import 'features/auth/presentation/bloc/auth_event.dart';
 import 'package:upgrader/upgrader.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    debugPrint('Step 1: WidgetsBinding initialized');
 
-  // Load environment variables
-  await dotenv.load();
+    // Load environment variables
+    await dotenv.load();
+    debugPrint('Step 2: DotEnv loaded');
 
-  // Initialize dependencies
-  await configureDependencies();
+    // Initialize dependencies
+    await configureDependencies();
+    debugPrint('Step 3: Dependencies configured');
 
-  // Initialize locale data for Indonesia
-  await initializeDateFormatting('id', null);
+    // Initialize locale data for Indonesia
+    await initializeDateFormatting('id', null);
+    debugPrint('Step 4: Locale initialized');
 
-  runApp(const IkaSmanSaraApp());
+    runApp(const IkaSmanSaraApp());
+  } catch (e, stackTrace) {
+    debugPrint('Initialization Error: $e');
+    debugPrint('Stacktrace: $stackTrace');
+    runApp(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Text(
+              'Gagal inisialisasi aplikasi:\n$e',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class IkaSmanSaraApp extends StatelessWidget {
