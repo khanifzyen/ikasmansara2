@@ -208,6 +208,7 @@ class _CreatePostViewState extends State<CreatePostView> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
+                // ignore: deprecated_member_use
                 value: _visibility,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),

@@ -19,7 +19,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../bloc/event_booking_bloc.dart';
 import '../widgets/event_donation_tab.dart';
 
-
 class EventDetailPage extends StatefulWidget {
   final String eventId;
 
@@ -120,194 +119,207 @@ class _EventDetailPageState extends State<EventDetailPage>
                 if (state is EventBookingSuccess) {
                   // Navigate to payment
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Pesanan berhasil dibuat, membuka pembayaran...')),
+                    const SnackBar(
+                      content: Text(
+                        'Pesanan berhasil dibuat, membuka pembayaran...',
+                      ),
+                    ),
                   );
                   if (state.booking.snapRedirectUrl != null) {
-                       // Using a helper method or direct url launch. 
-                       // Since we can't import url_launcher here yet (dart analysis), let's assume we implement a method 
-                       // or import it at top (replace_file_content specific).
-                       // I will add import in next step or use separate method.
-                       _launchPaymentUrl(context, state.booking.snapRedirectUrl!);
+                    // Using a helper method or direct url launch.
+                    // Since we can't import url_launcher here yet (dart analysis), let's assume we implement a method
+                    // or import it at top (replace_file_content specific).
+                    // I will add import in next step or use separate method.
+                    _launchPaymentUrl(context, state.booking.snapRedirectUrl!);
                   }
                 } else if (state is EventBookingFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Gagal membuat pesanan: ${state.message}')),
+                    SnackBar(
+                      content: Text('Gagal membuat pesanan: ${state.message}'),
+                    ),
                   );
                 }
               },
               child: CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: 220,
-                elevation: 0,
-                backgroundColor: Colors.white,
-                title: _isTitleVisible
-                    ? Text(
-                        event.title,
-                        style: const TextStyle(
-                          color: AppColors.textDark,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : null,
-                centerTitle: false,
-                leading: IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: _isTitleVisible
-                          ? Colors.transparent
-                          : Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: _isTitleVisible
-                          ? AppColors.textDark
-                          : Colors.black,
-                      size: 20,
-                    ),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: event.banner != null && event.banner!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: event.banner!,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
-                            'assets/images/placeholder_event.png',
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Image.asset(
-                          'assets/images/placeholder_event.png',
-                          fit: BoxFit.cover,
-                        ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                  ),
-                  transform: Matrix4.translationValues(0, -20, 0),
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          fullDateString.toUpperCase(),
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        event.title,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.access_time,
-                            size: 16,
-                            color: AppColors.textGrey,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            event.time,
+                controller: _scrollController,
+                slivers: [
+                  SliverAppBar(
+                    pinned: true,
+                    expandedHeight: 220,
+                    elevation: 0,
+                    backgroundColor: Colors.white,
+                    title: _isTitleVisible
+                        ? Text(
+                            event.title,
                             style: const TextStyle(
-                              color: AppColors.textGrey,
-                              fontSize: 13,
+                              color: AppColors.textDark,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          const Icon(
-                            Icons.location_on_outlined,
-                            size: 16,
-                            color: AppColors.textGrey,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        : null,
+                    centerTitle: false,
+                    leading: IconButton(
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _isTitleVisible
+                              ? Colors.transparent
+                              : Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: _isTitleVisible
+                              ? AppColors.textDark
+                              : Colors.black,
+                          size: 20,
+                        ),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background:
+                          event.banner != null && event.banner!.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: event.banner!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: Colors.grey[200],
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                'assets/images/placeholder_event.png',
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Image.asset(
+                              'assets/images/placeholder_event.png',
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(24),
+                        ),
+                      ),
+                      transform: Matrix4.translationValues(0, -20, 0),
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryLight.withValues(
+                                alpha: 0.1,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             child: Text(
-                              event.location,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              fullDateString.toUpperCase(),
                               style: const TextStyle(
-                                color: AppColors.textGrey,
-                                fontSize: 13,
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
                               ),
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          Text(
+                            event.title,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.access_time,
+                                size: 16,
+                                color: AppColors.textGrey,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                event.time,
+                                style: const TextStyle(
+                                  color: AppColors.textGrey,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              const Icon(
+                                Icons.location_on_outlined,
+                                size: 16,
+                                color: AppColors.textGrey,
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  event.location,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: AppColors.textGrey,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            event.description,
+                            style: const TextStyle(
+                              color: AppColors.textGrey,
+                              fontSize: 14,
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          // Tabs
+                          TabBar(
+                            controller: _tabController,
+                            labelColor: AppColors.primary,
+                            unselectedLabelColor: AppColors.textGrey,
+                            indicatorColor: AppColors.primary,
+                            isScrollable: true,
+                            tabAlignment: TabAlignment.start,
+                            labelStyle: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            tabs: const [
+                              Tab(text: 'Tiket'),
+                              Tab(text: 'Sub-event'),
+                              Tab(text: 'Sponsorship'),
+                              Tab(text: 'Donasi'),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          SizedBox(child: _buildTabContent(data)),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        event.description,
-                        style: const TextStyle(
-                          color: AppColors.textGrey,
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      // Tabs
-                      TabBar(
-                        controller: _tabController,
-                        labelColor: AppColors.primary,
-                        unselectedLabelColor: AppColors.textGrey,
-                        indicatorColor: AppColors.primary,
-                        isScrollable: true,
-                        tabAlignment: TabAlignment.start,
-                        labelStyle: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        tabs: const [
-                          Tab(text: 'Tiket'),
-                          Tab(text: 'Sub-event'),
-                          Tab(text: 'Sponsorship'),
-                          Tab(text: 'Donasi'),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(child: _buildTabContent(data)),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),

@@ -253,6 +253,7 @@ class _TicketTabState extends State<TicketTab> {
                                           DropdownButtonFormField<
                                             TicketOptionChoice
                                           >(
+                                            // ignore: deprecated_member_use
                                             value: selectedChoice,
                                             isDense: true,
                                             decoration: InputDecoration(
