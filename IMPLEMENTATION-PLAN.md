@@ -249,7 +249,7 @@ lib/
 | `CreatePostScreen` | Buat postingan baru | - |
 
 ### 7.3 Features
-- [ ] Category tabs (Semua, Karir, Nostalgia, Bisnis)
+- [x] Category tabs (Semua, Prestasi, Alumni, Sekolah, Event, Kegiatan)
 - [ ] Like/unlike posts
 - [ ] Comment system
 - [ ] Image attachment
@@ -304,10 +304,10 @@ lib/
 ## Phase 10: Polish & Testing (Week 11-12)
 
 ### 10.1 UI Polish
-- [ ] Loading shimmer effects
+- [x] Loading shimmer effects
 - [ ] Empty state illustrations
 - [ ] Error state UI
-- [ ] Pull-to-refresh
+- [x] Pull-to-refresh
 - [ ] Smooth animations & transitions
 
 ### 10.2 Offline Support

@@ -5,8 +5,9 @@ import '../../domain/entities/event_ticket_option.dart';
 
 class TicketTab extends StatefulWidget {
   final List<EventTicket> tickets;
+  final bool enableScroll;
 
-  const TicketTab({super.key, required this.tickets});
+  const TicketTab({super.key, required this.tickets, this.enableScroll = true});
 
   @override
   State<TicketTab> createState() => _TicketTabState();
@@ -91,307 +92,302 @@ class _TicketTabState extends State<TicketTab> {
       return const Center(child: Text('Belum ada tiket tersedia'));
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Pesan Tiket Baru',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          ...widget.tickets.map((ticket) {
-            final quantity = _quantities[ticket.id] ?? 0;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[200]!),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  ticket.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  ticket.description,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                if (ticket.includes.isNotEmpty)
-                                  Text(
-                                    'Include: ${ticket.includes.join(", ")}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                Text(
-                                  NumberFormat.currency(
-                                    locale: 'id_ID',
-                                    symbol: 'Rp ',
-                                    decimalDigits: 0,
-                                  ).format(ticket.price),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF006D4E),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
+    Widget content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Pesan Tiket Baru',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+
+        // ... (rest of the children will be preserved by replace_file_content matching)
+        const SizedBox(height: 16),
+        ...widget.tickets.map((ticket) {
+          final quantity = _quantities[ticket.id] ?? 0;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              InkWell(
-                                onTap: () => _updateQuantity(ticket.id, -1),
-                                child: Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey[300]!,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                  ),
-                                  child: const Icon(Icons.remove, size: 16),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
                               Text(
-                                '$quantity',
+                                ticket.name,
                                 style: const TextStyle(
-                                  fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              InkWell(
-                                onTap: () => _updateQuantity(ticket.id, 1),
-                                child: Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey[300]!,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
+                              Text(
+                                ticket.description,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              if (ticket.includes.isNotEmpty)
+                                Text(
+                                  'Include: ${ticket.includes.join(", ")}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
                                   ),
-                                  child: const Icon(Icons.add, size: 16),
+                                ),
+                              Text(
+                                NumberFormat.currency(
+                                  locale: 'id_ID',
+                                  symbol: 'Rp ',
+                                  decimalDigits: 0,
+                                ).format(ticket.price),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF006D4E),
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-
-                      // Render options for each quantity unit
-                      if (quantity > 0 && ticket.options.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(quantity, (index) {
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(12),
+                        ),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () => _updateQuantity(ticket.id, -1),
+                              child: Container(
+                                width: 32,
+                                height: 32,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey[300]!),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey[200]!),
+                                  color: Colors.white,
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Detail Tiket #${index + 1}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey[700],
-                                      ),
+                                child: const Icon(Icons.remove, size: 16),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              '$quantity',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            InkWell(
+                              onTap: () => _updateQuantity(ticket.id, 1),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey[300]!),
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.white,
+                                ),
+                                child: const Icon(Icons.add, size: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    // Render options for each quantity unit
+                    if (quantity > 0 && ticket.options.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(quantity, (index) {
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.grey[200]!),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Detail Tiket #${index + 1}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[700],
                                     ),
-                                    const SizedBox(height: 8),
-                                    ...ticket.options.map((option) {
-                                      final selectedChoice =
-                                          _selectedOptions[ticket
-                                              .id]?[index]?[option.id];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 8,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              option.name,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[600],
-                                              ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ...ticket.options.map((option) {
+                                    final selectedChoice =
+                                        _selectedOptions[ticket
+                                            .id]?[index]?[option.id];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            option.name,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
                                             ),
-                                            const SizedBox(height: 4),
-                                            DropdownButtonFormField<
-                                              TicketOptionChoice
-                                            >(
-                                              value: selectedChoice,
-                                              isDense: true,
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8,
-                                                    ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.grey[300]!,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          DropdownButtonFormField<
+                                            TicketOptionChoice
+                                          >(
+                                            value: selectedChoice,
+                                            isDense: true,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 8,
                                                   ),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                borderSide: BorderSide(
+                                                  color: Colors.grey[300]!,
                                                 ),
                                               ),
-                                              items: option.choices.map((
-                                                choice,
-                                              ) {
-                                                final label =
-                                                    choice.extraPrice > 0
-                                                    ? '${choice.label} (+${choice.extraPrice ~/ 1000}rb)'
-                                                    : choice.label;
-                                                return DropdownMenuItem(
-                                                  value: choice,
-                                                  child: Text(
-                                                    label,
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (value) {
-                                                if (value != null) {
-                                                  _updateOption(
-                                                    ticket.id,
-                                                    index,
-                                                    option.id,
-                                                    value,
-                                                  );
-                                                }
-                                              },
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ),
+                                            items: option.choices.map((choice) {
+                                              final label =
+                                                  choice.extraPrice > 0
+                                                  ? '${choice.label} (+${choice.extraPrice ~/ 1000}rb)'
+                                                  : choice.label;
+                                              return DropdownMenuItem(
+                                                value: choice,
+                                                child: Text(
+                                                  label,
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                _updateOption(
+                                                  ticket.id,
+                                                  index,
+                                                  option.id,
+                                                  value,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                ],
+                              ),
+                            );
+                          }),
                         ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-            );
-          }),
-
-          // Summary
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF006D4E).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Total Pembayaran',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      NumberFormat.currency(
-                        locale: 'id_ID',
-                        symbol: 'Rp ',
-                        decimalDigits: 0,
-                      ).format(_calculateTotal()),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF006D4E),
-                        fontSize: 16,
                       ),
-                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement buy logic with options
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Fitur Pembayaran segera hadir'),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF006D4E),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
               ),
-              child: const Text('Beli Tiket Sekarang'),
-            ),
+              const SizedBox(height: 16),
+            ],
+          );
+        }),
+
+        // Summary
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF006D4E).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(height: 32),
-        ],
-      ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total Pembayaran',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    NumberFormat.currency(
+                      locale: 'id_ID',
+                      symbol: 'Rp ',
+                      decimalDigits: 0,
+                    ).format(_calculateTotal()),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF006D4E),
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              // TODO: Implement buy logic with options
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Fitur Pembayaran segera hadir')),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF006D4E),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('Beli Tiket Sekarang'),
+          ),
+        ),
+        const SizedBox(height: 32),
+      ],
     );
+
+    if (widget.enableScroll) {
+      return SingleChildScrollView(child: content);
+    }
+
+    return content;
   }
 
   int _calculateTotal() {
     int total = 0;
     for (var ticket in widget.tickets) {
       final quantity = _quantities[ticket.id] ?? 0;
-      // Base price
-      total += ticket.price * quantity;
+      total += (ticket.price * quantity).toInt();
 
       // Add extra prices from options
       if (_selectedOptions.containsKey(ticket.id)) {
         _selectedOptions[ticket.id]!.forEach((index, optionsMap) {
           if (index < quantity) {
             optionsMap.forEach((optionId, choice) {
-              total += choice.extraPrice;
+              total += choice.extraPrice.toInt();
             });
           }
         });

@@ -35,6 +35,15 @@ import '../../features/events/domain/usecases/get_event_tickets.dart';
 import '../../features/events/domain/usecases/get_event_sub_events.dart';
 import '../../features/events/domain/usecases/get_event_sponsors.dart';
 import '../../features/events/presentation/bloc/events_bloc.dart';
+import '../../features/forum/data/datasources/forum_remote_data_source.dart';
+import '../../features/forum/data/repositories/forum_repository_impl.dart';
+import '../../features/forum/domain/repositories/forum_repository.dart';
+
+import '../../features/forum/domain/usecases/add_forum_comment.dart';
+import '../../features/forum/domain/usecases/create_forum_post.dart';
+import '../../features/forum/domain/usecases/get_forum_comments.dart';
+import '../../features/forum/domain/usecases/get_forum_posts.dart';
+import '../../features/forum/domain/usecases/toggle_forum_like.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -149,4 +158,26 @@ Future<void> configureDependencies() async {
 
   // BLoCs
   getIt.registerFactory(() => EventsBloc(getIt<GetEvents>()));
+
+  // ===== Forum Feature =====
+
+  // Data Sources
+  getIt.registerLazySingleton<ForumRemoteDataSource>(
+    () => ForumRemoteDataSourceImpl(getIt<PBClient>()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<ForumRepository>(
+    () => ForumRepositoryImpl(getIt<ForumRemoteDataSource>()),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(() => GetForumPosts(getIt<ForumRepository>()));
+  getIt.registerLazySingleton(() => CreateForumPost(getIt<ForumRepository>()));
+  getIt.registerLazySingleton(() => GetForumComments(getIt<ForumRepository>()));
+  getIt.registerLazySingleton(() => AddForumComment(getIt<ForumRepository>()));
+  getIt.registerLazySingleton(() => ToggleForumLike(getIt<ForumRepository>()));
+
+  // BLoCs
+  // ForumBloc registration will be done after creating the class
 }

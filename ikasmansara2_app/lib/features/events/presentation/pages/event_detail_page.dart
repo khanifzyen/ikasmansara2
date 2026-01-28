@@ -28,13 +28,40 @@ class EventDetailPage extends StatefulWidget {
 class _EventDetailPageState extends State<EventDetailPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late ScrollController _scrollController;
   late Future<_EventData> _dataFuture;
+  bool _isTitleVisible = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     _dataFuture = _fetchData();
+  }
+
+  void _scrollListener() {
+    // 220 is expandedHeight. 160 is a threshold where title should appear.
+    // Adjust kToolbarHeight equivalent (usually 56).
+    // Let's say when offset > 220 - 60 = 160.
+    if (_scrollController.hasClients) {
+      final isVisible = _scrollController.offset > 160;
+      if (isVisible != _isTitleVisible) {
+        setState(() {
+          _isTitleVisible = isVisible;
+        });
+      }
+    }
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    } else {
+      setState(() {});
+    }
   }
 
   Future<_EventData> _fetchData() async {
@@ -57,6 +84,7 @@ class _EventDetailPageState extends State<EventDetailPage>
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -82,20 +110,40 @@ class _EventDetailPageState extends State<EventDetailPage>
           final fullDateString = '$dayName, $dateStr';
 
           return CustomScrollView(
+            controller: _scrollController,
             slivers: [
               SliverAppBar(
                 pinned: true,
                 expandedHeight: 220,
+                elevation: 0,
+                backgroundColor: Colors.white,
+                title: _isTitleVisible
+                    ? Text(
+                        event.title,
+                        style: const TextStyle(
+                          color: AppColors.textDark,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : null,
+                centerTitle: false,
                 leading: IconButton(
                   icon: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: _isTitleVisible
+                          ? Colors.transparent
+                          : Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_back,
-                      color: Colors.black,
+                      color: _isTitleVisible
+                          ? AppColors.textDark
+                          : Colors.black,
                       size: 20,
                     ),
                   ),
@@ -228,18 +276,7 @@ class _EventDetailPageState extends State<EventDetailPage>
                         ],
                       ),
                       const SizedBox(height: 24),
-                      SizedBox(
-                        height: 600,
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            TicketTab(tickets: data.tickets),
-                            SubEventTab(subEvents: data.subEvents),
-                            SponsorTab(sponsors: data.sponsors),
-                            const EventDonationTab(),
-                          ],
-                        ),
-                      ),
+                      SizedBox(child: _buildTabContent(data)),
                     ],
                   ),
                 ),
@@ -249,6 +286,21 @@ class _EventDetailPageState extends State<EventDetailPage>
         },
       ),
     );
+  }
+
+  Widget _buildTabContent(_EventData data) {
+    switch (_tabController.index) {
+      case 0:
+        return TicketTab(tickets: data.tickets, enableScroll: false);
+      case 1:
+        return SubEventTab(subEvents: data.subEvents);
+      case 2:
+        return SponsorTab(sponsors: data.sponsors);
+      case 3:
+        return const EventDonationTab();
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }
 

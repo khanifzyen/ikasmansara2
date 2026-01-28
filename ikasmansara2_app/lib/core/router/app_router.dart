@@ -24,6 +24,9 @@ import '../../features/donations/presentation/pages/donation_detail_page.dart';
 import '../../features/donations/presentation/pages/my_donations_page.dart';
 import '../../features/news/presentation/pages/news_list_page.dart';
 import '../../features/news/presentation/pages/news_detail_page.dart';
+import '../../features/forum/presentation/pages/forum_page.dart';
+import '../../features/forum/presentation/pages/create_post_page.dart';
+import '../../features/forum/presentation/pages/forum_detail_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -207,6 +210,26 @@ class AppRouter {
         builder: (context, state) {
           final newsId = state.extra as String;
           return NewsDetailPage(newsId: newsId);
+        },
+      ),
+
+      // Forum Routes
+      GoRoute(
+        path: '/forum',
+        name: 'forum',
+        builder: (context, state) => const ForumPage(),
+      ),
+      GoRoute(
+        path: '/create-post',
+        name: 'create-post',
+        builder: (context, state) => const CreatePostPage(),
+      ),
+      GoRoute(
+        path: '/forum-detail',
+        name: 'forum-detail',
+        builder: (context, state) {
+          final postId = state.extra as String;
+          return ForumDetailPage(postId: postId);
         },
       ),
     ],

@@ -134,10 +134,10 @@ class _SideDrawer extends StatelessWidget {
                 ),
                 _DrawerItem(
                   icon: Icons.forum_outlined,
-                  label: 'Forum',
+                  label: 'Forum Diskusi',
                   onTap: () {
                     Navigator.pop(context);
-                    // context.push('/forum'); // Phase 7
+                    context.push('/forum');
                   },
                 ),
                 _DrawerItem(
