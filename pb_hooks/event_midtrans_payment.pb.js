@@ -79,6 +79,9 @@ onRecordCreateRequest((e) => {
                 // Use Buffer for base64 encoding (PocketBase JSVM compatible)
                 const authString = Buffer.from(serverKey + ":").toString("base64");
 
+                const paymentMethod = e.record.getString("payment_method");
+                const enabledPayments = paymentMethod ? [paymentMethod] : ["qris", "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"];
+
                 const payload = {
                     transaction_details: {
                         order_id: newBookingId,
@@ -90,7 +93,7 @@ onRecordCreateRequest((e) => {
                         email: user.getString("email"),
                         phone: user.getString("phone")
                     } : undefined,
-                    enabled_payments: ["qris", "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"]
+                    enabled_payments: enabledPayments
                 };
 
                 const res = $http.send({

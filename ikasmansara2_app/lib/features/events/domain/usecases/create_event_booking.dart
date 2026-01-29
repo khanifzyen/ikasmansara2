@@ -10,11 +10,13 @@ class CreateEventBooking {
     required String eventId,
     required List<Map<String, dynamic>> metadata,
     required int totalPrice,
+    required String paymentMethod,
   }) {
     return repository.createBooking(
       eventId: eventId,
       metadata: metadata,
       totalPrice: totalPrice,
+      paymentMethod: paymentMethod,
     );
   }
 }

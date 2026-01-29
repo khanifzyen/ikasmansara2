@@ -19,6 +19,7 @@ abstract class EventRepository {
     required String eventId,
     required List<Map<String, dynamic>> metadata,
     required int totalPrice,
+    required String paymentMethod,
   });
   Future<List<EventBooking>> getUserBookings(String userId);
   Future<List<EventBookingTicket>> getBookingTickets(String bookingId);

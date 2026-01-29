@@ -153,7 +153,9 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
       await file.writeAsBytes(bytes);
 
       if (mounted) {
-        await Share.shareXFiles([XFile(file.path)], text: 'QRIS Pembayaran');
+        await SharePlus.instance.share(
+          ShareParams(files: [XFile(file.path)], text: 'QRIS Pembayaran'),
+        );
       }
     } catch (e) {
       debugPrint('Error saving blob: $e');

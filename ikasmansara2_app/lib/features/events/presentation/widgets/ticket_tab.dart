@@ -20,9 +20,10 @@ class _TicketTabState extends State<TicketTab> {
   final Map<String, int> _quantities = {};
 
   // Map to track selected options: ticketId -> index -> optionId -> selectedChoice
-  // Structure: Map<String, Map<int, Map<String, TicketOptionChoice>>>
   final Map<String, Map<int, Map<String, TicketOptionChoice>>>
   _selectedOptions = {};
+
+  String _selectedPaymentMethod = 'qris'; // Default payment method
 
   @override
   void initState() {
@@ -253,8 +254,14 @@ class _TicketTabState extends State<TicketTab> {
                                           DropdownButtonFormField<
                                             TicketOptionChoice
                                           >(
-                                            // ignore: deprecated_member_use
-                                            value: selectedChoice,
+                                            initialValue:
+                                                option.choices.contains(
+                                                  selectedChoice,
+                                                )
+                                                ? selectedChoice
+                                                : (option.choices.isNotEmpty
+                                                      ? option.choices.first
+                                                      : null),
                                             isDense: true,
                                             decoration: InputDecoration(
                                               contentPadding:
@@ -325,36 +332,57 @@ class _TicketTabState extends State<TicketTab> {
             border: Border.all(color: Colors.grey[300]!),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Column(
-            children: [
-              RadioListTile<String>(
-                value: 'qris',
-                groupValue: 'qris', // Only QRIS available for now
-                onChanged: (val) {},
-                title: Row(
-                  children: [
-                    const Icon(Icons.qr_code, color: Colors.black),
-                    const SizedBox(width: 12),
-                    const Text('QRIS'),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+          child: RadioGroup<String>(
+            groupValue: _selectedPaymentMethod,
+            onChanged: (val) {
+              setState(() {
+                _selectedPaymentMethod = val!;
+              });
+            },
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  value: 'qris',
+                  title: Row(
+                    children: [
+                      const Icon(Icons.qr_code, color: Colors.black),
+                      const SizedBox(width: 12),
+                      const Text('QRIS'),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Instant',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'Instant',
-                        style: TextStyle(fontSize: 10, color: Colors.blue),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                const Divider(height: 1),
+                RadioListTile<String>(
+                  value: 'bni_va',
+                  title: Row(
+                    children: [
+                      // You might want to use an asset image for BNI logo if available,
+                      // otherwise use a generic bank icon or text.
+                      // Assuming no assets, using Icon and Text.
+                      const Icon(Icons.account_balance, color: Colors.black),
+                      const SizedBox(width: 12),
+                      const Text('BNI Virtual Account'),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 24),
@@ -477,6 +505,7 @@ class _TicketTabState extends State<TicketTab> {
                   eventId: eventId,
                   metadata: metadata,
                   totalPrice: total,
+                  paymentMethod: _selectedPaymentMethod,
                 ),
               );
             },

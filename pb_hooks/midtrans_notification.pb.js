@@ -1,21 +1,27 @@
 /// <reference path="../pb_data/types.d.ts" />
 
-routerAdd("POST", "/midtrans/notification", (c) => {
-    // 1. Parse Notification JSON
-    const data = c.request().json();
-    console.log("[Midtrans Webhook] Received:", JSON.stringify(data));
+routerAdd("POST", "/api/midtrans/notification", (e) => {
+    let data;
+    try {
+        data = e.requestInfo().body;
+        console.log("[Midtrans Webhook] Received:", JSON.stringify(data));
+    } catch (parseErr) {
+        console.error("[Midtrans Webhook] Failed to parse JSON:", parseErr);
+        return e.json(400, { message: "Invalid JSON body" });
+    }
 
     const orderId = data.order_id;
     const transactionStatus = data.transaction_status;
     const fraudStatus = data.fraud_status;
 
     if (!orderId) {
-        return c.json(400, { message: "Invalid order_id" });
+        console.warn("[Midtrans Webhook] Missing order_id in payload:", JSON.stringify(data));
+        return e.json(400, { message: "Invalid payload: missing order_id" });
     }
 
     // --- Audit Trail: Save to midtrans_logs ---
     try {
-        const logCollection = $app.dao().findCollectionByNameOrId("midtrans_logs");
+        const logCollection = $app.findCollectionByNameOrId("midtrans_logs");
         const logRecord = new Record(logCollection);
 
         logRecord.set("order_id", orderId);
@@ -28,7 +34,7 @@ routerAdd("POST", "/midtrans/notification", (c) => {
         logRecord.set("status_code", data.status_code);
         logRecord.set("raw_body", data);
 
-        $app.dao().saveRecord(logRecord);
+        $app.save(logRecord);
         console.log(`[Midtrans Webhook] Audit log saved for ${orderId}`);
     } catch (auditErr) {
         console.error(`[Midtrans Webhook] Failed to save audit log: ${auditErr.message}`);
@@ -39,16 +45,17 @@ routerAdd("POST", "/midtrans/notification", (c) => {
     try {
         // 2. Find Booking Record
         // order_id is stored in 'booking_id' field, but we need to find the record by that field.
-        const result = $app.dao().findRecordsByFilter(
+        const result = $app.findRecordsByFilter(
             "event_bookings",
             `booking_id = '${orderId}'`,
             "-created",
-            1
+            1,
+            0
         );
 
         if (!result || result.length === 0) {
             console.warn(`[Midtrans Webhook] Booking not found: ${orderId}`);
-            return c.json(404, { message: "Booking not found" });
+            return e.json(404, { message: "Booking not found" });
         }
 
         const booking = result[0];
@@ -56,7 +63,7 @@ routerAdd("POST", "/midtrans/notification", (c) => {
 
         if (currentStatus === "paid" || currentStatus === "refunded" || currentStatus === "expired") {
             console.log(`[Midtrans Webhook] Booking ${orderId} already ${currentStatus}. Ignoring.`);
-            return c.json(200, { message: "OK" });
+            return e.json(200, { message: "OK" });
         }
 
         // 3. Determine New Status
@@ -81,7 +88,7 @@ routerAdd("POST", "/midtrans/notification", (c) => {
 
         // 4. Update Record if status changed
         if (newStatus !== currentStatus && newStatus === "paid") {
-            console.log(`[Midtrans Webhook] Updating ${orderId} status to PAId`);
+            console.log(`[Midtrans Webhook] Updating ${orderId} status to PAID`);
             booking.set("payment_status", "paid");
 
             // Optionally set payment_method and payment_date
@@ -95,7 +102,7 @@ routerAdd("POST", "/midtrans/notification", (c) => {
                 // Metadata is stored as JSON field, in JSVM it might need parsing if it comes as string,
                 // but usually PocketBase returns it as object/array if it's a json field.
                 // Assuming metadata structure: [{ "ticket_id": "RECORD_ID", "quantity": 1, ... }]
-                const metadata = booking.get("metadata"); // getValue() might be safer depending on PB version, usually .get() works for field access
+                const metadata = booking.get("metadata");
 
                 // If metadata is null or empty, skip
                 if (metadata && Array.isArray(metadata)) {
@@ -103,10 +110,10 @@ routerAdd("POST", "/midtrans/notification", (c) => {
                         const item = metadata[i];
                         if (item.ticket_id && item.quantity) {
                             try {
-                                const ticket = $app.dao().findRecordById("event_tickets", item.ticket_id);
+                                const ticket = $app.findRecordById("event_tickets", item.ticket_id);
                                 const currentSold = ticket.getInt("sold");
                                 ticket.set("sold", currentSold + parseInt(item.quantity));
-                                $app.dao().saveRecord(ticket);
+                                $app.save(ticket);
                                 console.log(`[Midtrans Webhook] Incremented sold count for ticket ${item.ticket_id} by ${item.quantity}`);
                             } catch (ticketErr) {
                                 console.error(`[Midtrans Webhook] Failed to update ticket ${item.ticket_id}: ${ticketErr.message}`);
@@ -119,17 +126,17 @@ routerAdd("POST", "/midtrans/notification", (c) => {
             }
             // --------------------------------
 
-            $app.dao().saveRecord(booking);
+            $app.save(booking);
         } else if (newStatus !== currentStatus && newStatus === "failed") {
             console.log(`[Midtrans Webhook] Updating ${orderId} status to FAILED/EXPIRED`);
             booking.set("payment_status", "expired");
-            $app.dao().saveRecord(booking);
+            $app.save(booking);
         }
 
-        return c.json(200, { message: "OK" });
+        return e.json(200, { message: "OK" });
 
     } catch (err) {
         console.error(`[Midtrans Webhook] Error: ${err.message}`);
-        return c.json(500, { message: err.message });
+        return e.json(500, { message: err.message });
     }
 });

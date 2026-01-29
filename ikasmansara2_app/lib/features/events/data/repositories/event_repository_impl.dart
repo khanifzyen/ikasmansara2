@@ -64,11 +64,13 @@ class EventRepositoryImpl implements EventRepository {
     required String eventId,
     required List<Map<String, dynamic>> metadata,
     required int totalPrice,
+    required String paymentMethod,
   }) async {
     return await _remoteDataSource.createBooking(
       eventId: eventId,
       metadata: metadata,
       totalPrice: totalPrice,
+      paymentMethod: paymentMethod,
     );
   }
 

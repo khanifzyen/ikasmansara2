@@ -15,15 +15,17 @@ class CreateBooking extends EventBookingEvent {
   final String eventId;
   final List<Map<String, dynamic>> metadata;
   final int totalPrice;
+  final String paymentMethod;
 
   const CreateBooking({
     required this.eventId,
     required this.metadata,
     required this.totalPrice,
+    required this.paymentMethod,
   });
 
   @override
-  List<Object> get props => [eventId, metadata, totalPrice];
+  List<Object> get props => [eventId, metadata, totalPrice, paymentMethod];
 }
 
 // States
@@ -74,6 +76,7 @@ class EventBookingBloc extends Bloc<EventBookingEvent, EventBookingState> {
         eventId: event.eventId,
         metadata: event.metadata,
         totalPrice: event.totalPrice,
+        paymentMethod: event.paymentMethod,
       );
       emit(EventBookingSuccess(booking));
     } catch (e) {

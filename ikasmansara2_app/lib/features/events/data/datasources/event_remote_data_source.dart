@@ -23,6 +23,7 @@ abstract class EventRemoteDataSource {
     required String eventId,
     required List<Map<String, dynamic>> metadata,
     required int totalPrice,
+    required String paymentMethod,
   });
   Future<List<EventBookingModel>> getUserBookings(String userId);
   Future<List<EventBookingTicketModel>> getBookingTickets(String bookingId);
@@ -146,6 +147,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     required String eventId,
     required List<Map<String, dynamic>> metadata,
     required int totalPrice,
+    required String paymentMethod,
   }) async {
     try {
       final userId = _pbClient.pb.authStore.record?.id;
@@ -159,6 +161,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
         'metadata': metadata,
         'total_price': totalPrice,
         'payment_status': 'pending',
+        'payment_method': paymentMethod,
       };
 
       final record = await _pbClient.pb
