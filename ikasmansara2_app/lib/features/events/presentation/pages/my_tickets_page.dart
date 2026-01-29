@@ -17,11 +17,23 @@ class MyTicketsPage extends StatefulWidget {
 }
 
 class _MyTicketsPageState extends State<MyTicketsPage> {
+  late final MyTicketsBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = GetIt.I<MyTicketsBloc>();
+    _bloc.add(GetMyBookings(widget.userId));
+  }
+
+  void _refresh() {
+    _bloc.add(GetMyBookings(widget.userId));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          GetIt.I<MyTicketsBloc>()..add(GetMyBookings(widget.userId)),
+    return BlocProvider.value(
+      value: _bloc,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Tiketku'),
@@ -41,12 +53,19 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                   child: Text('Belum ada riwayat pembelian tiket'),
                 );
               }
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: state.bookings.length,
-                itemBuilder: (context, index) {
-                  return _buildBookingCard(context, state.bookings[index]);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  _refresh();
+                  // Wait for state to change
+                  await Future.delayed(const Duration(milliseconds: 500));
                 },
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.bookings.length,
+                  itemBuilder: (context, index) {
+                    return _buildBookingCard(context, state.bookings[index]);
+                  },
+                ),
               );
             }
             return const SizedBox.shrink();

@@ -80,7 +80,7 @@ onRecordCreateRequest((e) => {
                 const authString = Buffer.from(serverKey + ":").toString("base64");
 
                 const paymentMethod = e.record.getString("payment_method");
-                const enabledPayments = paymentMethod ? [paymentMethod] : ["qris", "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"];
+                const enabledPayments = paymentMethod ? [paymentMethod] : ["other_qris", "qris", "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"];
 
                 const payload = {
                     transaction_details: {

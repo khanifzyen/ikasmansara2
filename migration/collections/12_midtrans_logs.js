@@ -1,139 +1,74 @@
-/// <reference path="../pb_data/types.d.ts" />
-migrate((db) => {
-    const collection = new Collection({
-        "id": "midtrans_logs_01",
-        "created": "2024-01-28 00:00:00.000Z",
-        "updated": "2024-01-28 00:00:00.000Z",
-        "name": "midtrans_logs",
-        "type": "base",
-        "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "order_id",
-                "name": "order_id",
-                "type": "text",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "transaction_id",
-                "name": "transaction_id",
-                "type": "text",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "transaction_status",
-                "name": "transaction_status",
-                "type": "text",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "payment_type",
-                "name": "payment_type",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "gross_amount",
-                "name": "gross_amount",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "fraud_status",
-                "name": "fraud_status",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "status_code",
-                "name": "status_code",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "raw_body",
-                "name": "raw_body",
-                "type": "json",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "maxSize": 2000000
-                }
-            }
-        ],
-        "indexes": [
-            "CREATE INDEX `idx_order_id` ON `midtrans_logs` (`order_id`)"
-        ],
-        "listRule": "@request.auth.id != '' && @request.auth.isAdmin = true",
-        "viewRule": "@request.auth.id != '' && @request.auth.isAdmin = true",
-        "createRule": null,
-        "updateRule": null,
-        "deleteRule": null,
-        "options": {}
-    });
+/**
+ * Migration: Midtrans Logs Collection
+ * Based on SKEMA.md
+ * 
+ * Collection for storing Midtrans notification audit trail.
+ */
 
-    return Dao(db).saveCollection(collection);
-}, (db) => {
-    const dao = new Dao(db);
-    const collection = dao.findCollectionByNameOrId("midtrans_logs");
+import { authenticateAdmin, getCollection, upsertCollection } from '../pb-client.js';
 
-    return dao.deleteCollection(collection);
-})
+async function migrateMidtransLogs() {
+    console.log('\n========================================');
+    console.log('🎯 Starting Midtrans Logs Migration...');
+    console.log('========================================');
+
+    const pb = await authenticateAdmin();
+
+    const collectionName = 'midtrans_logs';
+
+    // Check if collection exists
+    const existing = await getCollection(pb, collectionName);
+    if (existing) {
+        console.log(`\n⏭️  Collection "${collectionName}" already exists. Skipping.`);
+        console.log('========================================\n');
+        return;
+    }
+
+    console.log(`\n🔍 Creating collection: ${collectionName}...`);
+
+    const collectionData = {
+        name: collectionName,
+        type: 'base',
+        fields: [
+            { name: 'order_id', type: 'text', required: true },
+            { name: 'transaction_id', type: 'text', required: true },
+            { name: 'transaction_status', type: 'text', required: true },
+            { name: 'payment_type', type: 'text', required: false },
+            { name: 'gross_amount', type: 'text', required: false },
+            { name: 'fraud_status', type: 'text', required: false },
+            { name: 'status_code', type: 'text', required: false },
+            { name: 'raw_body', type: 'json', required: true, maxSize: 2000000 }
+        ],
+        indexes: [
+            'CREATE INDEX `idx_order_id` ON `midtrans_logs` (`order_id`)'
+        ],
+        // API Rules: Admin only for list/view, create/update/delete disabled (system only via hooks)
+        listRule: '@request.auth.role = "admin"',
+        viewRule: '@request.auth.role = "admin"',
+        createRule: null,
+        updateRule: null,
+        deleteRule: null
+    };
+
+    try {
+        await upsertCollection(pb, collectionData);
+        console.log(`   ✅ Collection "${collectionName}" created successfully!`);
+    } catch (error) {
+        console.error(`   ❌ Failed to create ${collectionName}:`, error.message);
+        if (error.response?.data) {
+            console.error(`      Details:`, JSON.stringify(error.response.data, null, 2));
+        }
+        throw error;
+    }
+
+    console.log('\n========================================');
+    console.log('✅ Midtrans Logs migration completed!');
+    console.log('========================================\n');
+}
+
+// Only run if executed directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+    migrateMidtransLogs().catch(console.error);
+}
+
+export { migrateMidtransLogs };

@@ -97,34 +97,8 @@ routerAdd("POST", "/api/midtrans/notification", (e) => {
             }
             booking.set("payment_date", new Date());
 
-            // --- Update Ticket Sold Count ---
-            try {
-                // Metadata is stored as JSON field, in JSVM it might need parsing if it comes as string,
-                // but usually PocketBase returns it as object/array if it's a json field.
-                // Assuming metadata structure: [{ "ticket_id": "RECORD_ID", "quantity": 1, ... }]
-                const metadata = booking.get("metadata");
-
-                // If metadata is null or empty, skip
-                if (metadata && Array.isArray(metadata)) {
-                    for (let i = 0; i < metadata.length; i++) {
-                        const item = metadata[i];
-                        if (item.ticket_id && item.quantity) {
-                            try {
-                                const ticket = $app.findRecordById("event_tickets", item.ticket_id);
-                                const currentSold = ticket.getInt("sold");
-                                ticket.set("sold", currentSold + parseInt(item.quantity));
-                                $app.save(ticket);
-                                console.log(`[Midtrans Webhook] Incremented sold count for ticket ${item.ticket_id} by ${item.quantity}`);
-                            } catch (ticketErr) {
-                                console.error(`[Midtrans Webhook] Failed to update ticket ${item.ticket_id}: ${ticketErr.message}`);
-                            }
-                        }
-                    }
-                }
-            } catch (metaErr) {
-                console.error(`[Midtrans Webhook] Failed to process metadata for ticket updates: ${metaErr.message}`);
-            }
-            // --------------------------------
+            // Ticket generation and sold count update is handled by
+            // pb_hooks/ticket_generation.pb.js (triggered by payment_status='paid')
 
             $app.save(booking);
         } else if (newStatus !== currentStatus && newStatus === "failed") {

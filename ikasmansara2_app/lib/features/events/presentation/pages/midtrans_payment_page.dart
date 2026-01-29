@@ -9,6 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../../../core/network/pb_client.dart';
+import '../bloc/my_tickets_bloc.dart';
 
 class MidtransPaymentPage extends StatefulWidget {
   final String paymentUrl;
@@ -204,6 +208,12 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
   }
 
   void _navigateToMyTickets() {
+    // Trigger refresh on the singleton MyTicketsBloc
+    final userId = _getUserId();
+    if (userId != null) {
+      GetIt.I<MyTicketsBloc>().add(GetMyBookings(userId));
+    }
+
     if (widget.fromEventDetail) {
       context.go('/tickets');
     } else {
@@ -212,6 +222,16 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
       } else {
         context.go('/tickets');
       }
+    }
+  }
+
+  String? _getUserId() {
+    // Get userId from PBClient
+    try {
+      // ignore: depend_on_referenced_packages
+      return GetIt.I<PBClient>().pb.authStore.record?.id;
+    } catch (_) {
+      return null;
     }
   }
 

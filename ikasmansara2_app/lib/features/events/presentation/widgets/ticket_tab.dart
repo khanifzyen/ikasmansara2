@@ -342,7 +342,7 @@ class _TicketTabState extends State<TicketTab> {
             child: Column(
               children: [
                 RadioListTile<String>(
-                  value: 'qris',
+                  value: 'other_qris',
                   title: Row(
                     children: [
                       const Icon(Icons.qr_code, color: Colors.black),

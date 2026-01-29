@@ -22,10 +22,15 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
   final Map<String, ScreenshotController> _screenshotControllers = {};
 
   @override
+  void initState() {
+    super.initState();
+    GetIt.I<MyTicketsBloc>().add(GetMyBookingTickets(widget.bookingId));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          GetIt.I<MyTicketsBloc>()..add(GetMyBookingTickets(widget.bookingId)),
+    return BlocProvider.value(
+      value: GetIt.I<MyTicketsBloc>(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Detail Tiket'),

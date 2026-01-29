@@ -13,18 +13,35 @@
  * 5. Update 'event_tickets.sold'
  */
 
-onRecordAfterUpdateSuccess((e) => {
-    // Only proceed if status is 'paid'
-    if (e.record.getString("payment_status") !== "paid") return;
+onModelAfterUpdate((e) => {
+    // -----------------------------------------------------------------
+    // 1. FILTER: Only "event_bookings"
+    // -----------------------------------------------------------------
+    // e.model can be any model. We need to check if it belongs to 'event_bookings' collection.
+    // In PBJS, models usually have .collection() method if they are records.
+    try {
+        if (e.model.collection().name !== "event_bookings") {
+            return;
+        }
+    } catch (err) {
+        // Not a record model or collection not found
+        return;
+    }
 
-    console.log(`[Hook] 🎫 processing ticket generation for Booking ${e.record.getId()}...`);
+    // -----------------------------------------------------------------
+    // 2. CONDITION: payment_status BECOMES 'paid'
+    // -----------------------------------------------------------------
+    // We only care if the NEW state is 'paid'
+    if (e.model.getString("payment_status") !== "paid") return;
+
+    console.log(`[Hook] 🎫 processing ticket generation for Booking ${e.model.getId()}...`);
 
     try {
-        const bookingId = e.record.getId();
-        const eventId = e.record.getString("event");
+        const bookingId = e.model.getId();
+        const eventId = e.model.getString("event");
 
         // -----------------------------------------------------------------
-        // 1. Idempotency Check
+        // 3. Idempotency Check
         // -----------------------------------------------------------------
         // Check if we already have tickets for this booking
         const existingTickets = $app.findRecordsByFilter(
@@ -40,12 +57,12 @@ onRecordAfterUpdateSuccess((e) => {
         }
 
         // -----------------------------------------------------------------
-        // 2. Parse Metadata (Cart)
+        // 4. Parse Metadata (Cart)
         // -----------------------------------------------------------------
         // metadata format: [{ "ticket_type_id": "xyz", "quantity": 2, "options": {...} }]
-        const metadata = e.record.get("metadata");
+        // On server-side model update, get("metadata") might return the object directly or string.
+        const metadata = e.model.get("metadata");
 
-        // Handle if metadata is string (JSON encoded) or already object
         let items = [];
         if (typeof metadata === 'string') {
             try { items = JSON.parse(metadata); } catch (e) { }
@@ -59,7 +76,7 @@ onRecordAfterUpdateSuccess((e) => {
         }
 
         // -----------------------------------------------------------------
-        // 3. Prepare Event & sequences
+        // 5. Prepare Event & sequences
         // -----------------------------------------------------------------
         const event = $app.findRecordById("events", eventId);
         let eventLastSeq = event.getInt("last_ticket_seq") || 0;
@@ -68,7 +85,7 @@ onRecordAfterUpdateSuccess((e) => {
         const eventCode = event.getString("code") || "EVT";
 
         // -----------------------------------------------------------------
-        // 4. Generate Tickets
+        // 6. Generate Tickets
         // -----------------------------------------------------------------
         $app.runInTransaction((txApp) => {
             const bookingsTicketsCollection = txApp.findCollectionByNameOrId("event_booking_tickets");
@@ -126,6 +143,4 @@ onRecordAfterUpdateSuccess((e) => {
         console.error(`[Hook] ❌ Ticket Generation Failed: ${err.message}`);
     }
 
-    e.next();
-
-}, "event_bookings");
+});

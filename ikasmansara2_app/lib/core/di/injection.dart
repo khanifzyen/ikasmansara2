@@ -180,7 +180,7 @@ Future<void> configureDependencies() async {
   // BLoCs
   getIt.registerFactory(() => EventsBloc(getIt<GetEvents>()));
   getIt.registerFactory(() => EventBookingBloc(getIt<CreateEventBooking>()));
-  getIt.registerFactory(
+  getIt.registerLazySingleton(
     () => MyTicketsBloc(
       getUserEventBookings: getIt<GetUserEventBookings>(),
       getEventBookingTickets: getIt<GetEventBookingTickets>(),
