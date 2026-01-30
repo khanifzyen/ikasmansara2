@@ -23,7 +23,7 @@ class _TicketTabState extends State<TicketTab> {
   final Map<String, Map<int, Map<String, TicketOptionChoice>>>
   _selectedOptions = {};
 
-  String _selectedPaymentMethod = 'qris'; // Default payment method
+  String _selectedPaymentMethod = 'other_qris'; // Default payment method
 
   @override
   void initState() {
@@ -367,20 +367,20 @@ class _TicketTabState extends State<TicketTab> {
                   ),
                 ),
                 const Divider(height: 1),
-                RadioListTile<String>(
-                  value: 'bni_va',
-                  title: Row(
-                    children: [
-                      // You might want to use an asset image for BNI logo if available,
-                      // otherwise use a generic bank icon or text.
-                      // Assuming no assets, using Icon and Text.
-                      const Icon(Icons.account_balance, color: Colors.black),
-                      const SizedBox(width: 12),
-                      const Text('BNI Virtual Account'),
-                      const Spacer(),
-                    ],
-                  ),
-                ),
+                // RadioListTile<String>(
+                //   value: 'bni_va',
+                //   title: Row(
+                //     children: [
+                //       // You might want to use an asset image for BNI logo if available,
+                //       // otherwise use a generic bank icon or text.
+                //       // Assuming no assets, using Icon and Text.
+                //       const Icon(Icons.account_balance, color: Colors.black),
+                //       const SizedBox(width: 12),
+                //       const Text('BNI Virtual Account'),
+                //       const Spacer(),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),

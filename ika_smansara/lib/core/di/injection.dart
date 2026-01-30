@@ -55,6 +55,13 @@ import '../../features/forum/domain/usecases/get_forum_comments.dart';
 import '../../features/forum/domain/usecases/get_forum_posts.dart';
 import '../../features/forum/domain/usecases/toggle_forum_like.dart';
 
+import '../../features/profile/data/datasources/profile_remote_data_source.dart';
+import '../../features/profile/data/repositories/profile_repository_impl.dart';
+import '../../features/profile/domain/repositories/profile_repository.dart';
+import '../../features/profile/domain/usecases/get_profile.dart';
+import '../../features/profile/domain/usecases/update_profile.dart';
+import '../../features/profile/presentation/bloc/profile_bloc.dart';
+
 final GetIt getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
@@ -210,4 +217,28 @@ Future<void> configureDependencies() async {
 
   // BLoCs
   // ForumBloc registration will be done after creating the class
+
+  // ===== Profile Feature =====
+
+  // Data Sources
+  getIt.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(getIt<PBClient>()),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(getIt<ProfileRemoteDataSource>()),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(() => GetProfile(getIt<ProfileRepository>()));
+  getIt.registerLazySingleton(() => UpdateProfile(getIt<ProfileRepository>()));
+
+  // BLoCs
+  getIt.registerFactory(
+    () => ProfileBloc(
+      getProfile: getIt<GetProfile>(),
+      updateProfile: getIt<UpdateProfile>(),
+    ),
+  );
 }

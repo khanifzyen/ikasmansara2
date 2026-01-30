@@ -8,6 +8,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/pb_client.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
+
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -16,9 +18,23 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  String _version = '';
+
   @override
   void initState() {
     super.initState();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    // Fetch package info
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _version = 'Versi ${packageInfo.version}';
+      });
+    }
+
     _checkAuth();
   }
 
@@ -53,34 +69,49 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo
-            Image.asset(
-              'assets/images/logo-ika.png',
-              width: 350,
-              //height: 200,
-              fit: BoxFit.contain,
+      body: Stack(
+        children: [
+          // Center Content
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                Image.asset(
+                  'assets/images/logo-ika.png',
+                  width: 350,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  'Ikatan Alumni SMA Negeri 1 Jepara',
+                  style: TextStyle(fontSize: 18, color: AppColors.textGrey),
+                ),
+                const SizedBox(height: 48),
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                ),
+              ],
             ),
-            const SizedBox(height: 14),
-            const Text(
-              'Ikatan Alumni SMA Negeri 1 Jepara',
-              style: TextStyle(fontSize: 18, color: AppColors.textGrey),
+          ),
+
+          // Bottom Version
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 25.0),
+                child: Text(
+                  _version,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textGrey,
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 48),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-            ),
-            const Spacer(),
-            const Text(
-              'Versi 2.0.0',
-              style: TextStyle(fontSize: 14, color: AppColors.textGrey),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

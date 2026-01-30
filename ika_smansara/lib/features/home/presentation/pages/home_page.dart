@@ -188,7 +188,7 @@ class HomePage extends StatelessWidget {
                     _SectionHeader(
                       title: 'Agenda Kegiatan',
                       onViewAll: () {
-                        context.push('/tickets');
+                        context.push('/events');
                       },
                     ),
                     const SizedBox(height: 16),
@@ -242,7 +242,7 @@ class HomePage extends StatelessWidget {
                     _SectionHeader(
                       title: 'Program Donasi',
                       onViewAll: () {
-                        context.push('/donations');
+                        context.push('/donation-list');
                       },
                     ),
                     const SizedBox(height: 16),
@@ -347,12 +347,12 @@ class _MenuGrid extends StatelessWidget {
       _MenuItem(
         icon: Icons.volunteer_activism_outlined,
         label: 'Donasi',
-        onTap: () => context.push('/donations'),
+        onTap: () => context.push('/donation-list'),
       ),
       _MenuItem(
         icon: Icons.confirmation_number_outlined,
         label: 'Kegiatan',
-        onTap: () => context.push('/tickets'),
+        onTap: () => context.push('/events'),
       ),
       _MenuItem(
         icon: Icons.newspaper_outlined,
@@ -362,7 +362,11 @@ class _MenuGrid extends StatelessWidget {
       _MenuItem(
         icon: Icons.work_outline,
         label: 'Loker',
-        onTap: () => context.push('/loker'),
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fitur Loker akan segera hadir!')),
+          );
+        },
       ),
       _MenuItem(
         icon: Icons.shopping_bag_outlined,
@@ -385,7 +389,11 @@ class _MenuGrid extends StatelessWidget {
       _MenuItem(
         icon: Icons.people_outline,
         label: 'Direktori',
-        onTap: () => context.push('/directory'),
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fitur Direktori akan segera hadir!')),
+          );
+        },
       ),
       _MenuItem(
         icon: Icons.person_outline,

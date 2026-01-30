@@ -1,156 +1,244 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/pb_client.dart';
+import '../../../auth/domain/entities/user_entity.dart';
+import '../bloc/profile_bloc.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header with Gradient
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  height: 180,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, Color(0xFF004D38)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 40,
-                  left: 16,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                const Positioned(
-                  top: 52,
-                  child: Text(
-                    'Profil Saya',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: -50,
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          'assets/images/logo-ika.png',
-                        ), // Placeholder
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 60),
-
-            // Name & Info
-            const Text(
-              'User SMANSARA',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Alumni Angkatan 2010',
-              style: TextStyle(fontSize: 14, color: AppColors.textGrey),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Stats Row (Optional, maybe for future)
-
-            // Menu List
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+    return BlocProvider(
+      create: (context) => getIt<ProfileBloc>()..add(FetchProfile()),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ProfileError) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else if (state is ProfileLoaded ||
+                state is ProfileUpdateSuccess) {
+              final user = (state is ProfileLoaded)
+                  ? state.user
+                  : (state as ProfileUpdateSuccess).user;
+              return SingleChildScrollView(
                 child: Column(
                   children: [
-                    _ProfileMenuItem(
-                      icon: Icons.person_outline,
-                      label: 'Edit Profil',
-                      onTap: () {},
+                    // Header with Gradient
+                    _buildHeader(context, user),
+
+                    const SizedBox(height: 60),
+
+                    // Name & Info
+                    Text(
+                      user.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textDark,
+                      ),
                     ),
-                    const Divider(height: 1),
-                    _ProfileMenuItem(
-                      icon: Icons.card_membership,
-                      label: 'E-KTA Digital',
-                      onTap: () {}, // Go to E-KTA
+                    const SizedBox(height: 4),
+                    Text(
+                      user.isAlumni
+                          ? 'Alumni Angkatan ${user.angkatan ?? '-'}'
+                          : 'Masyarakat Umum',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textGrey,
+                      ),
                     ),
-                    const Divider(height: 1),
-                    _ProfileMenuItem(
-                      icon: Icons.settings_outlined,
-                      label: 'Pengaturan',
-                      onTap: () {},
+                    if (user.jobStatus != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        user.jobStatus!.displayName,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // Menu List
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _ProfileMenuItem(
+                              icon: Icons.person_outline,
+                              label: 'Edit Profil',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditProfilePage(user: user),
+                                  ),
+                                ).then((_) {
+                                  // Refresh profile after return
+                                  context.read<ProfileBloc>().add(
+                                    FetchProfile(),
+                                  );
+                                });
+                              },
+                            ),
+                            const Divider(height: 1),
+                            _ProfileMenuItem(
+                              icon: Icons.card_membership,
+                              label: 'E-KTA Digital',
+                              onTap: () => context.push('/ekta'),
+                            ),
+                            const Divider(height: 1),
+                            _ProfileMenuItem(
+                              icon: Icons.settings_outlined,
+                              label: 'Pengaturan',
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Fitur Pengaturan segera hadir',
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const Divider(height: 1),
+                            _ProfileMenuItem(
+                              icon: Icons.help_outline,
+                              label: 'Bantuan',
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Fitur Bantuan segera hadir'),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const Divider(height: 1),
-                    _ProfileMenuItem(
-                      icon: Icons.help_outline,
-                      label: 'Bantuan',
-                      onTap: () {},
+
+                    const SizedBox(height: 24),
+
+                    TextButton(
+                      onPressed: () {
+                        // Logout logic
+                        PBClient.instance.logout();
+                        context.go('/login');
+                      },
+                      child: const Text(
+                        'Keluar',
+                        style: TextStyle(
+                          color: AppColors.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: 40),
                   ],
                 ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            TextButton(
-              onPressed: () {
-                // Logout logic
-              },
-              child: const Text(
-                'Keluar',
-                style: TextStyle(
-                  color: AppColors.error,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, UserEntity user) {
+    final avatarUrl = (user.avatar != null && user.avatar!.isNotEmpty)
+        ? '${AppConstants.pocketBaseUrl}/api/files/users/${user.id}/${user.avatar}'
+        : null;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Container(
+          height: 180,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primary, Color(0xFF004D38)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40,
+          left: 16,
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => context.pop(),
+          ),
+        ),
+        const Positioned(
+          top: 52,
+          child: Text(
+            'Profil Saya',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: -50,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 4),
+            ),
+            child: ClipOval(
+              child: avatarUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: avatarUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/images/logo-ika.png',
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/images/logo-ika.png',
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

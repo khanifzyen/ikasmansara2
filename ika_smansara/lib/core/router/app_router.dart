@@ -22,6 +22,7 @@ import '../../features/events/presentation/pages/event_detail_page.dart';
 import '../../features/events/presentation/pages/ticket_detail_page.dart';
 import '../../features/donations/presentation/pages/donation_detail_page.dart';
 import '../../features/donations/presentation/pages/my_donations_page.dart';
+import '../../features/donations/presentation/pages/donation_list_page.dart';
 import '../../features/news/presentation/pages/news_list_page.dart';
 import '../../features/news/presentation/pages/news_detail_page.dart';
 import '../../features/forum/presentation/pages/forum_page.dart';
@@ -29,6 +30,7 @@ import '../../features/forum/presentation/pages/create_post_page.dart';
 import '../../features/forum/presentation/pages/forum_detail_page.dart';
 import '../../features/events/presentation/pages/my_tickets_page.dart';
 import '../../features/events/presentation/pages/midtrans_payment_page.dart';
+import '../../features/events/presentation/pages/event_list_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -146,6 +148,13 @@ class AppRouter {
         ],
       ),
 
+      // Event List
+      GoRoute(
+        path: '/events',
+        name: 'events',
+        builder: (context, state) => const EventListPage(),
+      ),
+
       // Pages passing through Shell (or separate)
       // Profile (Separate because it comes from Drawer)
       GoRoute(
@@ -193,6 +202,13 @@ class AppRouter {
           final donationId = state.extra as String;
           return DonationDetailPage(donationId: donationId);
         },
+      ),
+
+      // Donation List (Public)
+      GoRoute(
+        path: '/donation-list',
+        name: 'donation-list',
+        builder: (context, state) => const DonationListPage(),
       ),
 
       // My Donations (History)
