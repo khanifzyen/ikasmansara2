@@ -134,10 +134,14 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Booking ID: ${booking.bookingId}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  Expanded(
+                    child: Text(
+                      'Booking ID: ${booking.bookingId}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
