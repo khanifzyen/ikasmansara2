@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ikasmansara2_app/main.dart';
+import 'package:ika_smansara/main.dart';
 
 void main() {
   testWidgets('App should start', (WidgetTester tester) async {
