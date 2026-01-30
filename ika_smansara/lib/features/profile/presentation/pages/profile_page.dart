@@ -110,7 +110,15 @@ class ProfilePage extends StatelessWidget {
                             _ProfileMenuItem(
                               icon: Icons.card_membership,
                               label: 'E-KTA Digital',
-                              onTap: () => context.push('/ekta'),
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Fitur E-KTA Digital akan segera hadir!',
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                             const Divider(height: 1),
                             _ProfileMenuItem(

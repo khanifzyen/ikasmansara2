@@ -14,6 +14,7 @@ class EventBooking extends Equatable {
   final String paymentStatus;
   final String? snapToken;
   final String? snapRedirectUrl;
+  final DateTime created;
   final Event? event;
 
   const EventBooking({
@@ -23,6 +24,7 @@ class EventBooking extends Equatable {
     required this.eventId,
     required this.userId,
     required this.bookingId,
+    required this.created,
     required this.metadata,
     required this.totalPrice,
     required this.paymentStatus,
@@ -39,6 +41,7 @@ class EventBooking extends Equatable {
     eventId,
     userId,
     bookingId,
+    created,
     metadata,
     totalPrice,
     paymentStatus,

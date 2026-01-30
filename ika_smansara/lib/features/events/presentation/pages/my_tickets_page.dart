@@ -81,6 +81,33 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
       symbol: 'Rp ',
       decimalDigits: 0,
     );
+    final dateFormat = DateFormat('d MMM yyyy, HH:mm', 'id');
+
+    // Parse metadata
+    int totalTicketCount = 0;
+    List<String> shirtSizes = [];
+
+    for (var item in booking.metadata) {
+      if (item is Map) {
+        // Quantity
+        final qty = item['quantity'] as int? ?? 0;
+        totalTicketCount += qty;
+
+        // Options (Sizes)
+        final options = item['options'];
+        if (options is Map) {
+          options.forEach((key, value) {
+            if (value != null) {
+              shirtSizes.add(value.toString());
+            }
+          });
+        }
+      }
+    }
+
+    final sizeDetailString = shirtSizes.isNotEmpty
+        ? ', Rincian Ukuran Kaos: ${shirtSizes.join(', ')}'
+        : '';
 
     Color statusColor;
     String statusText;
@@ -120,7 +147,10 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => MyTicketDetailPage(bookingId: booking.id),
+                    builder: (_) => MyTicketDetailPage(
+                      bookingId: booking.id,
+                      booking: booking,
+                    ),
                   ),
                 );
               }
@@ -162,12 +192,26 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
+              Text(
+                'Pembelian: ${dateFormat.format(booking.created.toLocal())}',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
               const SizedBox(height: 12),
               Text(
                 booking.event?.title ?? 'Event Tidak Dikenal',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '$totalTicketCount Tiket$sizeDetailString',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 4),

@@ -41,6 +41,15 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
   }
 
   void _submit() {
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Fitur pembayaran donasi akan segera hadir'),
+      ),
+    );
+    return;
+
+    /*
     final amountString = _amountController.text.replaceAll('.', '');
     final amount = double.tryParse(amountString) ?? 0;
 
@@ -74,6 +83,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
         paymentMethod: _selectedPaymentMethod,
       ),
     );
+    */
   }
 
   @override

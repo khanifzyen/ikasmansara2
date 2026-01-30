@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/pb_client.dart';
 import '../../../auth/data/models/user_model.dart';
@@ -28,14 +29,20 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<UserModel> updateProfile(ProfileUpdateParams params) async {
     try {
       final userId = pbClient.pb.authStore.record!.id;
+      final body = params.toJson();
+
+      final List<http.MultipartFile> files = [];
+      if (params.avatarFile != null) {
+        final multipartFile = await http.MultipartFile.fromPath(
+          'avatar',
+          params.avatarFile!.path,
+        );
+        files.add(multipartFile);
+      }
+
       final record = await pbClient.pb
           .collection('users')
-          .update(userId, body: params.toJson());
-      // Also refresh auth store to reflect changes locally if needed,
-      // but update returns the updated record.
-      // Ideally we sync the auth store too.
-      // pbClient.pb.collection('users').authRefresh(); // Optional but good practice
-
+          .update(userId, body: body, files: files);
       return UserModel.fromRecord(record);
     } catch (e) {
       throw ServerException(message: e.toString());

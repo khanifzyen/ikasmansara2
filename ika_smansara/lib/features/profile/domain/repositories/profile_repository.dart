@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../auth/domain/entities/user_entity.dart';
 
 abstract class ProfileRepository {
@@ -11,6 +13,7 @@ class ProfileUpdateParams {
   final JobStatus? jobStatus;
   final String? company;
   final String? domisili;
+  final File? avatarFile;
 
   ProfileUpdateParams({
     this.name,
@@ -18,6 +21,7 @@ class ProfileUpdateParams {
     this.jobStatus,
     this.company,
     this.domisili,
+    this.avatarFile,
   });
 
   Map<String, dynamic> toJson() {

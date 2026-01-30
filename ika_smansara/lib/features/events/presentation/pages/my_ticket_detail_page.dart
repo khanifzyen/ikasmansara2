@@ -7,12 +7,17 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/network/pb_client.dart';
+import '../../domain/entities/event_booking.dart';
 import '../../domain/entities/event_booking_ticket.dart';
+import '../../domain/entities/event.dart';
 import '../../presentation/bloc/my_tickets_bloc.dart';
+import 'package:intl/intl.dart';
 
 class MyTicketDetailPage extends StatefulWidget {
   final String bookingId;
-  const MyTicketDetailPage({super.key, required this.bookingId});
+  final EventBooking? booking;
+
+  const MyTicketDetailPage({super.key, required this.bookingId, this.booking});
 
   @override
   State<MyTicketDetailPage> createState() => _MyTicketDetailPageState();
@@ -61,23 +66,41 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
               if (state.tickets.isEmpty) {
                 return const Center(child: Text('Tidak ada tiket ditemukan'));
               }
-              return ListView.builder(
+              return SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
-                itemCount: state.tickets.length,
-                itemBuilder: (context, index) {
-                  final ticket = state.tickets[index];
-                  // Initialize controller if not exists
-                  _screenshotControllers.putIfAbsent(
-                    ticket.id,
-                    () => ScreenshotController(),
-                  );
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Event Info Card
+                    if (widget.booking?.event != null) ...[
+                      _buildEventInfoCard(widget.booking!.event!),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Tiket Anda',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
-                  return _buildTicketItem(
-                    context,
-                    ticket,
-                    _screenshotControllers[ticket.id]!,
-                  );
-                },
+                    // Tickets List
+                    ...state.tickets.map((ticket) {
+                      // Initialize controller if not exists
+                      _screenshotControllers.putIfAbsent(
+                        ticket.id,
+                        () => ScreenshotController(),
+                      );
+
+                      return _buildTicketItem(
+                        context,
+                        ticket,
+                        _screenshotControllers[ticket.id]!,
+                      );
+                    }),
+                  ],
+                ),
               );
             }
             return const SizedBox.shrink();
@@ -151,9 +174,20 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                     child: Column(
                       children: [
                         QrImageView(
-                          data: ticket.id, // Use Ticket ID as QR Content
+                          data: ticket.ticketCode, // Use Readable Ticket ID
                           version: QrVersions.auto,
                           size: 200.0,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          ticket.ticketCode,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                            fontFamily: 'monospace',
+                            letterSpacing: 1.2,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -208,6 +242,62 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[800],
                   foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventInfoCard(Event event) {
+    final dateFormat = DateFormat('EEEE, d MMMM yyyy, HH:mm', 'id');
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            event.title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+              const SizedBox(width: 8),
+              Text(
+                dateFormat.format(event.date.toLocal()),
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  event.location,
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
                 ),
               ),
             ],

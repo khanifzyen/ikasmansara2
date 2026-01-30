@@ -24,7 +24,7 @@ class EventBookingTicketModel extends EventBookingTicket {
       bookingId: record.getStringValue('booking'),
       eventId: record.getStringValue('event'),
       ticketName: ticketName,
-      ticketCode: record.getStringValue('ticket_code'),
+      ticketCode: record.getStringValue('ticket_id'),
       userName: record.getStringValue('user_name'),
       userEmail: record.getStringValue('user_email'),
       options: record.data['options'] ?? {},

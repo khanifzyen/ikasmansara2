@@ -120,7 +120,12 @@ class _SideDrawer extends StatelessWidget {
                   label: 'Direktori',
                   onTap: () {
                     Navigator.pop(context);
-                    context.push('/directory');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Fitur Direktori akan segera hadir'),
+                      ),
+                    );
+                    // context.push('/directory');
                   },
                 ),
                 // Placeholders for future phases
@@ -129,6 +134,11 @@ class _SideDrawer extends StatelessWidget {
                   label: 'Market',
                   onTap: () {
                     Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Fitur Market akan segera hadir'),
+                      ),
+                    );
                     // context.push('/market'); // Phase 8
                   },
                 ),
@@ -137,7 +147,12 @@ class _SideDrawer extends StatelessWidget {
                   label: 'Forum Diskusi',
                   onTap: () {
                     Navigator.pop(context);
-                    context.push('/forum');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Fitur Forum Diskusi akan segera hadir'),
+                      ),
+                    );
+                    // context.push('/forum');
                   },
                 ),
                 _DrawerItem(

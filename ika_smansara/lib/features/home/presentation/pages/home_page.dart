@@ -10,6 +10,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../donations/presentation/bloc/donation_list_bloc.dart';
 import '../../../events/presentation/bloc/events_bloc.dart';
+import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../news/presentation/bloc/news_bloc.dart';
 
 class HomePage extends StatelessWidget {
@@ -98,236 +99,256 @@ class HomePage extends StatelessWidget {
               ),
 
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  children: [
-                    // E-KTA Preview
-                    BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        String angkatanText = 'ANGKATAN -';
-                        String ektaDisplay =
-                            'XXXX.XXXX.XXX'; // Placeholder matching schema structure
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<DonationListBloc>().add(FetchDonations());
+                    context.read<EventsBloc>().add(const FetchEvents());
+                    context.read<NewsBloc>().add(const FetchNewsList());
+                    context.read<AuthBloc>().add(const AuthCheckRequested());
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    children: [
+                      // E-KTA Preview
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          String angkatanText = 'ANGKATAN -';
+                          String ektaDisplay =
+                              'XXXX.XXXX.XXX'; // Placeholder matching schema structure
 
-                        if (state is AuthAuthenticated) {
-                          angkatanText =
-                              'ANGKATAN ${state.user.angkatan ?? '-'}';
+                          if (state is AuthAuthenticated) {
+                            angkatanText =
+                                'ANGKATAN ${state.user.angkatan ?? '-'}';
 
-                          // UserEntity.nomorEkta returns '-' if data is incomplete
-                          if (state.user.nomorEkta != '-') {
-                            ektaDisplay = state.user.nomorEkta;
+                            // UserEntity.nomorEkta returns '-' if data is incomplete
+                            if (state.user.nomorEkta != '-') {
+                              ektaDisplay = state.user.nomorEkta;
+                            }
                           }
-                        }
-                        return Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                AppColors.primary,
-                                Color(0xFF004D38),
-                              ], // Darker green
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.2),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+                          return Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  AppColors.primary,
+                                  Color(0xFF004D38),
+                                ], // Darker green
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    angkatanText,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1,
-                                    ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.2,
                                   ),
-                                  Icon(
-                                    Icons.school,
-                                    color: Colors.white.withValues(alpha: 0.8),
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                ektaDisplay,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Courier',
-                                  letterSpacing: 1,
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // Menu Grid
-                    const _MenuGrid(),
-
-                    const SizedBox(height: 30),
-                    // Agenda Section
-                    _SectionHeader(
-                      title: 'Agenda Kegiatan',
-                      onViewAll: () {
-                        context.push('/events');
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    BlocBuilder<EventsBloc, EventsState>(
-                      builder: (context, state) {
-                        if (state is EventsLoaded) {
-                          if (state.events.isEmpty) {
-                            return const Center(
-                              child: Text('Belum ada agenda kegiatan'),
-                            );
-                          }
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: state.events.map((event) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 16),
-                                  child: InkWell(
-                                    onTap: () => context.push(
-                                      '/event-detail',
-                                      extra: event.id,
-                                    ),
-                                    child: _AgendaCard(
-                                      day: DateFormat(
-                                        'EEEE',
-                                        'id',
-                                      ).format(event.date),
-                                      time: event.time,
-                                      title: event.title,
-                                      date: DateFormat(
-                                        'dd MMMM yyyy',
-                                        'id',
-                                      ).format(event.date),
-                                      location: event.location,
-                                      isRegisterOpen: event.isRegistrationOpen,
-                                      imageUrl: event.banner,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                              ],
                             ),
-                          );
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // Donation Slider
-                    _SectionHeader(
-                      title: 'Program Donasi',
-                      onViewAll: () {
-                        context.push('/donation-list');
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    BlocBuilder<DonationListBloc, DonationListState>(
-                      builder: (context, state) {
-                        if (state is DonationListLoaded) {
-                          if (state.donations.isEmpty) {
-                            return const Center(
-                              child: Text('Belum ada program donasi'),
-                            );
-                          }
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: state.donations.map((donation) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 16),
-                                  child: InkWell(
-                                    onTap: () => context.push(
-                                      '/donation-detail',
-                                      extra: donation.id,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      angkatanText,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1,
+                                      ),
                                     ),
-                                    child: _DonationCard(
-                                      title: donation.title,
-                                      amount: NumberFormat.currency(
-                                        locale: 'id_ID',
-                                        symbol: 'Rp ',
-                                        decimalDigits: 0,
-                                      ).format(donation.collectedAmount),
-                                      percent: donation.progress,
-                                      isUrgent: donation.priority == 'urgent',
-                                      imageUrl: donation.banner,
+                                    Icon(
+                                      Icons.school,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
+                                      size: 20,
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          );
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // News Section
-                    _SectionHeader(
-                      title: 'Kabar SMANSARA',
-                      onViewAll: () {
-                        context.push('/news');
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    BlocBuilder<NewsBloc, NewsState>(
-                      builder: (context, state) {
-                        if (state is NewsLoaded) {
-                          if (state.newsList.isEmpty) {
-                            return const Center(
-                              child: Text('Belum ada berita terbaru'),
-                            );
-                          }
-                          return Column(
-                            children: state.newsList.take(3).map((news) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: InkWell(
-                                  onTap: () => context.push(
-                                    '/news-detail',
-                                    extra: news.id,
-                                  ),
-                                  child: _NewsCard(
-                                    title: news.title,
-                                    tag: news.category.toUpperCase(),
-                                    imageUrl: news.thumbnail,
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  ektaDisplay,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Courier',
+                                    letterSpacing: 1,
                                   ),
                                 ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Menu Grid
+                      const _MenuGrid(),
+
+                      const SizedBox(height: 30),
+                      // Agenda Section
+                      _SectionHeader(
+                        title: 'Agenda Kegiatan',
+                        onViewAll: () {
+                          context.push('/events');
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      BlocBuilder<EventsBloc, EventsState>(
+                        builder: (context, state) {
+                          if (state is EventsLoaded) {
+                            if (state.events.isEmpty) {
+                              return const Center(
+                                child: Text('Belum ada agenda kegiatan'),
                               );
-                            }).toList(),
+                            }
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: state.events.map((event) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 16),
+                                    child: InkWell(
+                                      onTap: () => context.push(
+                                        '/event-detail',
+                                        extra: event.id,
+                                      ),
+                                      child: _AgendaCard(
+                                        day: DateFormat(
+                                          'EEEE',
+                                          'id',
+                                        ).format(event.date),
+                                        time: event.time,
+                                        title: event.title,
+                                        date: DateFormat(
+                                          'dd MMMM yyyy',
+                                          'id',
+                                        ).format(event.date),
+                                        location: event.location,
+                                        isRegisterOpen:
+                                            event.isRegistrationOpen,
+                                        imageUrl: event.banner,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
                           );
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-                    const SizedBox(height: 80), // Bottom padding
-                  ],
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Donation Slider
+                      _SectionHeader(
+                        title: 'Program Donasi',
+                        onViewAll: () {
+                          context.push('/donation-list');
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      BlocBuilder<DonationListBloc, DonationListState>(
+                        builder: (context, state) {
+                          if (state is DonationListLoaded) {
+                            if (state.donations.isEmpty) {
+                              return const Center(
+                                child: Text('Belum ada program donasi'),
+                              );
+                            }
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: state.donations.map((donation) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 16),
+                                    child: InkWell(
+                                      onTap: () => context.push(
+                                        '/donation-detail',
+                                        extra: donation.id,
+                                      ),
+                                      child: _DonationCard(
+                                        title: donation.title,
+                                        amount: NumberFormat.currency(
+                                          locale: 'id_ID',
+                                          symbol: 'Rp ',
+                                          decimalDigits: 0,
+                                        ).format(donation.collectedAmount),
+                                        percent: donation.progress,
+                                        isUrgent: donation.priority == 'urgent',
+                                        imageUrl: donation.banner,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // News Section
+                      _SectionHeader(
+                        title: 'Kabar SMANSARA',
+                        onViewAll: () {
+                          context.push('/news');
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      BlocBuilder<NewsBloc, NewsState>(
+                        builder: (context, state) {
+                          if (state is NewsLoaded) {
+                            if (state.newsList.isEmpty) {
+                              return const Center(
+                                child: Text('Belum ada berita terbaru'),
+                              );
+                            }
+                            return Column(
+                              children: state.newsList.take(3).map((news) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: InkWell(
+                                    onTap: () => context.push(
+                                      '/news-detail',
+                                      extra: news.id,
+                                    ),
+                                    child: _NewsCard(
+                                      title: news.title,
+                                      tag: news.category.toUpperCase(),
+                                      imageUrl: news.thumbnail,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 80), // Bottom padding
+                    ],
+                  ),
                 ),
               ),
             ],

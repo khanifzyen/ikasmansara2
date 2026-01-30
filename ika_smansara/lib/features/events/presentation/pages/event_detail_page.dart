@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
@@ -12,12 +13,12 @@ import '../../domain/usecases/get_event_tickets.dart';
 import '../../domain/usecases/get_event_sub_events.dart';
 import '../../domain/usecases/get_event_sponsors.dart';
 import '../widgets/ticket_tab.dart';
-import '../widgets/sub_event_tab.dart';
-import '../widgets/sponsor_tab.dart';
+// import '../widgets/sub_event_tab.dart';
+// import '../widgets/sponsor_tab.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../bloc/event_booking_bloc.dart';
-import '../widgets/event_donation_tab.dart';
+// import '../widgets/event_donation_tab.dart';
 
 class EventDetailPage extends StatefulWidget {
   final String eventId;
@@ -38,7 +39,7 @@ class _EventDetailPageState extends State<EventDetailPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
     _tabController.addListener(_handleTabSelection);
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
@@ -289,13 +290,17 @@ class _EventDetailPageState extends State<EventDetailPage>
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Text(
-                            event.description,
-                            style: const TextStyle(
-                              color: AppColors.textGrey,
-                              fontSize: 14,
-                              height: 1.5,
-                            ),
+                          Html(
+                            data: event.description,
+                            style: {
+                              "body": Style(
+                                color: AppColors.textGrey,
+                                fontSize: FontSize(14),
+                                lineHeight: LineHeight(1.5),
+                                margin: Margins.zero,
+                                padding: HtmlPaddings.zero,
+                              ),
+                            },
                           ),
                           const SizedBox(height: 24),
                           // Tabs
@@ -311,9 +316,9 @@ class _EventDetailPageState extends State<EventDetailPage>
                             ),
                             tabs: const [
                               Tab(text: 'Tiket'),
-                              Tab(text: 'Sub-event'),
-                              Tab(text: 'Sponsorship'),
-                              Tab(text: 'Donasi'),
+                              // Tab(text: 'Sub-event'),
+                              // Tab(text: 'Sponsorship'),
+                              // Tab(text: 'Donasi'),
                             ],
                           ),
                           const SizedBox(height: 24),
@@ -350,12 +355,14 @@ class _EventDetailPageState extends State<EventDetailPage>
     switch (_tabController.index) {
       case 0:
         return TicketTab(tickets: data.tickets, enableScroll: false);
+      /*
       case 1:
         return SubEventTab(subEvents: data.subEvents);
       case 2:
         return SponsorTab(sponsors: data.sponsors);
       case 3:
         return const EventDonationTab();
+      */
       default:
         return const SizedBox.shrink();
     }
