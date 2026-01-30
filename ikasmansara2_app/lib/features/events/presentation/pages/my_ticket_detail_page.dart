@@ -6,6 +6,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../../core/network/pb_client.dart';
 import '../../domain/entities/event_booking_ticket.dart';
 import '../../presentation/bloc/my_tickets_bloc.dart';
 
@@ -25,6 +26,18 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
   void initState() {
     super.initState();
     GetIt.I<MyTicketsBloc>().add(GetMyBookingTickets(widget.bookingId));
+  }
+
+  @override
+  void dispose() {
+    // Refresh bookings list when leaving detail page (back to list)
+    try {
+      final userId = GetIt.I<PBClient>().pb.authStore.record?.id;
+      if (userId != null) {
+        GetIt.I<MyTicketsBloc>().add(GetMyBookings(userId));
+      }
+    } catch (_) {}
+    super.dispose();
   }
 
   @override
