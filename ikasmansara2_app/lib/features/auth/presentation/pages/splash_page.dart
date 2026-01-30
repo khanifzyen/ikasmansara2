@@ -73,6 +73,12 @@ class _SplashPageState extends State<SplashPage> {
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
+            const Spacer(),
+            const Text(
+              'Versi 2.0.0',
+              style: TextStyle(fontSize: 14, color: AppColors.textGrey),
+            ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

@@ -1,4 +1,4 @@
-name: ikasmansara2_app
+name: ika_smansara
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -77,6 +77,22 @@ dev_dependencies:
   freezed: ^3.2.4
   json_serializable: ^6.11.4
   injectable_generator: ^2.12.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo-ika-1.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/images/logo-ika-1.png"
+  android_12:
+    image: "assets/images/logo-ika-1.png"
+    color: "#FFFFFF"
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

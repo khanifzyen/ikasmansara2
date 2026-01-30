@@ -1,4 +1,4 @@
-package com.example.ikasmansara2_app
+package com.ikasmansara.ika_smansara
 
 import io.flutter.embedding.android.FlutterActivity
 
