@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:gal/gal.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../core/network/pb_client.dart';
@@ -32,6 +32,7 @@ class MidtransPaymentPage extends StatefulWidget {
 
 class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
   late final WebViewController _controller;
+  final ScreenshotController _screenshotController = ScreenshotController();
   bool _isLoading = true;
   double _progress = 0;
 
@@ -41,9 +42,16 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
-        'BlobDownloader',
+        'QrisDownloader',
         onMessageReceived: (JavaScriptMessage message) {
-          _saveAndShareFile(message.message);
+          debugPrint('🔗 QRIS URL received from JS: ${message.message}');
+          _downloadQrisFromUrl(message.message);
+        },
+      )
+      ..addJavaScriptChannel(
+        'QrisLogger',
+        onMessageReceived: (JavaScriptMessage message) {
+          debugPrint('📜 [JS Log] ${message.message}');
         },
       )
       ..setNavigationDelegate(
@@ -62,17 +70,11 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
             setState(() {
               _isLoading = false;
             });
+            _injectSnapDownloadIntercept();
           },
           onNavigationRequest: (NavigationRequest request) {
             final url = request.url.toLowerCase();
 
-            // Handle Blob URLs (QRIS Image)
-            if (url.startsWith('blob:')) {
-              _handleBlobUrl(request.url);
-              return NavigationDecision.prevent;
-            }
-
-            // Check for success/finish callback
             if (url.contains('status_code=200') ||
                 url.contains('transaction_status=settlement') ||
                 url.contains('transaction_status=capture')) {
@@ -80,13 +82,11 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
               return NavigationDecision.prevent;
             }
 
-            // Check for pending callback
             if (url.contains('transaction_status=pending')) {
               _handlePaymentPending();
               return NavigationDecision.prevent;
             }
 
-            // Check for failed/cancelled callback
             if (url.contains('status_code=201') ||
                 url.contains('transaction_status=deny') ||
                 url.contains('transaction_status=cancel') ||
@@ -95,15 +95,13 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
               return NavigationDecision.prevent;
             }
 
-            // Handle Image Links / Deep Links
             if (url.endsWith('.png') ||
                 url.endsWith('.jpg') ||
                 url.endsWith('.jpeg') ||
                 url.contains('/qr-code') ||
-                url.contains('gojek://') || // Deep links
+                url.contains('gojek://') ||
                 url.contains('shopeeid://') ||
                 url.contains('wikibit://')) {
-              // Open in external app/browser
               launchUrl(
                 Uri.parse(request.url),
                 mode: LaunchMode.externalApplication,
@@ -121,52 +119,224 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
       ..loadRequest(Uri.parse(widget.paymentUrl));
   }
 
-  Future<void> _handleBlobUrl(String url) async {
-    final script =
-        '''
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '$url', true);
-      xhr.responseType = 'blob';
-      xhr.onload = function(e) {
-        if (this.status == 200) {
-          var blob = this.response;
-          var reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = function() {
-            var base64data = reader.result;
-            BlobDownloader.postMessage(base64data);
+  Future<void> _injectSnapDownloadIntercept() async {
+    final script = '''
+      (function() {
+        console.log('[Snap] Injecting download interceptor...');
+        QrisLogger.postMessage('Injector started');
+        
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+          var tagName = target.tagName;
+          var text = (target.textContent || target.innerText || '').substring(0, 50);
+          var className = target.className || '';
+          
+          QrisLogger.postMessage('Click: ' + tagName + ' | Text: ' + text);
+          
+          var isDownloadClick = false;
+          var elem = target;
+          
+          if (tagName === 'BUTTON' || tagName === 'A' || tagName === 'SPAN' || target.parentElement) {
+            if (tagName !== 'BUTTON' && tagName !== 'A') {
+              elem = target.parentElement;
+            }
+            
+            var elemText = (elem.textContent || elem.innerText || '').toLowerCase();
+            var elemClass = (elem.className || '').toLowerCase();
+            
+            if (elemText.includes('download') || 
+                elemText.includes('unduh') ||
+                elemClass.includes('download')) {
+              isDownloadClick = true;
+            }
           }
-        }
-      };
-      xhr.send();
+          
+          if (isDownloadClick) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            QrisLogger.postMessage('Download button clicked!');
+            
+            var allImages = document.querySelectorAll('img');
+            QrisLogger.postMessage('Total images: ' + allImages.length);
+            
+            var qrisImg = null;
+            
+            for (var i = 0; i < allImages.length; i++) {
+              var img = allImages[i];
+              var src = img.src || '';
+              var alt = (img.alt || '').toLowerCase();
+              var className = (img.className || '').toLowerCase();
+              
+              QrisLogger.postMessage('Img ' + i + ': src=' + src.substring(0, 80) + '... alt=' + alt);
+              
+              if (src.includes('midtrans.com/v4/qris') || 
+                  src.includes('qris') && src.includes('gopay') ||
+                  alt === 'qr-code' ||
+                  alt.includes('qris') ||
+                  className.includes('qris')) {
+                qrisImg = img;
+                QrisLogger.postMessage('Found QRIS image at index ' + i);
+              }
+            }
+            
+            if (qrisImg && qrisImg.src) {
+              QrisLogger.postMessage('QRIS URL: ' + qrisImg.src);
+              
+              if (qrisImg.src.startsWith('blob:')) {
+                QrisLogger.postMessage('Blob URL, converting...');
+                fetch(qrisImg.src)
+                  .then(resp => resp.blob())
+                  .then(blob => {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = function() {
+                      QrisDownloader.postMessage(reader.result);
+                    };
+                  })
+                  .catch(err => {
+                    QrisLogger.postMessage('Fetch error: ' + err);
+                  });
+              } else {
+                QrisLogger.postMessage('Sending URL to Flutter: ' + qrisImg.src);
+                QrisDownloader.postMessage(qrisImg.src);
+              }
+            } else {
+              QrisLogger.postMessage('QRIS image not found');
+            }
+          }
+        }, true);
+        
+        QrisLogger.postMessage('Interceptor injected');
+      })();
     ''';
-    await _controller.runJavaScript(script);
+
+    try {
+      await _controller.runJavaScript(script);
+      debugPrint('✅ Snap download interceptor injected');
+    } catch (e) {
+      debugPrint('❌ Error injecting interceptor: $e');
+    }
   }
 
-  Future<void> _saveAndShareFile(String dataUrl) async {
+  Future<void> _downloadQrisFromUrl(String dataUrlOrUrl) async {
     try {
-      // Data URL format: "data:image/png;base64,....."
-      final commaIndex = dataUrl.indexOf(',');
-      if (commaIndex == -1) return;
+      Uint8List imageBytes;
 
-      final base64Data = dataUrl.substring(commaIndex + 1);
-      final bytes = base64Decode(base64Data);
+      if (dataUrlOrUrl.startsWith('data:')) {
+        final commaIndex = dataUrlOrUrl.indexOf(',');
+        if (commaIndex == -1) {
+          debugPrint('Invalid data URL format');
+          return;
+        }
+        final base64Data = dataUrlOrUrl.substring(commaIndex + 1);
+        imageBytes = base64Decode(base64Data);
+        debugPrint('📥 Received base64 data, size: ${imageBytes.length} bytes');
+      } else if (dataUrlOrUrl.startsWith('http')) {
+        debugPrint('🔥 Downloading QRIS from: $dataUrlOrUrl');
 
-      final tempDir = await getTemporaryDirectory();
-      final file = File('${tempDir.path}/payment_qris.png');
-      await file.writeAsBytes(bytes);
+        final response = await http.get(Uri.parse(dataUrlOrUrl));
+        if (response.statusCode == 200) {
+          imageBytes = response.bodyBytes;
+          debugPrint('📥 Downloaded image, size: ${imageBytes.length} bytes');
+        } else {
+          throw Exception('Failed to download: ${response.statusCode}');
+        }
+      } else {
+        debugPrint('Unknown URL format: $dataUrlOrUrl');
+        return;
+      }
+
+      if (imageBytes.isEmpty) {
+        throw Exception('Empty image bytes');
+      }
+
+      final filename = 'qris_${widget.bookingId}.png';
+
+      debugPrint('💾 Saving to gallery with name: $filename');
+      await Gal.putImageBytes(imageBytes, name: filename);
+
+      debugPrint('✅ QRIS saved to gallery');
 
       if (mounted) {
-        await SharePlus.instance.share(
-          ShareParams(files: [XFile(file.path)], text: 'QRIS Pembayaran'),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'QRIS tersimpan!',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(filename, style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
         );
       }
     } catch (e) {
-      debugPrint('Error saving blob: $e');
+      debugPrint('❌ Error downloading QRIS: $e');
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Gagal mengunduh gambar')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Gagal: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Screenshot',
+              textColor: Colors.white,
+              onPressed: () => _downloadQrisScreenshot(),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _downloadQrisScreenshot() async {
+    try {
+      final image = await _screenshotController.capture();
+      if (image == null) {
+        throw Exception('Failed to capture screenshot');
+      }
+
+      await Gal.putImageBytes(image, name: 'qris_${widget.bookingId}.png');
+
+      debugPrint('✅ QRIS screenshot saved to gallery');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('QRIS tersimpan di Gallery'),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error saving QRIS: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Gagal menyimpan QRIS. Silakan screenshot manual.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -275,14 +445,16 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
               )
             : null,
       ),
-      body: WebViewWidget(
-        controller: _controller,
-        // Enable scrolling gestures
-        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-          Factory<VerticalDragGestureRecognizer>(
-            () => VerticalDragGestureRecognizer(),
-          ),
-        },
+      body: Screenshot(
+        controller: _screenshotController,
+        child: WebViewWidget(
+          controller: _controller,
+          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+            Factory<VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer(),
+            ),
+          },
+        ),
       ),
     );
   }

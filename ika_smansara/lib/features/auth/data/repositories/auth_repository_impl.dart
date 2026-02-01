@@ -1,8 +1,8 @@
 /// Auth Repository Implementation
 library;
 
-import 'package:flutter/foundation.dart';
 import 'package:pocketbase/pocketbase.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/failures/auth_failure.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -20,26 +20,58 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AuthResult<UserEntity>> getCurrentUser() async {
+    log.withContext(
+      'AuthRepository',
+      LogLevel.debug,
+      'Getting current user...',
+    );
+
     try {
       try {
         final user = await _remoteDataSource.getCurrentUser();
         if (user != null) {
+          log.withContext(
+            'AuthRepository',
+            LogLevel.info,
+            'User found, caching...',
+          );
           await _localDataSource.cacheUser(user);
           return (data: user.toEntity(), failure: null);
         }
       } catch (e) {
-        debugPrint('AuthRepository: Remote get current user failed: $e');
+        log.withContext(
+          'AuthRepository',
+          LogLevel.warning,
+          'Remote get current user failed',
+          error: e,
+        );
       }
 
       // Fallback to local cache
+      log.withContext(
+        'AuthRepository',
+        LogLevel.debug,
+        'Trying local cache...',
+      );
       final localUser = await _localDataSource.getLastUser();
       if (localUser != null) {
-        debugPrint('AuthRepository: Using cached user data');
+        log.withContext(
+          'AuthRepository',
+          LogLevel.info,
+          'Using cached user data',
+        );
         return (data: localUser.toEntity(), failure: null);
       }
 
+      log.withContext('AuthRepository', LogLevel.warning, 'No user found');
       return (data: null, failure: const UserNotFoundFailure());
     } catch (e) {
+      log.withContext(
+        'AuthRepository',
+        LogLevel.error,
+        'Get current user failed',
+        error: e,
+      );
       return (data: null, failure: _mapException(e));
     }
   }
@@ -57,11 +89,20 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Check if email is verified (system field)
       if (!user.verified) {
-        debugPrint('AuthRepository: Email not verified for ${user.email}');
+        log.withContext(
+          'AuthRepository',
+          LogLevel.warning,
+          'Email not verified for ${user.email}',
+        );
         await _remoteDataSource.logout();
         return (data: null, failure: const EmailNotVerifiedFailure());
       }
 
+      log.withContext(
+        'AuthRepository',
+        LogLevel.info,
+        'Login successful for ${user.email}',
+      );
       await _remoteDataSource.saveAuth();
       await _localDataSource.cacheUser(user);
       return (data: user.toEntity(), failure: null);
@@ -75,9 +116,12 @@ class AuthRepositoryImpl implements AuthRepository {
     RegisterAlumniParams params,
   ) async {
     try {
-      debugPrint(
-        'AuthRepository: Registering alumni with email: ${params.email}',
+      log.withContext(
+        'AuthRepository',
+        LogLevel.info,
+        'Registering alumni: ${params.email}',
       );
+
       final user = await _remoteDataSource.register(
         email: params.email,
         password: params.password,
@@ -90,17 +134,29 @@ class AuthRepositoryImpl implements AuthRepository {
         company: params.company,
         domisili: params.domisili,
       );
-      debugPrint('AuthRepository: Alumni registered successfully: ${user.id}');
+
+      log.withContext(
+        'AuthRepository',
+        LogLevel.info,
+        'Alumni registered successfully: ${user.id}',
+      );
 
       // Request verification email
-      debugPrint(
-        'AuthRepository: Requesting verification email for: ${params.email}',
+      log.withContext(
+        'AuthRepository',
+        LogLevel.debug,
+        'Requesting verification email for: ${params.email}',
       );
       await _remoteDataSource.requestVerification(params.email);
 
       return (data: user.toEntity(), failure: null);
     } catch (e) {
-      debugPrint('AuthRepository: Register alumni failed: $e');
+      log.withContext(
+        'AuthRepository',
+        LogLevel.error,
+        'Register alumni failed',
+        error: e,
+      );
       return (data: null, failure: _mapException(e));
     }
   }
@@ -163,9 +219,19 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// Map PocketBase exceptions to domain failures
   AuthFailure _mapException(dynamic e) {
-    debugPrint('AuthRepository: _mapException: $e');
+    log.withContext(
+      'AuthRepository',
+      LogLevel.error,
+      'Mapping exception',
+      error: e,
+    );
+
     if (e is ClientException) {
-      debugPrint('AuthRepository: ClientException response: ${e.response}');
+      log.withContext(
+        'AuthRepository',
+        LogLevel.warning,
+        'ClientException: ${e.statusCode}',
+      );
       final response = e.response;
       final statusCode = e.statusCode;
 

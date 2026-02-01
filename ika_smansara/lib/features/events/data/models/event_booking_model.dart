@@ -27,7 +27,7 @@ class EventBookingModel extends EventBooking {
       eventId: record.getStringValue('event'),
       userId: record.getStringValue('user'),
       bookingId: record.getStringValue('booking_id'),
-      created: DateTime.parse(record.created),
+      created: DateTime.parse(record.get<String>('created')),
       metadata: record.data['metadata'] is List ? record.data['metadata'] : [],
       totalPrice: record.getIntValue('total_price'),
       paymentStatus: record.getStringValue('payment_status'),

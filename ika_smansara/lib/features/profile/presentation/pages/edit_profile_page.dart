@@ -65,9 +65,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Gagal mengambil gambar: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal mengambil gambar: $e')));
+      }
     }
   }
 
@@ -143,7 +145,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   if (widget.user.isAlumni) ...[
                     const SizedBox(height: 16),
                     DropdownButtonFormField<JobStatus>(
-                      value: _selectedJobStatus,
+                      initialValue: _selectedJobStatus,
                       decoration: InputDecoration(
                         labelText: 'Status Pekerjaan',
                         prefixIcon: const Icon(Icons.work_outline),
