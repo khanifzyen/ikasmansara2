@@ -49,63 +49,82 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: GetIt.I<MyTicketsBloc>(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Detail Tiket'),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          elevation: 0,
-        ),
-        body: BlocBuilder<MyTicketsBloc, MyTicketsState>(
-          builder: (context, state) {
-            if (state is MyTicketsLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is MyTicketsFailure) {
-              return Center(child: Text('Error: ${state.message}'));
-            } else if (state is MyBookingTicketsLoaded) {
-              if (state.tickets.isEmpty) {
-                return const Center(child: Text('Tidak ada tiket ditemukan'));
-              }
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Event Info Card
-                    if (widget.booking?.event != null) ...[
-                      _buildEventInfoCard(widget.booking!.event!),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Tiket Anda',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+      child: BlocBuilder<MyTicketsBloc, MyTicketsState>(
+        builder: (context, state) {
+          final tickets = state is MyBookingTicketsLoaded
+              ? state.tickets
+              : <EventBookingTicket>[];
+          final canShareAll = tickets.isNotEmpty;
 
-                    // Tickets List
-                    ...state.tickets.map((ticket) {
-                      // Initialize controller if not exists
-                      _screenshotControllers.putIfAbsent(
-                        ticket.id,
-                        () => ScreenshotController(),
-                      );
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Detail Tiket'),
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 0,
+              actions: [
+                if (canShareAll)
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    tooltip: 'Bagikan Semua Tiket',
+                    onPressed: () => _shareAllTickets(context, tickets),
+                  ),
+              ],
+            ),
+            body: Builder(
+              builder: (context) {
+                if (state is MyTicketsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is MyTicketsFailure) {
+                  return Center(child: Text('Error: ${state.message}'));
+                } else if (state is MyBookingTicketsLoaded) {
+                  if (state.tickets.isEmpty) {
+                    return const Center(
+                      child: Text('Tidak ada tiket ditemukan'),
+                    );
+                  }
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Event Info Card
+                        if (widget.booking?.event != null) ...[
+                          _buildEventInfoCard(widget.booking!.event!),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Tiket Anda',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
 
-                      return _buildTicketItem(
-                        context,
-                        ticket,
-                        _screenshotControllers[ticket.id]!,
-                      );
-                    }),
-                  ],
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+                        // Tickets List
+                        ...state.tickets.map((ticket) {
+                          // Initialize controller if not exists
+                          _screenshotControllers.putIfAbsent(
+                            ticket.id,
+                            () => ScreenshotController(),
+                          );
+
+                          return _buildTicketItem(
+                            context,
+                            ticket,
+                            _screenshotControllers[ticket.id]!,
+                          );
+                        }),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -127,7 +146,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -160,7 +179,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                         Text(
                           ticket.ticketCode,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: Colors.white.withOpacity(0.8),
                             fontSize: 14,
                           ),
                         ),
@@ -174,7 +193,8 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                     child: Column(
                       children: [
                         QrImageView(
-                          data: ticket.ticketCode, // Use Readable Ticket ID
+                          data:
+                              '${ticket.id}:${ticket.ticketCode}', // Combined for security
                           version: QrVersions.auto,
                           size: 200.0,
                         ),
@@ -220,7 +240,8 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton.icon(
-                onPressed: () => _shareTicket(ticket, screenshotController),
+                onPressed: () =>
+                    _shareTicket(context, ticket, screenshotController),
                 icon: const Icon(Icons.share, size: 18),
                 label: const Text('Bagikan'),
                 style: ElevatedButton.styleFrom(
@@ -260,7 +281,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -307,7 +328,83 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
     );
   }
 
+  Future<void> _shareAllTickets(
+    BuildContext context,
+    List<EventBookingTicket> tickets,
+  ) async {
+    try {
+      // Show loading indicator
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: Card(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Menyiapkan tiket...'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      final directory = await getTemporaryDirectory();
+      List<XFile> filesToShare = [];
+
+      for (var ticket in tickets) {
+        final controller = _screenshotControllers[ticket.id];
+        if (controller != null) {
+          final image = await controller.capture();
+          if (image != null) {
+            final imagePath = await File(
+              '${directory.path}/ticket_${ticket.ticketCode}.png',
+            ).create();
+            await imagePath.writeAsBytes(image);
+            filesToShare.add(XFile(imagePath.path));
+          }
+        }
+      }
+
+      // Close loading dialog
+      if (mounted) {
+        Navigator.pop(context);
+        if (filesToShare.isNotEmpty) {
+          await SharePlus.instance.share(
+            ShareParams(
+              files: filesToShare,
+              text: 'Ini tiket-tiket saya untuk booking ini.',
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Gagal mengambil gambar tiket.')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error sharing all tickets: $e');
+      if (mounted) {
+        // Ensure dialog is closed if open
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal membagikan tiket: $e')));
+      }
+    }
+  }
+
   Future<void> _shareTicket(
+    BuildContext context,
     EventBookingTicket ticket,
     ScreenshotController controller,
   ) async {
