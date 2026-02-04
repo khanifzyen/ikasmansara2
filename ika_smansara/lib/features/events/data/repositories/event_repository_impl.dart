@@ -93,4 +93,10 @@ class EventRepositoryImpl implements EventRepository {
   Future<void> deleteBooking(String id) async {
     await _remoteDataSource.deleteBooking(id);
   }
+
+  @override
+  Future<EventBookingTicket> verifyTicket(String ticketId) async {
+    final model = await _remoteDataSource.verifyTicket(ticketId);
+    return model.toEntity();
+  }
 }

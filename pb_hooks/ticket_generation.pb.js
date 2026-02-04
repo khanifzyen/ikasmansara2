@@ -123,38 +123,32 @@ onRecordAfterUpdateSuccess((e) => {
         // -----------------------------------------------------------------
         // Generate Tickets (Transaction)
         // -----------------------------------------------------------------
+        const manualCount = e.record.getInt("manual_ticket_count");
+        const manualTicketTypeId = e.record.getString("manual_ticket_type");
+        const coordinatorName = e.record.getString("coordinator_name");
+
         // -----------------------------------------------------------------
         // Generate Tickets
         // -----------------------------------------------------------------
         console.log("[Hook] 🔄 Starting Ticket Generation (No Transaction)...");
-
-        // Note: We removed runInTransaction to avoid potential deadlocks/hanging.
-        // If an error occurs midway, we might have partial data.
-
         const bookingsTicketsCollection = $app.findCollectionByNameOrId("event_booking_tickets");
 
-        items.forEach(item => {
-            const ticketTypeId = item.ticket_type_id;
-            const qty = parseInt(item.quantity);
-            const options = item.options || {};
+        if (manualCount > 0 && manualTicketTypeId) {
+            console.log(`[Hook] ⚡ Manual Booking Detected. Count: ${manualCount}, Type: ${manualTicketTypeId}`);
 
-            console.log(`[Hook] 🎫 Processing Item: ${ticketTypeId}, Qty: ${qty}`);
-
-            if (!ticketTypeId || isNaN(qty) || qty <= 0) return;
-
-            // Update 'sold' count
+            // Update 'sold' count for manual type
             try {
-                const ticketTypeRecord = $app.findRecordById("event_tickets", ticketTypeId);
+                const ticketTypeRecord = $app.findRecordById("event_tickets", manualTicketTypeId);
                 const currentSold = ticketTypeRecord.getInt("sold");
-                ticketTypeRecord.set("sold", currentSold + qty);
+                ticketTypeRecord.set("sold", currentSold + manualCount);
                 $app.save(ticketTypeRecord);
             } catch (err) {
-                console.error(`[Hook] ❌ Failed to update sold count for ticket ${ticketTypeId}: ${err.message}`);
+                console.error(`[Hook] ❌ Failed to update sold count for ticket ${manualTicketTypeId}: ${err.message}`);
                 throw err;
             }
 
-            // Create tickets
-            for (let i = 0; i < qty; i++) {
+            // Batch create tickets
+            for (let i = 0; i < manualCount; i++) {
                 eventLastSeq++;
                 const seqStr = eventLastSeq.toString().padStart(4, "0");
                 const ticketIdStr = ticketFormat
@@ -164,15 +158,58 @@ onRecordAfterUpdateSuccess((e) => {
                 const newTicket = new Record(bookingsTicketsCollection);
                 newTicket.set("ticket_id", ticketIdStr);
                 newTicket.set("booking", bookingId);
-                newTicket.set("ticket_type", ticketTypeId);
-                newTicket.set("selected_options", options);
+                newTicket.set("ticket_type", manualTicketTypeId);
+                newTicket.set("user_name", coordinatorName);
                 newTicket.set("shirt_picked_up", false);
                 newTicket.set("checked_in", false);
 
                 $app.save(newTicket);
-                console.log(`[Hook] -> Generated Ticket: ${ticketIdStr}`);
+                console.log(`[Hook] -> Generated Manual Ticket: ${ticketIdStr}`);
             }
-        });
+
+        } else {
+            // Standard Metadata Flow
+            items.forEach(item => {
+                const ticketTypeId = item.ticket_type_id;
+                const qty = parseInt(item.quantity);
+                const options = item.options || {};
+
+                console.log(`[Hook] 🎫 Processing Item: ${ticketTypeId}, Qty: ${qty}`);
+
+                if (!ticketTypeId || isNaN(qty) || qty <= 0) return;
+
+                // Update 'sold' count
+                try {
+                    const ticketTypeRecord = $app.findRecordById("event_tickets", ticketTypeId);
+                    const currentSold = ticketTypeRecord.getInt("sold");
+                    ticketTypeRecord.set("sold", currentSold + qty);
+                    $app.save(ticketTypeRecord);
+                } catch (err) {
+                    console.error(`[Hook] ❌ Failed to update sold count for ticket ${ticketTypeId}: ${err.message}`);
+                    throw err;
+                }
+
+                // Create tickets
+                for (let i = 0; i < qty; i++) {
+                    eventLastSeq++;
+                    const seqStr = eventLastSeq.toString().padStart(4, "0");
+                    const ticketIdStr = ticketFormat
+                        .replace("{CODE}", eventCode)
+                        .replace("{SEQ}", seqStr);
+
+                    const newTicket = new Record(bookingsTicketsCollection);
+                    newTicket.set("ticket_id", ticketIdStr);
+                    newTicket.set("booking", bookingId);
+                    newTicket.set("ticket_type", ticketTypeId);
+                    newTicket.set("selected_options", options);
+                    newTicket.set("shirt_picked_up", false);
+                    newTicket.set("checked_in", false);
+
+                    $app.save(newTicket);
+                    console.log(`[Hook] -> Generated Ticket: ${ticketIdStr}`);
+                }
+            });
+        }
 
         // Update Event's last_ticket_seq
         event.set("last_ticket_seq", eventLastSeq);

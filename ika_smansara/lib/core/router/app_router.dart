@@ -31,6 +31,7 @@ import '../../features/forum/presentation/pages/forum_detail_page.dart';
 import '../../features/events/presentation/pages/my_tickets_page.dart';
 import '../../features/events/presentation/pages/midtrans_payment_page.dart';
 import '../../features/events/presentation/pages/event_list_page.dart';
+import '../../features/events/presentation/pages/ticket_scanner_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -265,6 +266,11 @@ class AppRouter {
             fromEventDetail: extras['fromEventDetail'] as bool? ?? false,
           );
         },
+      ),
+      GoRoute(
+        path: '/ticket-scanner',
+        name: 'ticket-scanner',
+        builder: (context, state) => const TicketScannerPage(),
       ),
     ],
 

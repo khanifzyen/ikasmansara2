@@ -195,6 +195,12 @@ Satu record = satu pesanan (bisa berisi banyak tiket).
 | `payment_date` | date | ❌ | Tanggal bayar |
 | `snap_token` | text | ❌ | Midtrans Snap Token |
 | `snap_redirect_url` | text | ❌ | Midtrans Snap Redirect URL |
+| `is_deleted` | number | ❌ | Soft delete status (0=active, 1=deleted) |
+| `coordinator_name` | text | ❌ | Nama koordinator (untuk manual booking) |
+| `coordinator_phone` | text | ❌ | No. HP koordinator |
+| `manual_ticket_count` | number | ❌ | Jumlah tiket manual (jika ada) |
+| `manual_ticket_type` | relation | ❌ | → event_tickets (untuk manual booking) |
+| `notes` | text | ❌ | Catatan admin |
 
 > **QR Booking ID**: Generate dari field `booking_id`. Tidak perlu disimpan.
 

@@ -30,4 +30,17 @@ class EventBookingTicketModel extends EventBookingTicket {
       options: record.data['options'] ?? {},
     );
   }
+
+  EventBookingTicket toEntity() {
+    return EventBookingTicket(
+      id: id,
+      bookingId: bookingId,
+      eventId: eventId,
+      ticketName: ticketName,
+      ticketCode: ticketCode,
+      userName: userName,
+      userEmail: userEmail,
+      options: options,
+    );
+  }
 }

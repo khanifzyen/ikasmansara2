@@ -75,22 +75,39 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: AppColors.border,
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: avatarUrl != null
-                                  ? CachedNetworkImageProvider(avatarUrl)
-                                  : const AssetImage(
-                                          'assets/images/logo-ika.png',
-                                        )
-                                        as ImageProvider,
-                              fit: BoxFit.cover,
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () => context.push('/ticket-scanner'),
+                              icon: const Icon(
+                                Icons.qr_code_scanner,
+                                color: AppColors.primary,
+                              ),
+                              style: IconButton.styleFrom(
+                                backgroundColor: AppColors.primaryLight
+                                    .withValues(alpha: 0.1),
+                                shape: const CircleBorder(),
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 45,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: AppColors.border,
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: avatarUrl != null
+                                      ? CachedNetworkImageProvider(avatarUrl)
+                                      : const AssetImage(
+                                              'assets/images/logo-ika.png',
+                                            )
+                                            as ImageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

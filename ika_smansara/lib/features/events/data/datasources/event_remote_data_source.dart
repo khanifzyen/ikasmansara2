@@ -29,6 +29,7 @@ abstract class EventRemoteDataSource {
   Future<List<EventBookingTicketModel>> getBookingTickets(String bookingId);
   Future<void> cancelBooking(String id);
   Future<void> deleteBooking(String id);
+  Future<EventBookingTicketModel> verifyTicket(String ticketId);
 }
 
 class EventRemoteDataSourceImpl implements EventRemoteDataSource {
@@ -234,6 +235,23 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
           .update(id, body: {'is_deleted': 1});
     } catch (e) {
       debugPrint('DEBUG: Error deleting booking: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<EventBookingTicketModel> verifyTicket(String ticketId) async {
+    debugPrint('DEBUG: Verifying ticket: $ticketId...');
+    try {
+      // Input is likely the RECORD ID.
+      // We fetch it. If it exists, it's valid (unless we add logic for "checked_in").
+      final record = await _pbClient.pb
+          .collection('event_booking_tickets')
+          .getOne(ticketId, expand: 'ticket_type');
+
+      return EventBookingTicketModel.fromRecord(record);
+    } catch (e) {
+      debugPrint('DEBUG: Error verifying ticket: $e');
       rethrow;
     }
   }
