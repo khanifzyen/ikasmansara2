@@ -205,7 +205,10 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     try {
       final result = await _pbClient.pb
           .collection('event_booking_tickets')
-          .getList(filter: 'booking = "$bookingId"', expand: 'ticket_type');
+          .getList(
+            filter: 'booking = "$bookingId"',
+            expand: 'ticket_type,booking.user',
+          );
       return result.items
           .map((record) => EventBookingTicketModel.fromRecord(record))
           .toList();

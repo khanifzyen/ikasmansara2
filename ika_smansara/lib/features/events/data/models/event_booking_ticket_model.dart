@@ -15,9 +15,25 @@ class EventBookingTicketModel extends EventBookingTicket {
 
   factory EventBookingTicketModel.fromRecord(RecordModel record) {
     // Handling expansion for ticket_type to get name
-    final expanded = record.get<List<RecordModel>>('expand.ticket_type');
-    final ticketType = expanded.isNotEmpty ? expanded.first : null;
+    final expandedTicket = record.get<List<RecordModel>>('expand.ticket_type');
+    final ticketType = expandedTicket.isNotEmpty ? expandedTicket.first : null;
     final ticketName = ticketType?.getStringValue('name') ?? 'Unknown Ticket';
+
+    // Handling expansion for booking.user to get user name and email
+    final expandedBooking = record.get<List<RecordModel>>('expand.booking');
+    final booking = expandedBooking.isNotEmpty ? expandedBooking.first : null;
+
+    String userName = '';
+    String userEmail = '';
+
+    if (booking != null) {
+      final expandedUser = booking.get<List<RecordModel>>('expand.user');
+      final user = expandedUser.isNotEmpty ? expandedUser.first : null;
+      if (user != null) {
+        userName = user.getStringValue('name');
+        userEmail = user.getStringValue('email');
+      }
+    }
 
     return EventBookingTicketModel(
       id: record.id,
@@ -25,9 +41,9 @@ class EventBookingTicketModel extends EventBookingTicket {
       eventId: record.getStringValue('event'),
       ticketName: ticketName,
       ticketCode: record.getStringValue('ticket_id'),
-      userName: record.getStringValue('user_name'),
-      userEmail: record.getStringValue('user_email'),
-      options: record.data['options'] ?? {},
+      userName: userName,
+      userEmail: userEmail,
+      options: record.data['selected_options'] ?? {},
     );
   }
 

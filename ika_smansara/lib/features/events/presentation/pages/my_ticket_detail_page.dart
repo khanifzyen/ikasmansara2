@@ -7,6 +7,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/network/pb_client.dart';
+import '../../../../core/services/printer_service.dart';
+import '../../../settings/domain/usecases/get_printer_settings.dart';
 import '../../domain/entities/event_booking.dart';
 import '../../domain/entities/event_booking_ticket.dart';
 import '../../domain/entities/event.dart';
@@ -251,13 +253,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
               ),
               const SizedBox(width: 16),
               ElevatedButton.icon(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Fitur Print via Bluetooth segera hadir'),
-                    ),
-                  );
-                },
+                onPressed: () => _printTicket(context, ticket),
                 icon: const Icon(Icons.print, size: 18),
                 label: const Text('Cetak'),
                 style: ElevatedButton.styleFrom(
@@ -436,6 +432,91 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Gagal membagikan tiket: $e')));
+      }
+    }
+  }
+
+  Future<void> _printTicket(
+    BuildContext context,
+    EventBookingTicket ticket,
+  ) async {
+    // Check if event data is available
+    final event = widget.booking?.event;
+    if (event == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data event tidak tersedia')),
+        );
+      }
+      return;
+    }
+
+    // Show loading
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Mencetak tiket...'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    try {
+      // Get printer settings for paper size
+      final getPrinterSettings = GetIt.I<GetPrinterSettings>();
+      final printerSettings = await getPrinterSettings();
+
+      // Get printer service
+      final printerService = GetIt.I<PrinterService>();
+
+      // Print the ticket
+      await printerService.printEventTicket(
+        ticketId: ticket.id,
+        ticketCode: ticket.ticketCode,
+        ticketName: ticket.ticketName,
+        userName: ticket.userName,
+        options: ticket.options,
+        eventTitle: event.title,
+        eventDate: event.date,
+        eventTime: event.time,
+        eventLocation: event.location,
+        paperSize: printerSettings.paperSize,
+      );
+
+      // Close loading dialog
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tiket berhasil dicetak!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error printing ticket: $e');
+      // Close loading dialog
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal mencetak: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

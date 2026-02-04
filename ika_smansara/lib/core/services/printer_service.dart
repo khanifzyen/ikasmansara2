@@ -53,6 +53,11 @@ class PrinterService {
     }
   }
 
+  /// Request Bluetooth permissions without scanning devices
+  Future<bool> requestPermissions() async {
+    return await checkPermission();
+  }
+
   Future<List<BluetoothInfo>> scanDevices() async {
     bool permissionGranted = await checkPermission();
     print('PrinterService: Permission granted? $permissionGranted');
@@ -93,7 +98,18 @@ class PrinterService {
   }
 
   Future<bool> get isConnected async {
-    return await PrintBluetoothThermal.connectionStatus;
+    try {
+      return await PrintBluetoothThermal.connectionStatus.timeout(
+        const Duration(seconds: 2),
+        onTimeout: () {
+          print('PrinterService: Connection status check timed out');
+          return false;
+        },
+      );
+    } catch (e) {
+      print('PrinterService: Error checking connection status: $e');
+      return false;
+    }
   }
 
   Future<void> printTestTicket(int paperSize) async {
@@ -128,6 +144,158 @@ class PrinterService {
     );
 
     bytes += generator.feed(2);
+    bytes += generator.cut();
+
+    await PrintBluetoothThermal.writeBytes(bytes);
+  }
+
+  /// Print event ticket with QR code
+  /// [ticketId] - The record ID from event_booking_tickets
+  /// [ticketCode] - The unique ticket code (e.g. TIX-REU10-001)
+  /// [ticketName] - Ticket type name (e.g. VIP Package)
+  /// [userName] - Name of the ticket holder
+  /// [options] - Selected options (e.g. {size: "XL"})
+  /// [eventTitle] - Event title
+  /// [eventDate] - Event date
+  /// [eventTime] - Event time (e.g. "08:00")
+  /// [eventLocation] - Event location
+  /// [paperSize] - Paper width: 58 or 80
+  Future<void> printEventTicket({
+    required String ticketId,
+    required String ticketCode,
+    required String ticketName,
+    required String userName,
+    required Map<String, dynamic> options,
+    required String eventTitle,
+    required DateTime eventDate,
+    required String eventTime,
+    required String eventLocation,
+    required int paperSize,
+  }) async {
+    final connected = await isConnected;
+    if (!connected) {
+      throw Exception(
+        'Printer tidak terhubung. Silakan hubungkan terlebih dahulu.',
+      );
+    }
+
+    List<int> bytes = [];
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(
+      paperSize == 58 ? PaperSize.mm58 : PaperSize.mm80,
+      profile,
+    );
+
+    // Format date
+    final months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
+    final days = ['', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    final dayName = days[eventDate.weekday];
+    final formattedDate =
+        '$dayName, ${eventDate.day} ${months[eventDate.month]} ${eventDate.year}';
+
+    // Format options
+    String optionsStr = '';
+    if (options.isNotEmpty) {
+      optionsStr = options.entries.map((e) => '${e.value}').join(', ');
+    }
+
+    bytes += generator.reset();
+
+    // === HEADER ===
+    bytes += generator.text(
+      'IKA SMANSARA',
+      styles: const PosStyles(
+        align: PosAlign.center,
+        height: PosTextSize.size2,
+        width: PosTextSize.size2,
+        bold: true,
+      ),
+    );
+    bytes += generator.feed(1);
+    bytes += generator.hr();
+
+    // === EVENT INFO ===
+    bytes += generator.text('EVENT:', styles: const PosStyles(bold: true));
+    bytes += generator.text(eventTitle);
+    bytes += generator.feed(1);
+
+    bytes += generator.text('WAKTU:', styles: const PosStyles(bold: true));
+    bytes += generator.text('$formattedDate - $eventTime');
+    bytes += generator.feed(1);
+
+    bytes += generator.text('LOKASI:', styles: const PosStyles(bold: true));
+    bytes += generator.text(eventLocation);
+    bytes += generator.hr();
+
+    // === TICKET INFO ===
+    bytes += generator.row([
+      PosColumn(text: 'TIKET', width: 4, styles: const PosStyles(bold: true)),
+      PosColumn(text: ': $ticketName', width: 8),
+    ]);
+    bytes += generator.row([
+      PosColumn(text: 'NAMA', width: 4, styles: const PosStyles(bold: true)),
+      PosColumn(text: ': $userName', width: 8),
+    ]);
+    if (optionsStr.isNotEmpty) {
+      bytes += generator.row([
+        PosColumn(text: 'OPSI', width: 4, styles: const PosStyles(bold: true)),
+        PosColumn(text: ': $optionsStr', width: 8),
+      ]);
+    }
+    bytes += generator.hr();
+
+    // === QR CODE ===
+    // Format: ticketId:ticketCode (per SKEMA.md)
+    final qrContent = '$ticketId:$ticketCode';
+    bytes += generator.qrcode(qrContent, size: QRSize.size6);
+    bytes += generator.feed(1);
+
+    // === TICKET CODE (Human Readable) ===
+    bytes += generator.text(
+      ticketCode,
+      styles: const PosStyles(
+        align: PosAlign.center,
+        //bold: true,
+        //height: PosTextSize.size1,
+        //width: PosTextSize.size2,
+      ),
+    );
+    bytes += generator.hr();
+
+    // === FOOTER ===
+    bytes += generator.text(
+      'Simpan struk ini sebagai',
+      styles: const PosStyles(align: PosAlign.center),
+    );
+    bytes += generator.text(
+      'bukti tiket masuk.',
+      styles: const PosStyles(align: PosAlign.center),
+    );
+    bytes += generator.feed(1);
+    bytes += generator.text(
+      'Download di Playstore:',
+      styles: const PosStyles(align: PosAlign.center),
+    );
+    bytes += generator.text(
+      'IKA SMANSARA',
+      styles: const PosStyles(align: PosAlign.center, bold: true),
+    );
+
+    //bytes += generator.feed(2);
     bytes += generator.cut();
 
     await PrintBluetoothThermal.writeBytes(bytes);

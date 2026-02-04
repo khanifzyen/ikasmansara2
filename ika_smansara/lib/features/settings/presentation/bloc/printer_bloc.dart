@@ -32,6 +32,9 @@ class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
   ) async {
     emit(PrinterLoading());
     try {
+      // Request permissions first to trigger the permission popup
+      await printerService.requestPermissions();
+
       final settings = await getPrinterSettings();
       final isConnected = await printerService.isConnected;
       emit(PrinterLoaded(settings: settings, isConnected: isConnected));
