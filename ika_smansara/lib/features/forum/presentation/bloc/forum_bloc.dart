@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/forum_post.dart';
 
 import '../../domain/usecases/create_forum_post.dart';
@@ -34,7 +35,8 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
       final posts = await getForumPosts(category: event.category);
       emit(ForumLoaded(posts: posts));
     } catch (e) {
-      emit(ForumError(e.toString()));
+      log.error('ForumBloc: Failed to fetch posts', error: e);
+      emit(const ForumError('Gagal memuat postingan forum.'));
     }
   }
 
@@ -46,7 +48,8 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
       final posts = await getForumPosts(category: event.category);
       emit(ForumLoaded(posts: posts));
     } catch (e) {
-      emit(ForumError(e.toString()));
+      log.error('ForumBloc: Failed to refresh posts', error: e);
+      emit(const ForumError('Gagal memuat ulang postingan.'));
     }
   }
 
@@ -66,7 +69,8 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
       // Optionally re-fetch
       add(FetchForumPosts(category: event.category));
     } catch (e) {
-      emit(ForumError(e.toString()));
+      log.error('ForumBloc: Failed to create post', error: e);
+      emit(const ForumError('Gagal membuat postingan.'));
     }
   }
 
@@ -94,6 +98,7 @@ class ForumBloc extends Bloc<ForumEvent, ForumState> {
         emit(currentState.copyWith(posts: posts));
       }
     } catch (e) {
+      log.error('ForumBloc: Failed to like post', error: e);
       // Handle error quietly or show snackbar via listener if needed
       // For now just stay in current state
     }

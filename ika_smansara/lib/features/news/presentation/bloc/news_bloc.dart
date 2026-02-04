@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/news.dart';
 import '../../domain/usecases/get_news_list.dart';
 
@@ -33,7 +34,8 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         ),
       );
     } catch (e) {
-      emit(NewsError(e.toString()));
+      log.error('NewsBloc: Failed to fetch news', error: e);
+      emit(const NewsError('Gagal memuat berita. Silakan coba lagi.'));
     }
   }
 
@@ -52,7 +54,8 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         ),
       );
     } catch (e) {
-      emit(NewsError(e.toString()));
+      log.error('NewsBloc: Failed to refresh news', error: e);
+      emit(const NewsError('Gagal memuat ulang berita.'));
     }
   }
 

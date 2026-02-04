@@ -102,7 +102,8 @@ class _EventDetailPageState extends State<EventDetailPage>
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            // Log error here if possible, but for UI just show generic
+            return const Center(child: Text('Gagal memuat detail event'));
           } else if (!snapshot.hasData) {
             return const Center(child: Text('Event not found'));
           }

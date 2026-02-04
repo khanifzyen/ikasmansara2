@@ -162,6 +162,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
         'total_price': totalPrice,
         'payment_status': 'pending',
         'payment_method': paymentMethod,
+        'is_deleted': 0,
       };
 
       final record = await _pbClient.pb
@@ -182,7 +183,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
       final result = await _pbClient.pb
           .collection('event_bookings')
           .getList(
-            filter: 'user = "$userId"',
+            filter: 'user = "$userId" && (is_deleted = 0 || is_deleted = null)',
             sort: '-created',
             expand: 'event',
           );
@@ -228,7 +229,9 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<void> deleteBooking(String id) async {
     try {
-      await _pbClient.pb.collection('event_bookings').delete(id);
+      await _pbClient.pb
+          .collection('event_bookings')
+          .update(id, body: {'is_deleted': 1});
     } catch (e) {
       debugPrint('DEBUG: Error deleting booking: $e');
       rethrow;

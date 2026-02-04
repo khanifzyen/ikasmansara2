@@ -3,6 +3,8 @@ library;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/failures/auth_failure.dart';
+import '../../../../core/utils/app_logger.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -50,7 +52,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     if (result.failure != null) {
-      emit(AuthError(result.failure!));
+      log.error('AuthBloc: Login failed', error: result.failure!.message);
+      // Use generic message for ServerFailure to hide raw details
+      if (result.failure is ServerFailure) {
+        emit(const AuthError(ServerFailure('Gagal login. Silakan coba lagi.')));
+      } else {
+        emit(AuthError(result.failure!));
+      }
     } else if (result.data != null) {
       emit(AuthAuthenticated(result.data!));
     }
@@ -65,7 +73,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.registerAlumni(event.params);
 
     if (result.failure != null) {
-      emit(AuthError(result.failure!));
+      log.error(
+        'AuthBloc: Register Alumni failed',
+        error: result.failure!.message,
+      );
+      if (result.failure is ServerFailure) {
+        emit(
+          const AuthError(ServerFailure('Gagal mendaftar. Silakan coba lagi.')),
+        );
+      } else {
+        emit(AuthError(result.failure!));
+      }
     } else {
       emit(AuthRegistrationSuccess(email: event.params.email));
     }
@@ -80,7 +98,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.registerPublic(event.params);
 
     if (result.failure != null) {
-      emit(AuthError(result.failure!));
+      log.error(
+        'AuthBloc: Register Public failed',
+        error: result.failure!.message,
+      );
+      if (result.failure is ServerFailure) {
+        emit(
+          const AuthError(ServerFailure('Gagal mendaftar. Silakan coba lagi.')),
+        );
+      } else {
+        emit(AuthError(result.failure!));
+      }
     } else {
       emit(AuthRegistrationSuccess(email: event.params.email));
     }

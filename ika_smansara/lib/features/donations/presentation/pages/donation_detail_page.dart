@@ -37,7 +37,7 @@ class DonationDetailPage extends StatelessWidget {
           } else if (state is TransactionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Gagal melakukan donasi: ${state.message}'),
+                content: Text(state.message),
                 backgroundColor: Colors.red,
               ),
             );
@@ -57,7 +57,7 @@ class DonationDetailPage extends StatelessWidget {
             return Scaffold(
               backgroundColor: Colors.white,
               appBar: AppBar(title: const Text('Error')),
-              body: Center(child: Text('Error: ${state.message}')),
+              body: Center(child: Text(state.message)),
             );
           } else if (state is DonationDetailLoaded) {
             final donation = state.donation;

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/event_booking.dart';
 import '../../domain/usecases/create_event_booking.dart';
 
@@ -80,7 +81,10 @@ class EventBookingBloc extends Bloc<EventBookingEvent, EventBookingState> {
       );
       emit(EventBookingSuccess(booking));
     } catch (e) {
-      emit(EventBookingFailure(e.toString()));
+      log.error('EventBookingBloc: Failed to create booking', error: e);
+      emit(
+        const EventBookingFailure('Gagal membuat pesanan. Silakan coba lagi.'),
+      );
     }
   }
 }

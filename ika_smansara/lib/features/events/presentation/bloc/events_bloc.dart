@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/event.dart';
 import '../../domain/usecases/get_events.dart';
 
@@ -49,19 +49,17 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
 
   EventsBloc(this.getEvents) : super(EventsInitial()) {
     on<FetchEvents>((event, emit) async {
-      debugPrint(
-        'DEBUG: EventsBloc - FetchEvents received. Category: ${event.category}',
+      log.debug(
+        'EventsBloc - FetchEvents received. Category: ${event.category}',
       );
       emit(EventsLoading());
       try {
         final events = await getEvents(category: event.category);
-        debugPrint(
-          'DEBUG: EventsBloc - Successfully fetched ${events.length} events',
-        );
+        log.debug('EventsBloc - Successfully fetched ${events.length} events');
         emit(EventsLoaded(events));
       } catch (e) {
-        debugPrint('DEBUG: EventsBloc - Error: $e');
-        emit(EventsError(e.toString()));
+        log.error('EventsBloc - Error fetching events', error: e);
+        emit(const EventsError('Gagal memuat daftar event.'));
       }
     });
   }

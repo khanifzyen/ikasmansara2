@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/event_booking.dart';
 import '../../domain/entities/event_booking_ticket.dart';
 import '../../domain/usecases/get_user_event_bookings.dart';
@@ -104,7 +105,8 @@ class MyTicketsBloc extends Bloc<MyTicketsEvent, MyTicketsState> {
       final bookings = await getUserEventBookings(event.userId);
       emit(MyBookingsLoaded(bookings));
     } catch (e) {
-      emit(MyTicketsFailure(e.toString()));
+      log.error('MyTicketsBloc: Failed to fetch user bookings', error: e);
+      emit(const MyTicketsFailure('Gagal memuat tiket. Silakan coba lagi.'));
     }
   }
 
@@ -117,7 +119,8 @@ class MyTicketsBloc extends Bloc<MyTicketsEvent, MyTicketsState> {
       final tickets = await getEventBookingTickets(event.bookingId);
       emit(MyBookingTicketsLoaded(tickets));
     } catch (e) {
-      emit(MyTicketsFailure(e.toString()));
+      log.error('MyTicketsBloc: Failed to fetch booking tickets', error: e);
+      emit(const MyTicketsFailure('Gagal memuat detail tiket.'));
     }
   }
 
@@ -132,7 +135,8 @@ class MyTicketsBloc extends Bloc<MyTicketsEvent, MyTicketsState> {
       // Reload list
       add(GetMyBookings(event.userId));
     } catch (e) {
-      emit(MyTicketsFailure(e.toString()));
+      log.error('MyTicketsBloc: Failed to cancel booking', error: e);
+      emit(const MyTicketsFailure('Gagal membatalkan pesanan.'));
     }
   }
 
@@ -146,7 +150,8 @@ class MyTicketsBloc extends Bloc<MyTicketsEvent, MyTicketsState> {
       // Reload list
       add(GetMyBookings(event.userId));
     } catch (e) {
-      emit(MyTicketsFailure(e.toString()));
+      log.error('MyTicketsBloc: Failed to delete booking', error: e);
+      emit(const MyTicketsFailure('Gagal menghapus pesanan.'));
     }
   }
 }

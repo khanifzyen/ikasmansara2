@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/donation_transaction.dart';
 import '../../domain/usecases/get_my_donations.dart';
 
@@ -43,18 +44,15 @@ class MyDonationBloc extends Bloc<MyDonationEvent, MyDonationState> {
 
   MyDonationBloc(this.getMyDonations) : super(MyDonationInitial()) {
     on<FetchMyDonations>((event, emit) async {
-      // ignore: avoid_print
-      print('DEBUG: MyDonationBloc -> FetchMyDonations');
+      log.debug('MyDonationBloc -> FetchMyDonations');
       emit(MyDonationLoading());
       try {
         final transactions = await getMyDonations();
-        // ignore: avoid_print
-        print('DEBUG: MyDonationBloc -> Loaded ${transactions.length} items');
+        log.debug('MyDonationBloc -> Loaded ${transactions.length} items');
         emit(MyDonationLoaded(transactions));
       } catch (e) {
-        // ignore: avoid_print
-        print('DEBUG: MyDonationBloc -> Error: $e');
-        emit(MyDonationError(e.toString()));
+        log.error('MyDonationBloc -> Error fetching my donations', error: e);
+        emit(const MyDonationError('Gagal memuat riwayat donasi.'));
       }
     });
   }

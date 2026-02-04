@@ -16,6 +16,7 @@ class EventBooking extends Equatable {
   final String? snapRedirectUrl;
   final DateTime created;
   final Event? event;
+  final int isDeleted;
 
   const EventBooking({
     required this.id,
@@ -31,6 +32,7 @@ class EventBooking extends Equatable {
     this.snapToken,
     this.snapRedirectUrl,
     this.event,
+    this.isDeleted = 0,
   });
 
   @override
@@ -48,5 +50,6 @@ class EventBooking extends Equatable {
     snapToken,
     snapRedirectUrl,
     event,
+    isDeleted,
   ];
 }

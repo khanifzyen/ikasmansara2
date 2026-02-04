@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/usecases/get_profile.dart';
@@ -84,8 +84,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final user = await getProfile();
       emit(ProfileLoaded(user));
     } catch (e) {
-      debugPrint('ProfileBloc Error: $e');
-      emit(ProfileError(e.toString()));
+      log.error('ProfileBloc: Failed to fetch profile', error: e);
+      emit(const ProfileError('Gagal memuat profil.'));
     }
   }
 
@@ -100,8 +100,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       // Optionally emit loaded again to update UI
       emit(ProfileLoaded(user));
     } catch (e) {
-      debugPrint('ProfileBloc Update Error: $e');
-      emit(ProfileError(e.toString()));
+      log.error('ProfileBloc: Failed to update profile', error: e);
+      emit(const ProfileError('Gagal memperbarui profil.'));
     }
   }
 }

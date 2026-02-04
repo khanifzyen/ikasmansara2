@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/donation.dart';
 import '../../domain/entities/donation_transaction.dart';
 import '../../domain/usecases/get_donation_detail.dart';
@@ -118,15 +119,13 @@ class DonationDetailBloc
     required this.createDonationTransaction,
   }) : super(DonationDetailInitial()) {
     on<FetchDonationDetail>((event, emit) async {
-      // ignore: avoid_print
-      print('DEBUG: DonationDetailBloc -> FetchDonationDetail(${event.id})');
+      log.debug('DonationDetailBloc -> FetchDonationDetail(${event.id})');
       emit(DonationDetailLoading());
       try {
         final donation = await getDonationDetail(event.id);
         final transactions = await getDonationTransactions(event.id);
-        // ignore: avoid_print
-        print(
-          'DEBUG: DonationDetailBloc -> Detail Loaded & ${transactions.length} trx',
+        log.debug(
+          'DonationDetailBloc -> Detail Loaded & ${transactions.length} trx',
         );
         emit(
           DonationDetailLoaded(
@@ -135,15 +134,13 @@ class DonationDetailBloc
           ),
         );
       } catch (e) {
-        // ignore: avoid_print
-        print('DEBUG: DonationDetailBloc -> Detail Error: $e');
-        emit(DonationDetailError(e.toString()));
+        log.error('DonationDetailBloc -> Detail Error', error: e);
+        emit(const DonationDetailError('Gagal memuat detail donasi.'));
       }
     });
 
     on<CreateTransactionEvent>((event, emit) async {
-      // ignore: avoid_print
-      print('DEBUG: DonationDetailBloc -> CreateTransactionEvent');
+      log.debug('DonationDetailBloc -> CreateTransactionEvent');
       // Optimistically show loading or define a separate loading state for transaction
       // For simplicity, we assume the UI handles 'TransactionLoading' and then we might need to re-fetch to restore 'Loaded' state
       emit(TransactionLoading());
@@ -156,17 +153,17 @@ class DonationDetailBloc
           message: event.message,
           paymentMethod: event.paymentMethod,
         );
-        // ignore: avoid_print
-        print(
-          'DEBUG: DonationDetailBloc -> Transaction Success: ${transaction.transactionId}',
+        log.debug(
+          'DonationDetailBloc -> Transaction Success: ${transaction.transactionId}',
         );
         emit(TransactionSuccess(transaction));
         // Optionally, one could auto-refresh the detail here.
         // But better to let UI decide to dispatch FetchDonationDetail again.
       } catch (e) {
-        // ignore: avoid_print
-        print('DEBUG: DonationDetailBloc -> Transaction Error: $e');
-        emit(TransactionError(e.toString()));
+        log.error('DonationDetailBloc -> Transaction Error', error: e);
+        emit(
+          const TransactionError('Gagal memproses donasi. Silakan coba lagi.'),
+        );
         // If we want to recover the previous loaded state, we'd need to store it.
         // But 'TransactionError' is specific enough.
       }
