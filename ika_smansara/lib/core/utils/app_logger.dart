@@ -105,7 +105,7 @@ class AppLogger {
         warning(prefixedMessage, error: error, stackTrace: stackTrace);
         break;
       case LogLevel.error:
-        error(prefixedMessage, error: error, stackTrace: stackTrace);
+        this.error(prefixedMessage, error: error, stackTrace: stackTrace);
         break;
     }
   }

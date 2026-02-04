@@ -113,7 +113,26 @@ class SettingsPage extends StatelessWidget {
                   },
                   activeThumbColor: AppColors.primary,
                 ),
-                // Theme toggle could go here if implemented fully
+
+                // const Divider(height: 1),
+                // _buildListTile(
+                //   context,
+                //   icon: Icons.brightness_6_outlined,
+                //   title: 'Tampilan',
+                //   subtitle: _getThemeText(
+                //     (state is SettingsLoaded)
+                //         ? state.settings.themeMode
+                //         : 'system',
+                //   ),
+                //   onTap: () {
+                //     _showThemeSelectionDialog(
+                //       context,
+                //       (state is SettingsLoaded)
+                //           ? state.settings.themeMode
+                //           : 'system',
+                //     );
+                //   },
+                // ),
                 const SizedBox(height: 24),
                 _buildSectionLabel('Informasi'),
                 _buildListTile(
@@ -266,6 +285,84 @@ class SettingsPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  String _getThemeText(String mode) {
+    switch (mode) {
+      case 'light':
+        return 'Mode Terang';
+      case 'dark':
+        return 'Mode Gelap';
+      default:
+        return 'Mengikuti Sistem';
+    }
+  }
+
+  void _showThemeSelectionDialog(BuildContext context, String currentMode) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Pilih Tampilan',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark,
+                  ),
+                ),
+              ),
+              _buildThemeRadio(
+                context,
+                'system',
+                'Mengikuti Sistem',
+                currentMode,
+              ),
+              _buildThemeRadio(context, 'light', 'Mode Terang', currentMode),
+              _buildThemeRadio(context, 'dark', 'Mode Gelap', currentMode),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeRadio(
+    BuildContext context,
+    String value,
+    String label,
+    String groupValue,
+  ) {
+    return RadioListTile<String>(
+      value: value,
+      groupValue: groupValue,
+      onChanged: (newValue) {
+        if (newValue != null) {
+          context.read<SettingsBloc>().add(ToggleTheme(newValue));
+          Navigator.pop(context);
+        }
+      },
+      title: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontSize: 16,
+          color: AppColors.textDark,
+          fontWeight: value == groupValue ? FontWeight.w600 : FontWeight.w400,
+        ),
+      ),
+      activeColor: AppColors.primary,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
 }

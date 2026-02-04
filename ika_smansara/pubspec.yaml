@@ -72,6 +72,7 @@ dependencies:
   logger: ^2.0.0
   print_bluetooth_thermal: ^1.1.9
   esc_pos_utils_plus: ^2.0.4
+  device_info_plus: ^12.3.0
 
 dev_dependencies:
   flutter_test:
