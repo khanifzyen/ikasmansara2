@@ -830,7 +830,7 @@ h3 {
 
 @media (min-width: 1200px) {
     .page-content {
-        max-width: 1200px;
+        max-width: 100%;
     }
 }
 

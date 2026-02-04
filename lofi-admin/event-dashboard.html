@@ -265,14 +265,15 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID Transaksi</th>
+                            <th>ID Booking</th>
                             <th>Nama</th>
+                            <th>No. HP</th>
                             <th>Angkatan</th>
                             <th>Tiket</th>
-                            <th>Ukuran Kaos</th>
                             <th>Total Bayar</th>
                             <th>Channel</th>
-                            <th>Kaos</th>
+                            <th>Bukti</th>
+                            <th>Catatan</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -280,63 +281,70 @@
                     <tbody>
                         <tr>
                             <td><code
-                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0001</code>
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">REUNI26-2026-0001</code>
                             </td>
                             <td><strong>Budi Santoso</strong></td>
+                            <td>081234567890</td>
                             <td>2010</td>
                             <td>3</td>
-                            <td>L, M, XL</td>
                             <td style="font-weight: 600;">Rp 150.000</td>
                             <td><span class="badge badge-info">Aplikasi</span></td>
-                            <td><span class="badge badge-success">Diambil</span></td>
+                            <td>-</td>
+                            <td>-</td>
                             <td><span class="badge badge-success">Lunas</span></td>
                             <td><button class="btn-action btn-edit" onclick="showParticipantDetail(1)">Detail</button>
                             </td>
                         </tr>
                         <tr>
                             <td><code
-                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0002</code>
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">REUNI26-2026-0005</code>
+                            </td>
+                            <td><strong>Andi (Koordinator)</strong></td>
+                            <td>08567890123</td>
+                            <td>2005</td>
+                            <td>5</td>
+                            <td style="font-weight: 600;">Rp 250.000</td>
+                            <td><span class="badge badge-warning">Manual Cash</span></td>
+                            <td><button class="btn-action"
+                                    style="font-size: 10px; padding: 4px 8px; background: #EEF2FF; color: #4F46E5;">Unggah</button>
+                            </td>
+                            <td style="font-size: 12px; color: var(--text-grey);">2x L, 3x XL (Cash di Rapat)</td>
+                            <td><span class="badge badge-warning" style="cursor: pointer;"
+                                    onclick="openStatusModal('REUNI26-2026-0005', 5)">Pending</span></td>
+                            <td><button class="btn-action btn-edit" onclick="showParticipantDetail(5)">Detail</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">REUNI26-2026-0002</code>
                             </td>
                             <td><strong>Siti Aminah</strong></td>
+                            <td>089876543210</td>
                             <td>2015</td>
                             <td>2</td>
-                            <td>M, S</td>
                             <td style="font-weight: 600;">Rp 100.000</td>
-                            <td><span class="badge badge-warning">Cash</span></td>
-                            <td><span class="badge badge-warning">Belum</span></td>
+                            <td><span class="badge badge-info">Manual TF</span></td>
+                            <td><a href="#" style="font-size: 12px;">Lihat</a></td>
+                            <td style="font-size: 12px; color: var(--text-grey);">Via BCA IKA</td>
                             <td><span class="badge badge-success">Lunas</span></td>
                             <td><button class="btn-action btn-edit" onclick="showParticipantDetail(2)">Detail</button>
                             </td>
                         </tr>
                         <tr>
                             <td><code
-                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0003</code>
+                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">REUNI26-2026-0003</code>
                             </td>
                             <td><strong>Ahmad Fauzi</strong></td>
+                            <td>081122334455</td>
                             <td>2008</td>
                             <td>1</td>
-                            <td>XXL</td>
                             <td style="font-weight: 600;">Rp 60.000</td>
-                            <td><span class="badge badge-grey">Transfer</span></td>
-                            <td><span class="badge badge-grey">-</span></td>
+                            <td><span class="badge badge-info">Aplikasi</span></td>
+                            <td>-</td>
+                            <td>-</td>
                             <td><span class="badge badge-warning">Pending</span></td>
                             <td><button class="btn-action btn-approve"
                                     onclick="approveItem('peserta', 3)">Validasi</button></td>
-                        </tr>
-                        <tr>
-                            <td><code
-                                    style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">TRX-JS-0004</code>
-                            </td>
-                            <td><strong>Dewi Lestari</strong></td>
-                            <td>2012</td>
-                            <td>4</td>
-                            <td>L, L, M, XXXL</td>
-                            <td style="font-weight: 600;">Rp 215.000</td>
-                            <td><span class="badge badge-info">Aplikasi</span></td>
-                            <td><span class="badge badge-success">Diambil</span></td>
-                            <td><span class="badge badge-success">Lunas</span></td>
-                            <td><button class="btn-action btn-edit" onclick="showParticipantDetail(4)">Detail</button>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -736,38 +744,92 @@
             <div class="confirm-modal-content" style="max-width: 500px; text-align: left;">
                 <h3 style="margin-bottom: 20px;">Input Peserta Manual</h3>
                 <div class="input-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" class="input-field" placeholder="Nama Peserta">
+                    <label>Nama Koordinator</label>
+                    <input type="text" class="input-field" placeholder="Nama Koordinator / Pemesan">
+                </div>
+                <div class="input-group">
+                    <label>No. HP / WhatsApp</label>
+                    <input type="text" class="input-field" placeholder="08...">
                 </div>
                 <div class="input-group">
                     <label>Tahun Angkatan</label>
                     <input type="number" class="input-field" placeholder="2010">
                 </div>
+                <div class="input-group" style="display: flex; gap: 16px;">
+                    <div style="flex: 1;">
+                        <label>Jenis Tiket</label>
+                        <select class="input-field">
+                            <option>Tiket Reuni (Rp 50.000)</option>
+                            <option>Tiket Terusan (+Kaos)</option>
+                            <option>Donatur (Free)</option>
+                        </select>
+                    </div>
+                    <div style="width: 100px;">
+                        <label>Jumlah</label>
+                        <input type="number" class="input-field" value="1" min="1">
+                    </div>
+                </div>
                 <div class="input-group">
-                    <label>Ukuran Kaos</label>
+                    <label>Channel Pembayaran</label>
                     <select class="input-field">
-                        <option>S</option>
-                        <option>M</option>
-                        <option selected>L</option>
-                        <option>XL</option>
-                        <option>XXL (+10rb)</option>
-                        <option>XXXL (+15rb)</option>
+                        <option value="manual_cash">Cash (Panitia)</option>
+                        <option value="manual_transfer">Transfer Manual (Rekening IKA)</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Channel Pendaftaran</label>
-                    <select class="input-field">
-                        <option>Cash (Panitia)</option>
-                        <option>Rekening Bank IKA</option>
-                    </select>
+                    <label>Bukti Bayar (Opsional)</label>
+                    <input type="file" class="input-field" accept="image/*,application/pdf">
+                    <p style="font-size: 11px; color: var(--text-grey); margin-top: 4px;">Upload foto struk/bukti
+                        transfer jika ada.</p>
                 </div>
                 <div class="input-group">
-                    <label>Jumlah Bayar (Rp)</label>
-                    <input type="number" class="input-field" value="50000">
+                    <label>Catatan (Ukuran Kaos, dll)</label>
+                    <textarea class="input-field" rows="3"
+                        placeholder="Contoh: 1x Size L, 2x Size M. Peserta: Budi, Ani."></textarea>
                 </div>
                 <div class="confirm-modal-actions">
                     <button class="btn-outline" onclick="closeModal('modalAddPeserta')">Batal</button>
                     <button class="btn-primary" onclick="submitParticipant()">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Update Status Pembayaran -->
+        <div id="modalUpdateStatus" class="confirm-modal">
+            <div class="confirm-modal-content" style="max-width: 400px; text-align: left;">
+                <h3 style="margin-bottom: 20px;">Update Status Pembayaran</h3>
+                <input type="hidden" id="statusUpdateId">
+                <input type="hidden" id="statusUpdateTickets">
+                <div class="input-group">
+                    <label>Status Saat Ini</label>
+                    <div
+                        style="padding: 10px; background: #FEF3C7; border-radius: 8px; color: #D97706; font-weight: 600;">
+                        Pending
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Ubah Status Menjadi</label>
+                    <select id="newStatusSelect" class="input-field">
+                        <option value="pending">Pending</option>
+                        <option value="lunas">Lunas</option>
+                    </select>
+                </div>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeModal('modalUpdateStatus')">Batal</button>
+                    <button class="btn-primary" onclick="updatePaymentStatus()">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Konfirmasi Pembayaran Lunas -->
+        <div id="modalConfirmPayment" class="confirm-modal">
+            <div class="confirm-modal-content">
+                <div style="font-size: 40px; margin-bottom: 16px;">🎟️</div>
+                <h3>Konfirmasi Pelunasan</h3>
+                <p id="confirmPaymentText">Status Lunas. Anda akan menggenerate X tiket. Anda yakin?</p>
+                <div class="confirm-modal-actions">
+                    <button class="btn-outline" onclick="closeModal('modalConfirmPayment')">Batal</button>
+                    <button class="btn-primary" onclick="confirmPayment()">Ya, Generate Tiket</button>
                 </div>
             </div>
         </div>
@@ -1038,8 +1100,119 @@
         }
 
         function submitParticipant() {
-            alert('Peserta berhasil ditambahkan secara manual!');
+            // Get values simulating form submission
+            const modal = document.getElementById('modalAddPeserta');
+            const name = modal.querySelector('input[placeholder="Nama Koordinator / Pemesan"]').value || 'Tanpa Nama';
+            const phone = modal.querySelector('input[placeholder="08..."]').value || '-';
+            const year = modal.querySelector('input[placeholder="2010"]').value || '2000';
+
+            // Use querySelectorAll for elements with same type/tag
+            const numberInputs = modal.querySelectorAll('input[type="number"]');
+            const selects = modal.querySelectorAll('select');
+
+            // 2nd number input is Quantity (index 1)
+            // 1st number input is Angkatan (index 0) - strictly we already grabbed year by placeholder, but for tickets we need index 1
+            const tickets = numberInputs[1] ? numberInputs[1].value : 1;
+
+            // 2nd select is Channel (index 1)
+            // 1st select is Ticket Type (index 0)
+            const channelSelect = selects[1];
+            const channel = channelSelect ? channelSelect.options[channelSelect.selectedIndex].text : 'Manual';
+
+            const notes = modal.querySelector('textarea').value || '-';
+            const proofInput = modal.querySelector('input[type="file"]');
+
+            // Random ID Generation
+            const randomSeq = Math.floor(Math.random() * 9000) + 1000;
+            const id = 'REUNI26-2026-' + randomSeq;
+
+            // Determine Proof Cell Content
+            let proofCell = '<button class="btn-action" style="font-size: 10px; padding: 4px 8px; background: #EEF2FF; color: #4F46E5;">Unggah</button>';
+            if (proofInput && proofInput.files.length > 0) {
+                proofCell = '<a href="#" style="font-size: 12px;">Lihat</a>';
+            }
+
+            // Create Row HTML
+            const newRow = `
+                <tr>
+                    <td><code style="font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">${id}</code></td>
+                    <td><strong>${name} (Koordinator)</strong></td>
+                    <td>${phone}</td>
+                    <td>${year}</td>
+                    <td>${tickets}</td>
+                    <td style="font-weight: 600;">Rp ${(tickets * 50000).toLocaleString('id-ID')}</td>
+                    <td><span class="badge badge-warning">${channel}</span></td>
+                    <td>${proofCell}</td>
+                    <td style="font-size: 12px; color: var(--text-grey);">${notes}</td>
+                    <td><span class="badge badge-warning" style="cursor: pointer;" onclick="openStatusModal('${id}', ${tickets})">Pending</span></td>
+                    <td><button class="btn-action btn-edit" onclick="alert('Detail belum tersedia untuk simulasi ini')">Detail</button></td>
+                </tr>
+            `;
+
+            // Append to table
+            const tbody = document.querySelector('.data-table tbody');
+            tbody.insertAdjacentHTML('afterbegin', newRow);
+
+            alert('Peserta berhasil ditambahkan! Status: Pending.');
             closeModal('modalAddPeserta');
+        }
+
+        let currentStatusRowId = null;
+
+        function openStatusModal(id, tickets, rowElement) {
+            document.getElementById('statusUpdateId').value = id;
+            document.getElementById('statusUpdateTickets').value = tickets;
+            document.getElementById('newStatusSelect').value = 'pending';
+            currentStatusRowId = id; // Store ID to find row later if needed, though we manipulate DOM directly here usually
+            // For simulation simplicity, we just look for the row by ID text content or pass the button itself
+            // Let's store the row element reference globally or look it up
+            openModal('modalUpdateStatus');
+        }
+
+        function updatePaymentStatus() {
+            const newStatus = document.getElementById('newStatusSelect').value;
+            if (newStatus === 'lunas') {
+                const tickets = document.getElementById('statusUpdateTickets').value;
+                document.getElementById('confirmPaymentText').innerText = `Status Lunas. Anda akan menggenerate ${tickets} tiket. Anda yakin?`;
+                closeModal('modalUpdateStatus');
+                openModal('modalConfirmPayment');
+            } else {
+                closeModal('modalUpdateStatus');
+                alert('Status tetap Pending.');
+            }
+        }
+
+        function confirmPayment() {
+            const id = document.getElementById('statusUpdateId').value;
+            const tickets = document.getElementById('statusUpdateTickets').value;
+
+            // Find the row and update badge
+            const badges = document.querySelectorAll('.data-table .badge-warning');
+            for (let badge of badges) {
+                if (badge.innerText === 'Pending') {
+                    // This is a naive lookup, in real app we'd use ID. 
+                    // For simulation, we assume the user clicked the specific row's badge or we search by ID column
+                    const row = badge.closest('tr');
+                    if (row && row.innerHTML.includes(id)) {
+                        badge.className = 'badge badge-success';
+                        badge.innerText = 'Lunas';
+                        badge.onclick = null;
+                        badge.removeAttribute('onclick');
+                        badge.style.cursor = 'default';
+
+                        // Also update "Unggah" button to "Lihat" (simulated)
+                        const uploadBtn = row.querySelector('button.btn-action');
+                        if (uploadBtn && uploadBtn.innerText === 'Unggah') {
+                            uploadBtn.outerHTML = '<a href="#" style="font-size: 12px;">Lihat</a>';
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            closeModal('modalConfirmPayment');
+            alert(`Status Lunas. ${tickets} Tiket berhasil digenerate.`);
         }
 
         function submitExpense() {
