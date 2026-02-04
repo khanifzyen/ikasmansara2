@@ -7,6 +7,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
+import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:upgrader/upgrader.dart';
 
 void main() async {
@@ -56,6 +57,9 @@ class IkaSmanSaraApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
         ),
+        BlocProvider<SettingsBloc>(
+          create: (_) => getIt<SettingsBloc>()..add(LoadAppSettings()),
+        ),
       ],
       child: UpgradeAlert(
         upgrader: Upgrader(
@@ -64,11 +68,27 @@ class IkaSmanSaraApp extends StatelessWidget {
         showIgnore: false,
         showLater: false,
         dialogStyle: UpgradeDialogStyle.cupertino,
-        child: MaterialApp.router(
-          title: 'IKA SMANSARA',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          routerConfig: AppRouter.router,
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, state) {
+            ThemeMode themeMode = ThemeMode.system;
+            if (state is SettingsLoaded) {
+              if (state.settings.themeMode == 'light') {
+                themeMode = ThemeMode.light;
+              }
+              if (state.settings.themeMode == 'dark') {
+                themeMode = ThemeMode.dark;
+              }
+            }
+
+            return MaterialApp.router(
+              title: 'IKA SMANSARA',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              routerConfig: AppRouter.router,
+            );
+          },
         ),
       ),
     );

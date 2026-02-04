@@ -70,6 +70,7 @@ import '../../features/settings/domain/usecases/save_app_settings.dart';
 import '../../features/settings/domain/usecases/save_printer_settings.dart';
 import '../../features/settings/presentation/bloc/printer_bloc.dart';
 import '../../features/settings/presentation/bloc/settings_bloc.dart';
+import '../../core/services/printer_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -277,6 +278,9 @@ Future<void> configureDependencies() async {
     () => SaveAppSettings(getIt<SettingsRepository>()),
   );
 
+  // Services
+  getIt.registerLazySingleton<PrinterService>(() => PrinterService());
+
   // BLoCs
   getIt.registerFactory(
     () => SettingsBloc(
@@ -289,6 +293,7 @@ Future<void> configureDependencies() async {
     () => PrinterBloc(
       getPrinterSettings: getIt<GetPrinterSettings>(),
       savePrinterSettings: getIt<SavePrinterSettings>(),
+      printerService: getIt<PrinterService>(),
     ),
   );
 }

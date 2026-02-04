@@ -89,7 +89,7 @@ class PrinterSettingsPage extends StatelessWidget {
                             ),
                           );
                         },
-                        activeColor: AppColors.primary,
+                        activeThumbColor: AppColors.primary,
                       ),
                       const Divider(height: 1),
                       ListTile(

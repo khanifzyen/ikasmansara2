@@ -111,7 +111,7 @@ class SettingsPage extends StatelessWidget {
                       ToggleNotifications(value),
                     );
                   },
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                 ),
                 // Theme toggle could go here if implemented fully
                 const SizedBox(height: 24),

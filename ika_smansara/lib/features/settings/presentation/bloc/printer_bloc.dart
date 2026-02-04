@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../core/services/printer_service.dart';
 import '../../domain/entities/printer_settings.dart';
 import '../../domain/usecases/get_printer_settings.dart';
 import '../../domain/usecases/save_printer_settings.dart';
@@ -10,10 +11,12 @@ part 'printer_state.dart';
 class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
   final GetPrinterSettings getPrinterSettings;
   final SavePrinterSettings savePrinterSettings;
+  final PrinterService printerService;
 
   PrinterBloc({
     required this.getPrinterSettings,
     required this.savePrinterSettings,
+    required this.printerService,
   }) : super(PrinterInitial()) {
     on<LoadPrinterSettings>(_onLoadPrinterSettings);
     on<ScanDevices>(_onScanDevices);
@@ -30,7 +33,8 @@ class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
     emit(PrinterLoading());
     try {
       final settings = await getPrinterSettings();
-      emit(PrinterLoaded(settings: settings));
+      final isConnected = await printerService.isConnected;
+      emit(PrinterLoaded(settings: settings, isConnected: isConnected));
     } catch (e) {
       emit(const PrinterError("Failed to load printer settings"));
     }
@@ -40,20 +44,31 @@ class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
     ScanDevices event,
     Emitter<PrinterState> emit,
   ) async {
-    if (state is PrinterLoaded) {
-      final currentSettings = (state as PrinterLoaded).settings;
-      emit(PrinterScanning(settings: currentSettings));
+    if (state is PrinterLoaded || state is PrinterScanResult) {
+      PrinterSettings? currentSettings;
+      if (state is PrinterLoaded) {
+        currentSettings = (state as PrinterLoaded).settings;
+      } else if (state is PrinterScanResult) {
+        currentSettings = (state as PrinterScanResult).settings;
+      }
 
-      // Simulate scanning delay
-      await Future.delayed(const Duration(seconds: 2));
+      if (currentSettings != null) {
+        emit(PrinterScanning(settings: currentSettings));
+        try {
+          final devices = await printerService.scanDevices();
+          final deviceList = devices
+              .map((d) => {'name': d.name, 'mac': d.macAdress})
+              .toList();
 
-      // Mock devices
-      final devices = [
-        {'name': 'RPP02N', 'mac': '00:11:22:33:44:55'},
-        {'name': 'Blue-Tooth Printer', 'mac': 'AA:BB:CC:DD:EE:FF'},
-      ];
-
-      emit(PrinterScanResult(settings: currentSettings, devices: devices));
+          emit(
+            PrinterScanResult(settings: currentSettings, devices: deviceList),
+          );
+        } catch (e) {
+          emit(PrinterError("Gagal memindai: ${e.toString()}"));
+          // Restore state
+          emit(PrinterLoaded(settings: currentSettings));
+        }
+      }
     }
   }
 
@@ -69,16 +84,24 @@ class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
 
     if (settings != null) {
       emit(PrinterLoading());
-      // Simulate connection delay
-      await Future.delayed(const Duration(seconds: 1));
 
-      final newSettings = settings.copyWith(
-        macAddress: event.macAddress,
-        name: event.name,
-      );
-      await savePrinterSettings(newSettings);
-
-      emit(PrinterLoaded(settings: newSettings, isConnected: true));
+      try {
+        final success = await printerService.connect(event.macAddress);
+        if (success) {
+          final newSettings = settings.copyWith(
+            macAddress: event.macAddress,
+            name: event.name,
+          );
+          await savePrinterSettings(newSettings);
+          emit(PrinterLoaded(settings: newSettings, isConnected: true));
+        } else {
+          emit(const PrinterError("Gagal menghubungkan ke printer"));
+          emit(PrinterLoaded(settings: settings, isConnected: false));
+        }
+      } catch (e) {
+        emit(PrinterError("Error koneksi: $e"));
+        emit(PrinterLoaded(settings: settings, isConnected: false));
+      }
     }
   }
 
@@ -88,13 +111,11 @@ class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
   ) async {
     if (state is PrinterLoaded) {
       final currentSettings = (state as PrinterLoaded).settings;
-      final newSettings = PrinterSettings(
-        paperSize: currentSettings.paperSize,
-        autoPrintEnabled: currentSettings.autoPrintEnabled,
-      );
+      await printerService.disconnect();
 
-      await savePrinterSettings(newSettings);
-      emit(PrinterLoaded(settings: newSettings, isConnected: false));
+      // Keep settings but mark disconnected? Or clear mac?
+      // Usually keep mac for auto-reconnect, but here we just update status
+      emit(PrinterLoaded(settings: currentSettings, isConnected: false));
     }
   }
 
@@ -119,6 +140,13 @@ class PrinterBloc extends Bloc<PrinterEvent, PrinterState> {
   }
 
   Future<void> _onTestPrint(TestPrint event, Emitter<PrinterState> emit) async {
-    // Just a trigger for UI side effect or logging
+    if (state is PrinterLoaded) {
+      final settings = (state as PrinterLoaded).settings;
+      try {
+        await printerService.printTestTicket(settings.paperSize);
+      } catch (e) {
+        emit(PrinterError("Gagal mencetak: $e"));
+      }
+    }
   }
 }
