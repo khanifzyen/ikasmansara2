@@ -102,4 +102,25 @@ class AuthRemoteDataSource {
   Future<void> saveAuth() async {
     await _pbClient.saveAuth();
   }
+
+  /// Change Password
+  Future<void> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final userId = currentUserRecord?.id;
+    if (userId == null) throw Exception('User not logged in');
+
+    await _pb
+        .collection('users')
+        .update(
+          userId,
+          body: {
+            'oldPassword': oldPassword,
+            'password': newPassword,
+            'passwordConfirm': confirmPassword,
+          },
+        );
+  }
 }

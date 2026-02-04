@@ -61,6 +61,15 @@ import '../../features/profile/domain/repositories/profile_repository.dart';
 import '../../features/profile/domain/usecases/get_profile.dart';
 import '../../features/profile/domain/usecases/update_profile.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
+import '../../features/settings/data/datasources/settings_local_data_source.dart';
+import '../../features/settings/data/repositories/settings_repository_impl.dart';
+import '../../features/settings/domain/repositories/settings_repository.dart';
+import '../../features/settings/domain/usecases/get_app_settings.dart';
+import '../../features/settings/domain/usecases/get_printer_settings.dart';
+import '../../features/settings/domain/usecases/save_app_settings.dart';
+import '../../features/settings/domain/usecases/save_printer_settings.dart';
+import '../../features/settings/presentation/bloc/printer_bloc.dart';
+import '../../features/settings/presentation/bloc/settings_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -239,6 +248,47 @@ Future<void> configureDependencies() async {
     () => ProfileBloc(
       getProfile: getIt<GetProfile>(),
       updateProfile: getIt<UpdateProfile>(),
+    ),
+  );
+
+  // ===== Settings Feature =====
+
+  // Data Sources
+  getIt.registerLazySingleton<SettingsLocalDataSource>(
+    () => SettingsLocalDataSourceImpl(sharedPreferences),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(getIt<SettingsLocalDataSource>()),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(
+    () => GetPrinterSettings(getIt<SettingsRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => SavePrinterSettings(getIt<SettingsRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetAppSettings(getIt<SettingsRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => SaveAppSettings(getIt<SettingsRepository>()),
+  );
+
+  // BLoCs
+  getIt.registerFactory(
+    () => SettingsBloc(
+      getAppSettings: getIt<GetAppSettings>(),
+      saveAppSettings: getIt<SaveAppSettings>(),
+    ),
+  );
+
+  getIt.registerFactory(
+    () => PrinterBloc(
+      getPrinterSettings: getIt<GetPrinterSettings>(),
+      savePrinterSettings: getIt<SavePrinterSettings>(),
     ),
   );
 }

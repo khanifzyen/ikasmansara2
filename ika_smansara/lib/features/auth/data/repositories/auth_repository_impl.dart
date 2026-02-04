@@ -217,6 +217,24 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<AuthResult<void>> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      await _remoteDataSource.changePassword(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+      return (data: null, failure: null);
+    } catch (e) {
+      return (data: null, failure: _mapException(e));
+    }
+  }
+
   /// Map PocketBase exceptions to domain failures
   AuthFailure _mapException(dynamic e) {
     log.withContext(

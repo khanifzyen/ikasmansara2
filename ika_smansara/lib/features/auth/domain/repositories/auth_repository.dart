@@ -77,4 +77,11 @@ abstract class AuthRepository {
 
   /// Request password reset email
   Future<AuthResult<void>> requestPasswordReset(String email);
+
+  /// Change password
+  Future<AuthResult<void>> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  });
 }

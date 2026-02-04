@@ -1,0 +1,271 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/di/injection.dart';
+import '../bloc/settings_bloc.dart';
+import 'printer_settings_page.dart';
+import 'change_password_page.dart';
+import 'about_page.dart';
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<SettingsBloc>()..add(LoadAppSettings()),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(
+            'Pengaturan',
+            style: GoogleFonts.inter(
+              fontWeight: FontWeight.w600,
+              color: AppColors.textDark,
+            ),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+            onPressed: () => context.pop(),
+          ),
+        ),
+        body: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, state) {
+            final isNotifEnabled = (state is SettingsLoaded)
+                ? state.settings.notificationsEnabled
+                : true;
+
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _buildSectionLabel('Perangkat'),
+                _buildListTile(
+                  context,
+                  icon: Icons.print_outlined,
+                  title: 'Konfigurasi Printer',
+                  subtitle: 'Atur koneksi printer thermal',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PrinterSettingsPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+                _buildSectionLabel('Akun & Keamanan'),
+                _buildListTile(
+                  context,
+                  icon: Icons.lock_outline,
+                  title: 'Ubah Kata Sandi',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ChangePasswordPage(),
+                      ),
+                    );
+                  },
+                ),
+                _buildListTile(
+                  context,
+                  icon: Icons.delete_forever_outlined,
+                  title: 'Hapus Akun',
+                  titleColor: AppColors.error,
+                  onTap: () {
+                    _showDeleteAccountDialog(context);
+                  },
+                ),
+                const SizedBox(height: 24),
+                _buildSectionLabel('Preferensi'),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  secondary: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  title: Text(
+                    'Notifikasi',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  value: isNotifEnabled,
+                  onChanged: (value) {
+                    context.read<SettingsBloc>().add(
+                      ToggleNotifications(value),
+                    );
+                  },
+                  activeColor: AppColors.primary,
+                ),
+                // Theme toggle could go here if implemented fully
+                const SizedBox(height: 24),
+                _buildSectionLabel('Informasi'),
+                _buildListTile(
+                  context,
+                  icon: Icons.privacy_tip_outlined,
+                  title: 'Kebijakan Privasi',
+                  onTap: () async {
+                    final Uri url = Uri.parse(
+                      'https://ikasmansara.com/privacy-policy',
+                    ); // Dummy URL
+                    if (!await launchUrl(url)) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Tidak dapat membuka link"),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                _buildListTile(
+                  context,
+                  icon: Icons.description_outlined,
+                  title: 'Syarat & Ketentuan',
+                  onTap: () async {
+                    final Uri url = Uri.parse(
+                      'https://ikasmansara.com/terms',
+                    ); // Dummy URL
+                    if (!await launchUrl(url)) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Tidak dapat membuka link"),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                _buildListTile(
+                  context,
+                  icon: Icons.info_outline,
+                  title: 'Tentang Aplikasi',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AboutPage()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 40),
+                Center(
+                  child: Text(
+                    'Versi 2.0.1+32',
+                    style: GoogleFonts.inter(
+                      color: AppColors.textGrey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textGrey,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+    Color titleColor = AppColors.textDark,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          color: titleColor == AppColors.error
+              ? AppColors.error
+              : AppColors.primary,
+          size: 24,
+        ),
+      ),
+      title: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: titleColor,
+        ),
+      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textGrey),
+            )
+          : null,
+      trailing: const Icon(Icons.chevron_right, color: AppColors.textGrey),
+      onTap: onTap,
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus Akun?'),
+        content: const Text(
+          'Apakah Anda yakin ingin menghapus akun secara permanen? Data yang dihapus tidak dapat dikembalikan.\n\nUntuk saat ini, silakan hubungi Admin untuk pemrosesan penghapusan data.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              final Uri url = Uri.parse(
+                'https://wa.me/6281234567890?text=Halo%20Admin%2C%20saya%20ingin%20mengajukan%20penghapusan%20akun%20IKA%20SMANSARA',
+              );
+              launchUrl(url);
+            },
+            child: const Text(
+              'Hubungi Admin',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

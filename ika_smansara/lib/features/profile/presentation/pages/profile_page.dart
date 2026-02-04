@@ -10,6 +10,7 @@ import '../../../../core/network/pb_client.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../bloc/profile_bloc.dart';
 import 'edit_profile_page.dart';
+import '../../../settings/presentation/pages/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -126,11 +127,10 @@ class ProfilePage extends StatelessWidget {
                               icon: Icons.settings_outlined,
                               label: 'Pengaturan',
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Fitur Pengaturan segera hadir',
-                                    ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const SettingsPage(),
                                   ),
                                 );
                               },
