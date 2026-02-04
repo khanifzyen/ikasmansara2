@@ -541,61 +541,29 @@
                     <div class="step-pane" id="step3">
                         <div class="step-header">
                             <h2 class="step-title">🎟️ Tiket & Peserta</h2>
-                            <p class="step-subtitle">Atur kuota, harga, dan variasi tiket yang tersedia.</p>
+                            <p class="step-subtitle">Atur jenis tiket, harga, kuota, dan fasilitas yang didapatkan
+                                peserta.</p>
                         </div>
 
-                        <div class="input-group">
-                            <label>Desain Tiket / Kaos</label>
-                            <div class="upload-zone" style="padding: 20px;"
-                                onclick="document.getElementById('merchUpload').click()">
-                                <input type="file" id="merchUpload" style="display: none;"
-                                    onchange="handleFileUpload(this, 'merchPreview')">
-                                <div id="merchPreview">
-                                    <div style="font-size: 24px;">👕</div>
-                                    <span style="font-size: 14px; color: #64748b;">Upload Preview Merchandise</span>
-                                </div>
+                        <!-- Ticket Types Container -->
+                        <div id="ticketTypesContainer">
+                            <!-- Helper Text if empty -->
+                            <div id="emptyTicketsState"
+                                style="text-align: center; padding: 40px; background: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 12px; margin-bottom: 24px; display: none;">
+                                <div style="font-size: 32px; margin-bottom: 8px;">🎫</div>
+                                <p style="color: #64748b; margin-bottom: 16px;">Belum ada jenis tiket yang dibuat.</p>
+                                <button type="button" class="btn-primary" onclick="addTicketType()"
+                                    style="width: auto;">+ Buat Tiket Pertama</button>
                             </div>
+
+                            <!-- List of added tickets will go here -->
+                            <div id="ticketList"></div>
                         </div>
 
-                        <div class="inline-row">
-                            <div class="input-group">
-                                <label>Harga Tiket (Rp)</label>
-                                <input type="number" class="input-field" value="50000">
-                            </div>
-                            <div class="input-group">
-                                <label>Kuota Peserta</label>
-                                <input type="number" class="input-field" value="1000">
-                            </div>
-                        </div>
+                        <button type="button" class="btn-outline" onclick="addTicketType()" id="btnAddTicket"
+                            style="border-style: dashed; width: 100%; margin-top: 16px;">+ Tambah Jenis Tiket
+                            Baru</button>
 
-                        <div class="input-group">
-                            <label>Fasilitas (Include)</label>
-                            <input type="text" class="input-field" placeholder="Contoh: Kaos, Snack, Sticker, Doorprice"
-                                value="Kaos, Snack, Doorprice">
-                            <p style="font-size: 12px; color: #64748b; margin-top: 6px;">Pisahkan dengan koma.</p>
-                        </div>
-
-                        <hr style="border: 0; border-top: 1px dashed #e2e8f0; margin: 32px 0;">
-
-                        <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Variasi Tambahan</h4>
-                        <div id="ticketOptionsList">
-                            <div class="dynamic-item">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                    <label style="margin:0;">Nama Variasi</label>
-                                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
-                                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
-                                </div>
-                                <input type="text" class="input-field" value="Ukuran Kaos" style="margin-bottom: 12px;">
-                                <label style="display:block; margin-bottom:8px;">Opsi (Format: Label|ExtraHarga)</label>
-                                <textarea class="input-field" rows="3" style="font-family: monospace;">S|0
-M|0
-L|0
-XL|0
-XXL|10000</textarea>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-outline" onclick="addTicketOption()"
-                            style="border-style: dashed;">+ Tambah Variasi Baru</button>
                     </div>
 
                     <!-- STEP 4: FEATURES -->
@@ -919,21 +887,93 @@ XXL|10000</textarea>
             }
         }
 
-        function addTicketOption() {
-            const list = document.getElementById('ticketOptionsList');
+        // Multi-Ticket Logic
+        let ticketCount = 0;
+
+        function addTicketType() {
+            ticketCount++;
+            const container = document.getElementById('ticketList');
+            const emptyState = document.getElementById('emptyTicketsState');
+
+            // Hide empty state
+            emptyState.style.display = 'none';
+
+            const ticketId = `ticket-${ticketCount}`;
             const item = document.createElement('div');
             item.className = 'dynamic-item';
+            item.id = ticketId;
+            item.style.borderLeft = '4px solid var(--primary)';
+            item.style.padding = '24px';
+            item.style.background = '#f8fafc';
+
             item.innerHTML = `
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <label style="margin:0;">Nama Variasi</label>
-                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
-                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer;">Hapus</button>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center;">
+                    <h4 style="font-size: 16px; margin: 0; color: var(--primary);">🎫 Jenis Tiket #${ticketCount}</h4>
+                    <button type="button" onclick="removeTicketType('${ticketId}')" 
+                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer; font-size: 13px;">Hapus Tiket</button>
                 </div>
-                <input type="text" class="input-field" placeholder="Contoh: Ukuran Hoodie" style="margin-bottom: 12px;">
-                <label style="display:block; margin-bottom:8px;">Opsi (Format: Label|ExtraHarga)</label>
-                <textarea class="input-field" rows="3" style="font-family: monospace;">S|0\nM|0\nL|0</textarea>
+
+                <div class="input-group">
+                    <label>Nama Tiket (e.g. Regular, VIP, Early Bird)</label>
+                    <input type="text" class="input-field" placeholder="Nama Tiket">
+                </div>
+
+                <div class="inline-row">
+                    <div class="input-group">
+                        <label>Harga (Rp)</label>
+                        <input type="number" class="input-field" value="50000">
+                    </div>
+                    <div class="input-group">
+                        <label>Kuota</label>
+                        <input type="number" class="input-field" value="100">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Fasilitas (Include)</label>
+                    <input type="text" class="input-field" placeholder="Contoh: Kaos, Snack, Sticker" value="Kaos, Snack">
+                </div>
+
+                <!-- Ticket Options (Nested) -->
+                <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 16px;">
+                    <h5 style="font-size: 14px; margin-bottom: 12px; font-weight: 700;">Variasi Tambahan (Opsional)</h5>
+                    <div id="${ticketId}-options"></div>
+                    <button type="button" class="btn-outline" onclick="addTicketOption('${ticketId}-options')" 
+                        style="border-style: dashed; padding: 6px 12px; font-size: 12px; margin-top: 8px;">+ Tambah Variasi (ex: Ukuran)</button>
+                </div>
             `;
-            list.appendChild(item);
+
+            container.appendChild(item);
+        }
+
+        function removeTicketType(id) {
+            document.getElementById(id).remove();
+            const container = document.getElementById('ticketList');
+            if (container.children.length === 0) {
+                document.getElementById('emptyTicketsState').style.display = 'block';
+            }
+        }
+
+        function addTicketOption(containerId) {
+            const container = document.getElementById(containerId);
+            const item = document.createElement('div');
+            item.className = 'dynamic-item';
+            item.style.marginBottom = '12px';
+            item.style.padding = '12px';
+            item.style.boxShadow = 'none';
+            item.style.border = '1px dashed #cbd5e1';
+
+            item.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <label style="margin:0; font-size: 12px;">Nama Variasi</label>
+                    <button type="button" onclick="this.closest('.dynamic-item').remove()"
+                        style="color:#ef4444; background:none; border:none; font-weight:600; cursor:pointer; font-size: 11px;">Hapus</button>
+                </div>
+                <input type="text" class="input-field" value="Ukuran Kaos" style="margin-bottom: 8px; font-size: 13px; padding: 8px;">
+                <label style="display:block; margin-bottom:4px; font-size: 12px;">Opsi (Label|ExtraHarga)</label>
+                <textarea class="input-field" rows="2" style="font-family: monospace; font-size: 12px; padding: 8px;">S|0\nM|0\nL|0\nXL|10000</textarea>
+            `;
+            container.appendChild(item);
         }
 
         function addSubevent() {
@@ -991,6 +1031,7 @@ XXL|10000</textarea>
         // Init
         updateStepUI();
         updatePreviews();
+        addTicketType(); // Add one default ticket
     </script>
 </body>
 

@@ -36,7 +36,7 @@
             <h2>Tulis Berita</h2>
         </div>
 
-        <div class="form-section content-padding">
+        <div class="form-section content-padding" style="max-width: 100%;">
             <div class="input-group">
                 <label>Judul Berita</label>
                 <input type="text" class="input-field" placeholder="Judul yang menarik...">
@@ -70,8 +70,15 @@
             </div>
 
             <div class="input-group">
-                <label>Penulis</label>
-                <input type="text" class="input-field" placeholder="Nama penulis">
+                <label>Penulis (User)</label>
+                <select class="input-field">
+                    <option value="" disabled selected>Pilih Penulis (Pengguna)...</option>
+                    <option value="current_user">Saya Sendiri (Admin)</option>
+                    <option value="user_1">Budi Santoso (Alumni 2010)</option>
+                    <option value="user_2">Ahmad Fauzi (Alumni 2011)</option>
+                </select>
+                <small style="color: var(--text-grey); font-size: 11px;">Berita akan terhubung ke profil user yang
+                    dipilih.</small>
             </div>
 
             <div class="input-group">

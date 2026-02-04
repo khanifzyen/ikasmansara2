@@ -198,8 +198,11 @@ Satu record = satu pesanan (bisa berisi banyak tiket).
 | `is_deleted` | number | ❌ | Soft delete status (0=active, 1=deleted) |
 | `coordinator_name` | text | ❌ | Nama koordinator (untuk manual booking) |
 | `coordinator_phone` | text | ❌ | No. HP koordinator |
+| `coordinator_angkatan` | number | ❌ | Angkatan Koordinator (misal 2010) |
+| `registration_channel` | select | ❌ | `app`, `manual_cash`, `manual_transfer` |
 | `manual_ticket_count` | number | ❌ | Jumlah tiket manual (jika ada) |
 | `manual_ticket_type` | relation | ❌ | → event_tickets (untuk manual booking) |
+| `payment_proof` | file | ❌ | Bukti transfer (untuk manual booking) |
 | `notes` | text | ❌ | Catatan admin |
 
 > **QR Booking ID**: Generate dari field `booking_id`. Tidak perlu disimpan.
@@ -490,3 +493,91 @@ onRecordAfterCreateRequest((e) => {
 **API Rules:**
 - `list`, `view`: Admin only.
 - `create`, `update`, `delete`: Disabled (System only via Hook).
+
+---
+
+## 20. Activity Logs (Admin Audit)
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `type` | text | ✅ | `create`, `update`, `delete`, `approve`, `reject` |
+| `module` | text | ✅ | `user`, `event`, `donation`, `loker`, `market` |
+| `message` | text | ✅ | Pesan ringkas ("Donasi masuk Rp 500rb") |
+| `related_id` | text | ❌ | ID record terkait (untuk link) |
+| `related_collection` | text | ❌ | Nama collection (misal: `donation_transactions`) |
+| `actor` | relation | ✅ | → users (Pelaku/Admin yg melakukan) |
+| `is_read` | bool | ✅ | Default: false |
+
+**API Rules:**
+- List/View: Admin only
+- Create/Update/Delete: Disabled (System only via Hook)
+
+---
+
+## 21. Notifications (User)
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `user` | relation | ✅ | → users (Penerima notifikasi) |
+| `title` | text | ✅ | Judul pendek ("Pembayaran Berhasil") |
+| `message` | text | ✅ | Detail ("Tiket Reuni Anda sudah terbit.") |
+| `type` | text | ✅ | `transaction`, `ticket`, `social`, `system` |
+| `related_collection` | text | ❌ | Target link (e.g., `event_bookings`) |
+| `related_id` | text | ❌ | Target ID (e.g., `BOOK-001`) |
+| `is_read` | bool | ✅ | Default: false |
+| `action_url` | text | ❌ | Deep link khusus (opsional) |
+
+**API Rules:**
+- List/View: Owner (user = @request.auth.id)
+- Update (Read status): Owner
+- Create/Delete: Disabled (System only via Hook)
+
+---
+
+## 22. Event Accounts (Buku Rekening)
+
+Menyimpan saldo untuk setiap pos keuangan event (Cash, Bank IKA, Payment Gateway).
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `event` | relation | ✅ | → events |
+| `name` | text | ✅ | Nama Akun (e.g. "Cash Panitia", "BCA IKA") |
+| `type` | select | ✅ | `cash`, `bank`, `gateway` |
+| `balance` | number | ✅ | Saldo saat ini (Default: 0) |
+| `account_number` | text | ❌ | No. Rekening / No. HP (opsional) |
+
+**API Rules:**
+- List/View: Admin only
+- Create/Update/Delete: Admin only
+
+---
+
+## 23. Event Financial Transactions (Arus Kas)
+
+Mencatat detail pemasukan, pengeluaran, dan transfer antar akun.
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `event` | relation | ✅ | → events |
+| `type` | select | ✅ | `income` (Masuk), `expense` (Keluar), `transfer` (Pindah Buku) |
+| `title` | text | ✅ | Judul Transaksi (e.g. "Bayar Vendor Kaos") |
+| `amount` | number | ✅ | Nominal (Rp) |
+| `date` | date | ✅ | Tanggal Transaksi |
+| `category` | text | ❌ | Kategori (e.g. `logistik`, `konsumsi`, `tiket`) |
+| `from_account` | relation | ❌ | → event_accounts (Sumber Dana). Wajib untuk `expense` & `transfer`. |
+| `to_account` | relation | ❌ | → event_accounts (Tujuan Dana). Wajib untuk `income` & `transfer`. |
+| `proof` | file | ❌ | Foto Bukti / Struk |
+| `description` | text | ❌ | Catatan Detail |
+| `related_ref` | text | ❌ | ID Referensi System (e.g. `BOOK-001`, `SPON-002`) |
+
+**API Rules:**
+- List/View: Admin only
+- Create: Admin only
+- Update/Delete: Admin only
+
+**Hooks Logic:**
+- On Create `income`: `to_account.balance += amount` (Atomic)
+- On Create `expense`: `from_account.balance -= amount` (Atomic)
+- On Create `transfer`: `from_account.balance -= amount`, `to_account.balance += amount` (Atomic)
+
+

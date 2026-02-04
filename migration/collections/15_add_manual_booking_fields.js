@@ -2,7 +2,7 @@
  * Migration: Add Manual Booking Fields to Event Bookings
  */
 
-import { authenticateAdmin, upsertCollection } from '../pb-client.js';
+import { authenticateAdmin, upsertCollection, getCollectionId } from '../pb-client.js';
 
 async function migrateManualBookingFields() {
     console.log('\n========================================');
@@ -10,6 +10,12 @@ async function migrateManualBookingFields() {
     console.log('========================================');
 
     const pb = await authenticateAdmin();
+
+    // Get event_tickets ID for relation
+    const eventTicketsId = await getCollectionId(pb, 'event_tickets');
+    if (!eventTicketsId) {
+        throw new Error('❌ Collection "event_tickets" not found! Cannot create relation.');
+    }
 
     await upsertCollection(pb, {
         name: 'event_bookings',
@@ -21,11 +27,9 @@ async function migrateManualBookingFields() {
                 required: false,
                 presentable: false,
                 unique: false,
-                options: {
-                    min: null,
-                    max: null,
-                    pattern: ""
-                }
+                min: null,
+                max: null,
+                pattern: ""
             },
             {
                 name: 'coordinator_phone',
@@ -33,11 +37,28 @@ async function migrateManualBookingFields() {
                 required: false,
                 presentable: false,
                 unique: false,
-                options: {
-                    min: null,
-                    max: null,
-                    pattern: ""
-                }
+                min: null,
+                max: null,
+                pattern: ""
+            },
+            {
+                name: 'coordinator_angkatan',
+                type: 'number',
+                required: false,
+                presentable: false,
+                unique: false,
+                min: null,
+                max: null,
+                noDecimal: true
+            },
+            {
+                name: 'registration_channel',
+                type: 'select',
+                required: false,
+                presentable: false,
+                unique: false,
+                maxSelect: 1,
+                values: ['app', 'manual_cash', 'manual_transfer']
             },
             {
                 name: 'manual_ticket_count',
@@ -45,11 +66,9 @@ async function migrateManualBookingFields() {
                 required: false,
                 presentable: false,
                 unique: false,
-                options: {
-                    min: null,
-                    max: null,
-                    noDecimal: true
-                }
+                min: null,
+                max: null,
+                noDecimal: true
             },
             {
                 name: 'manual_ticket_type',
@@ -57,13 +76,23 @@ async function migrateManualBookingFields() {
                 required: false,
                 presentable: false,
                 unique: false,
-                options: {
-                    collectionId: 'event_tickets',
-                    cascadeDelete: false,
-                    minSelect: null,
-                    maxSelect: 1,
-                    displayFields: null
-                }
+                collectionId: eventTicketsId,
+                cascadeDelete: false,
+                minSelect: null,
+                maxSelect: 1,
+                displayFields: null
+            },
+            {
+                name: 'payment_proof',
+                type: 'file',
+                required: false,
+                presentable: false,
+                unique: false,
+                maxSelect: 1,
+                maxSize: 5242880,
+                mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
+                thumbs: [],
+                protected: false
             },
             {
                 name: 'notes',
@@ -71,11 +100,9 @@ async function migrateManualBookingFields() {
                 required: false,
                 presentable: false,
                 unique: false,
-                options: {
-                    min: null,
-                    max: null,
-                    pattern: ""
-                }
+                min: null,
+                max: null,
+                pattern: ""
             }
         ]
     });
