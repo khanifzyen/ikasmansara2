@@ -61,35 +61,40 @@ class IkaSmanSaraApp extends StatelessWidget {
           create: (_) => getIt<SettingsBloc>()..add(LoadAppSettings()),
         ),
       ],
-      child: UpgradeAlert(
-        upgrader: Upgrader(
-          // debugDisplayAlways: true,
-        ),
-        showIgnore: false,
-        showLater: false,
-        dialogStyle: UpgradeDialogStyle.cupertino,
-        child: BlocBuilder<SettingsBloc, SettingsState>(
-          builder: (context, state) {
-            ThemeMode themeMode = ThemeMode.system;
-            if (state is SettingsLoaded) {
-              if (state.settings.themeMode == 'light') {
-                themeMode = ThemeMode.light;
-              }
-              if (state.settings.themeMode == 'dark') {
-                themeMode = ThemeMode.dark;
-              }
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, state) {
+          ThemeMode themeMode = ThemeMode.system;
+          if (state is SettingsLoaded) {
+            if (state.settings.themeMode == 'light') {
+              themeMode = ThemeMode.light;
             }
+            if (state.settings.themeMode == 'dark') {
+              themeMode = ThemeMode.dark;
+            }
+          }
 
-            return MaterialApp.router(
-              title: 'IKA SMANSARA',
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: themeMode,
-              routerConfig: AppRouter.router,
-            );
-          },
-        ),
+          return MaterialApp.router(
+            title: 'IKA SMANSARA',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            routerConfig: AppRouter.router,
+            builder: (context, child) {
+              return UpgradeAlert(
+                upgrader: Upgrader(
+                  minAppVersion: '2.0.1',
+                  debugLogging: true,
+                  // debugDisplayAlways: true, // Uncomment untuk testing
+                ),
+                showIgnore: false,
+                showLater: false,
+                dialogStyle: UpgradeDialogStyle.cupertino,
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+          );
+        },
       ),
     );
   }

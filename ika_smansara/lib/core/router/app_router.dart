@@ -33,6 +33,14 @@ import '../../features/events/presentation/pages/midtrans_payment_page.dart';
 import '../../features/events/presentation/pages/event_list_page.dart';
 import '../../features/events/presentation/pages/ticket_scanner_page.dart';
 
+// Admin imports
+import '../../features/admin/core/presentation/pages/admin_dashboard_page.dart';
+import '../../features/admin/core/presentation/pages/admin_placeholder_page.dart';
+import '../../features/admin/users/presentation/pages/admin_users_page.dart';
+import '../../features/admin/users/presentation/pages/admin_user_detail_page.dart';
+import '../../features/admin/events/presentation/pages/admin_events_page.dart';
+import '../../features/admin/events/presentation/pages/admin_event_detail_page.dart';
+
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -271,6 +279,98 @@ class AppRouter {
         path: '/ticket-scanner',
         name: 'ticket-scanner',
         builder: (context, state) => const TicketScannerPage(),
+      ),
+
+      // Admin Routes
+      GoRoute(
+        path: '/admin',
+        name: 'admin-dashboard',
+        builder: (context, state) => const AdminDashboardPage(),
+      ),
+      GoRoute(
+        path: '/admin/users',
+        name: 'admin-users',
+        builder: (context, state) => const AdminUsersPage(),
+      ),
+      GoRoute(
+        path: '/admin/users/:userId',
+        name: 'admin-user-detail',
+        builder: (context, state) {
+          final userId = state.pathParameters['userId']!;
+          return AdminUserDetailPage(userId: userId);
+        },
+      ),
+      GoRoute(
+        path: '/admin/events',
+        name: 'admin-events',
+        builder: (context, state) => const AdminEventsPage(),
+      ),
+      GoRoute(
+        path: '/admin/events/:eventId',
+        name: 'admin-event-detail',
+        builder: (context, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return AdminEventDetailPage(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: '/admin/donations',
+        name: 'admin-donations',
+        builder: (context, state) => const AdminPlaceholderPage(
+          title: 'Kelola Donasi',
+          icon: '💰',
+          description:
+              'Fitur untuk mengelola campaign donasi akan segera hadir.',
+        ),
+      ),
+      GoRoute(
+        path: '/admin/news',
+        name: 'admin-news',
+        builder: (context, state) => const AdminPlaceholderPage(
+          title: 'Kelola Berita',
+          icon: '📰',
+          description:
+              'Fitur untuk membuat dan mengelola berita akan segera hadir.',
+        ),
+      ),
+      GoRoute(
+        path: '/admin/forum',
+        name: 'admin-forum',
+        builder: (context, state) => const AdminPlaceholderPage(
+          title: 'Moderasi Forum',
+          icon: '💬',
+          description:
+              'Fitur untuk moderasi post dan komentar forum akan segera hadir.',
+        ),
+      ),
+      GoRoute(
+        path: '/admin/loker',
+        name: 'admin-loker',
+        builder: (context, state) => const AdminPlaceholderPage(
+          title: 'Approval Loker',
+          icon: '💼',
+          description: 'Fitur untuk approval lowongan kerja akan segera hadir.',
+        ),
+      ),
+      GoRoute(
+        path: '/admin/market',
+        name: 'admin-market',
+        builder: (context, state) => const AdminPlaceholderPage(
+          title: 'Approval Market',
+          icon: '🛒',
+          description:
+              'Fitur untuk approval iklan jual-beli akan segera hadir.',
+        ),
+      ),
+      GoRoute(
+        path: '/admin/memory',
+        name: 'admin-memory',
+        builder: (context, state) => const AdminPlaceholderPage(
+          title: 'Approval Memory',
+          icon: '📷',
+          description:
+              'Fitur untuk approval galeri kenangan akan segera hadir.',
+        ),
       ),
     ],
 

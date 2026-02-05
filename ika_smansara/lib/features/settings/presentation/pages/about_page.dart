@@ -24,7 +24,7 @@ class _AboutPageState extends State<AboutPage> {
     final info = await PackageInfo.fromPlatform();
     setState(() {
       _version = '${info.version}+${info.buildNumber}';
-      _appName = info.appName;
+      // _appName tetap hardcoded 'IKA SMANSARA' untuk konsistensi antar platform
     });
   }
 
@@ -106,6 +106,17 @@ class _AboutPageState extends State<AboutPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 32),
+            _buildCreditItem('Pelindung', 'Dr. H. Noor Rachmad, SH, MH'),
+            const SizedBox(height: 12),
+            _buildCreditItem(
+              'Product Manager',
+              'Dr. HM. Jamhari, S.Sos, M.Kom',
+            ),
+            const SizedBox(height: 12),
+            _buildCreditItem('Lead Developer', 'A. Khanif Zyen, S.Kom, M.Kom'),
+            const SizedBox(height: 12),
+            _buildCreditItem('Developer', 'Muhamad Mashudi Ardi Winata, S.Kom'),
             const SizedBox(height: 48),
             Text(
               '© ${DateTime.now().year} IKA SMANSARA',
@@ -114,6 +125,30 @@ class _AboutPageState extends State<AboutPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCreditItem(String title, String name) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            color: AppColors.textGrey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          name,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: AppColors.textDark,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }

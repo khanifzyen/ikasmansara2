@@ -77,6 +77,25 @@ class HomePage extends StatelessWidget {
                         ),
                         Row(
                           children: [
+                            // Admin Panel Button (only for admins)
+                            if (state is AuthAuthenticated &&
+                                state.user.isAdmin)
+                              IconButton(
+                                onPressed: () => context.push('/admin'),
+                                icon: const Icon(
+                                  Icons.admin_panel_settings,
+                                  color: AppColors.primary,
+                                ),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: AppColors.primaryLight
+                                      .withValues(alpha: 0.1),
+                                  shape: const CircleBorder(),
+                                ),
+                                tooltip: 'Admin Panel',
+                              ),
+                            if (state is AuthAuthenticated &&
+                                state.user.isAdmin)
+                              const SizedBox(width: 8),
                             IconButton(
                               onPressed: () => context.push('/ticket-scanner'),
                               icon: const Icon(
