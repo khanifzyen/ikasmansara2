@@ -12,6 +12,15 @@ class Event extends Equatable {
   final DateTime created;
   final DateTime updated;
 
+  // Configuration fields
+  final String code;
+  final bool enableSponsorship;
+  final bool enableDonation;
+  final double? donationTarget;
+  final String? donationDescription;
+  final String bookingIdFormat;
+  final String ticketIdFormat;
+
   const Event({
     required this.id,
     required this.title,
@@ -23,6 +32,13 @@ class Event extends Equatable {
     required this.status,
     required this.created,
     required this.updated,
+    required this.code,
+    required this.enableSponsorship,
+    required this.enableDonation,
+    this.donationTarget,
+    this.donationDescription,
+    required this.bookingIdFormat,
+    required this.ticketIdFormat,
   });
 
   bool get isRegistrationOpen => status == 'active';
@@ -39,5 +55,12 @@ class Event extends Equatable {
     status,
     created,
     updated,
+    code,
+    enableSponsorship,
+    enableDonation,
+    donationTarget,
+    donationDescription,
+    bookingIdFormat,
+    ticketIdFormat,
   ];
 }

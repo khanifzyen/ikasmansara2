@@ -24,6 +24,13 @@ abstract class EventModel with _$EventModel {
     required String status,
     required DateTime created,
     required DateTime updated,
+    required String code,
+    @Default(false) bool enableSponsorship,
+    @Default(false) bool enableDonation,
+    double? donationTarget,
+    String? donationDescription,
+    required String bookingIdFormat,
+    required String ticketIdFormat,
   }) = _EventModel;
 
   factory EventModel.fromJson(Map<String, dynamic> json) =>
@@ -47,6 +54,13 @@ abstract class EventModel with _$EventModel {
         updated:
             DateTime.tryParse(record.getStringValue('updated')) ??
             DateTime.now(),
+        code: record.getStringValue('code'),
+        enableSponsorship: record.getBoolValue('enable_sponsorship'),
+        enableDonation: record.getBoolValue('enable_donation'),
+        donationTarget: record.data['donation_target']?.toDouble(),
+        donationDescription: record.getStringValue('donation_description'),
+        bookingIdFormat: record.getStringValue('booking_id_format'),
+        ticketIdFormat: record.getStringValue('ticket_id_format'),
       );
     } catch (e) {
       debugPrint('DEBUG: Error parsing dates for event ${record.id}: $e');
@@ -71,6 +85,13 @@ abstract class EventModel with _$EventModel {
       status: status,
       created: created,
       updated: updated,
+      code: code,
+      enableSponsorship: enableSponsorship,
+      enableDonation: enableDonation,
+      donationTarget: donationTarget,
+      donationDescription: donationDescription,
+      bookingIdFormat: bookingIdFormat,
+      ticketIdFormat: ticketIdFormat,
     );
   }
 }

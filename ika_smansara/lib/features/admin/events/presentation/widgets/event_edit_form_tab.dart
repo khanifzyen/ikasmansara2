@@ -29,12 +29,20 @@ class EventEditFormTab extends StatefulWidget {
 class _EventEditFormTabState extends State<EventEditFormTab> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
+  late TextEditingController _codeController;
   late TextEditingController _locationController;
-  late TextEditingController
-  _descriptionController; // Keep for fallback/validation if needed
+  late TextEditingController _descriptionController;
+  late TextEditingController _bookingIdFormatController;
+  late TextEditingController _ticketIdFormatController;
+  late TextEditingController _donationTargetController;
+  late TextEditingController _donationDescriptionController;
+
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
   late String _selectedStatus;
+  late bool _enableSponsorship;
+  late bool _enableDonation;
+
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   late QuillController _quillController;
@@ -45,11 +53,28 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.event.title);
+    _codeController = TextEditingController(text: widget.event.code);
     _locationController = TextEditingController(text: widget.event.location);
     _descriptionController = TextEditingController(
       text: widget.event.description,
     );
+    _bookingIdFormatController = TextEditingController(
+      text: widget.event.bookingIdFormat,
+    );
+    _ticketIdFormatController = TextEditingController(
+      text: widget.event.ticketIdFormat,
+    );
+    _donationTargetController = TextEditingController(
+      text: widget.event.donationTarget?.toString() ?? '',
+    );
+    _donationDescriptionController = TextEditingController(
+      text: widget.event.donationDescription ?? '',
+    );
+
     _selectedDate = widget.event.date;
+    _selectedStatus = widget.event.status;
+    _enableSponsorship = widget.event.enableSponsorship;
+    _enableDonation = widget.event.enableDonation;
 
     // Parse time string (HH:mm format, handles suffixes like "WIB")
     try {
@@ -86,8 +111,13 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
   @override
   void dispose() {
     _titleController.dispose();
+    _codeController.dispose();
     _locationController.dispose();
     _descriptionController.dispose();
+    _bookingIdFormatController.dispose();
+    _ticketIdFormatController.dispose();
+    _donationTargetController.dispose();
+    _donationDescriptionController.dispose();
     _quillController.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
@@ -176,11 +206,18 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
         '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
     final updatedData = {
       'title': _titleController.text,
+      'code': _codeController.text.toUpperCase(),
       'location': _locationController.text,
       'description': description,
       'date': DateFormat('yyyy-MM-dd').format(_selectedDate),
       'time': timeString,
       'status': _selectedStatus,
+      'enable_sponsorship': _enableSponsorship,
+      'enable_donation': _enableDonation,
+      'donation_target': double.tryParse(_donationTargetController.text),
+      'donation_description': _donationDescriptionController.text,
+      'booking_id_format': _bookingIdFormatController.text,
+      'ticket_id_format': _ticketIdFormatController.text,
     };
 
     context.read<AdminEventsBloc>().add(
@@ -253,14 +290,40 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
               const SizedBox(height: 20),
 
               // Judul Event
-              _buildInputGroup(
-                label: 'Judul Event',
-                child: TextFormField(
-                  controller: _titleController,
-                  decoration: _inputDecoration('Masukkan judul event'),
-                  validator: (value) =>
-                      value?.isEmpty ?? true ? 'Judul harus diisi' : null,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: _buildInputGroup(
+                      label: 'Judul Event',
+                      child: TextFormField(
+                        controller: _titleController,
+                        decoration: _inputDecoration('Masukkan judul event'),
+                        validator: (value) =>
+                            value?.isEmpty ?? true ? 'Judul harus diisi' : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 1,
+                    child: _buildInputGroup(
+                      label: 'Kode',
+                      child: TextFormField(
+                        controller: _codeController,
+                        decoration: _inputDecoration('REUNI26'),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                        validator: (value) =>
+                            value?.isEmpty ?? true ? 'Wajib' : null,
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               // Tanggal & Waktu
@@ -440,6 +503,105 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
                   },
                 ),
               ),
+
+              const Divider(height: 32),
+
+              // Configuration Section
+              Text(
+                'Konfigurasi System',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildInputGroup(
+                      label: 'Format ID Pesanan',
+                      child: TextFormField(
+                        controller: _bookingIdFormatController,
+                        decoration: _inputDecoration('{CODE}-{YEAR}-{SEQ}'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildInputGroup(
+                      label: 'Format ID Tiket',
+                      child: TextFormField(
+                        controller: _ticketIdFormatController,
+                        decoration: _inputDecoration('TIX-{CODE}-{SEQ}'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const Divider(height: 32),
+
+              // Donation & Sponsorship Section
+              Text(
+                'Donasi & Sponsorship',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 8),
+              SwitchListTile(
+                title: Text(
+                  'Aktifkan Fitur Sponsorship',
+                  style: GoogleFonts.inter(fontSize: 14),
+                ),
+                subtitle: Text(
+                  'Menampilkan paket sponsorship di halaman pendaftaran',
+                  style: GoogleFonts.inter(fontSize: 12),
+                ),
+                value: _enableSponsorship,
+                onChanged: (val) => setState(() => _enableSponsorship = val),
+                activeThumbColor: AppColors.primary,
+                contentPadding: EdgeInsets.zero,
+              ),
+              SwitchListTile(
+                title: Text(
+                  'Aktifkan Fitur Donasi',
+                  style: GoogleFonts.inter(fontSize: 14),
+                ),
+                subtitle: Text(
+                  'Memungkinkan alumni memberikan donasi sukarela untuk event',
+                  style: GoogleFonts.inter(fontSize: 12),
+                ),
+                value: _enableDonation,
+                onChanged: (val) => setState(() => _enableDonation = val),
+                activeThumbColor: AppColors.primary,
+                contentPadding: EdgeInsets.zero,
+              ),
+
+              if (_enableDonation) ...[
+                const SizedBox(height: 12),
+                _buildInputGroup(
+                  label: 'Target Donasi (Opsional)',
+                  child: TextFormField(
+                    controller: _donationTargetController,
+                    keyboardType: TextInputType.number,
+                    decoration: _inputDecoration('Contoh: 50000000'),
+                  ),
+                ),
+                _buildInputGroup(
+                  label: 'Deskripsi Donasi',
+                  child: TextFormField(
+                    controller: _donationDescriptionController,
+                    maxLines: 2,
+                    decoration: _inputDecoration(
+                      'Jelaskan tujuan penggalangan donasi...',
+                    ),
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 24),
 
