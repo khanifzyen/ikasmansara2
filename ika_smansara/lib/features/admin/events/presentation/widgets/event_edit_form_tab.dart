@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,11 @@ import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:cached_network_image/cached_network_image.dart';
 import '../bloc/admin_events_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../events/domain/entities/event.dart';
@@ -29,6 +35,8 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
   late String _selectedStatus;
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
   late QuillController _quillController;
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
@@ -86,6 +94,51 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+      );
+
+      if (pickedFile != null) {
+        final File compressedFile = await _compressImage(File(pickedFile.path));
+        setState(() {
+          _imageFile = compressedFile;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal mengambil gambar: $e')));
+      }
+    }
+  }
+
+  Future<File> _compressImage(File file) async {
+    final dir = await getTemporaryDirectory();
+    final targetPath = p.join(
+      dir.path,
+      'compressed_banner_${DateTime.now().millisecondsSinceEpoch}.jpg',
+    );
+
+    final result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: 1024,
+      minHeight: 1024,
+      quality: 85,
+    );
+
+    if (result == null) {
+      throw Exception('Gagal mengompres gambar');
+    }
+
+    return File(result.path);
+  }
+
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -131,7 +184,7 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
     };
 
     context.read<AdminEventsBloc>().add(
-      UpdateEvent(widget.event.id, updatedData),
+      UpdateEvent(widget.event.id, updatedData, bannerFile: _imageFile),
     );
   }
 
@@ -312,42 +365,58 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
                 ),
               ),
 
-              // Banner Upload (Placeholder)
+              // Banner Upload
               _buildInputGroup(
                 label: 'Banner Event',
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(12),
-                    color: AppColors.background,
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.image,
-                        size: 48,
-                        color: AppColors.textGrey,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Klik untuk upload banner',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: AppColors.textGrey,
-                        ),
-                      ),
-                      if (widget.event.banner != null) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'Current: ${widget.event.banner!.split('/').last}',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ],
+                child: InkWell(
+                  onTap: _pickImage,
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.border),
+                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.background,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: _imageFile != null
+                          ? Image.file(_imageFile!, fit: BoxFit.cover)
+                          : (widget.event.banner != null &&
+                                widget.event.banner!.isNotEmpty)
+                          ? CachedNetworkImage(
+                              imageUrl: widget.event.banner!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Center(
+                                    child: Icon(
+                                      Icons.error_outline,
+                                      color: AppColors.error,
+                                    ),
+                                  ),
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.image_outlined,
+                                  size: 48,
+                                  color: AppColors.textGrey,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Klik untuk upload banner',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: AppColors.textGrey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
                   ),
                 ),
               ),

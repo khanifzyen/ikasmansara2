@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../events/domain/entities/event.dart';
@@ -36,9 +38,10 @@ class DeleteEventAction extends AdminEventsEvent {
 class UpdateEvent extends AdminEventsEvent {
   final String eventId;
   final Map<String, dynamic> data;
-  const UpdateEvent(this.eventId, this.data);
+  final File? bannerFile;
+  const UpdateEvent(this.eventId, this.data, {this.bannerFile});
   @override
-  List<Object?> get props => [eventId, data];
+  List<Object?> get props => [eventId, data, bannerFile];
 }
 
 class LoadEventDetail extends AdminEventsEvent {
@@ -141,7 +144,14 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
   ) async {
     emit(AdminEventsLoading());
     try {
-      await _repository.updateEvent(event.eventId, event.data);
+      final Map<String, dynamic> body = Map.from(event.data);
+      if (event.bannerFile != null) {
+        body['banner'] = await http.MultipartFile.fromPath(
+          'banner',
+          event.bannerFile!.path,
+        );
+      }
+      await _repository.updateEvent(event.eventId, body);
       emit(const AdminEventsActionSuccess('Event berhasil diupdate'));
       add(LoadEventDetail(event.eventId));
     } catch (e) {
