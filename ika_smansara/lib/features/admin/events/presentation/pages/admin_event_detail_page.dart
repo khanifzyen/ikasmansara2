@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../events/domain/entities/event.dart';
 import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_stat_card.dart';
-import '../../data/datasources/admin_events_remote_data_source.dart';
-import '../../data/repositories/admin_events_repository_impl.dart';
+import '../bloc/admin_events_bloc.dart';
 import '../widgets/event_edit_form_tab.dart';
 import '../widgets/participants_placeholder_tab.dart';
 import '../widgets/finance_placeholder_tab.dart';
@@ -23,17 +23,12 @@ class AdminEventDetailPage extends StatefulWidget {
 
 class _AdminEventDetailPageState extends State<AdminEventDetailPage>
     with SingleTickerProviderStateMixin {
-  final _repository = AdminEventsRepositoryImpl(AdminEventsRemoteDataSource());
-  Event? _event;
-  bool _isLoading = true;
-  String? _error;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _loadEvent();
   }
 
   @override
@@ -42,69 +37,67 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
     super.dispose();
   }
 
-  Future<void> _loadEvent() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final event = await _repository.getEventById(widget.eventId);
-      setState(() {
-        _event = event;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width >= 768;
-
-    return AdminResponsiveScaffold(
-      title: _event?.title ?? 'Event Dashboard',
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
-        onPressed: () => context.pop(),
-      ),
-      actions: [
-        if (_event != null && !isDesktop)
-          IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.textGrey),
-            onPressed: _loadEvent,
+    return BlocProvider(
+      create: (context) =>
+          AdminEventsBloc()..add(LoadEventDetail(widget.eventId)),
+      child: AdminResponsiveScaffold(
+        title: 'Event Dashboard',
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+          onPressed: () => context.pop(),
+        ),
+        actions: [
+          BlocBuilder<AdminEventsBloc, AdminEventsState>(
+            builder: (context, state) {
+              return IconButton(
+                icon: const Icon(Icons.refresh, color: AppColors.textGrey),
+                onPressed: () => context.read<AdminEventsBloc>().add(
+                  LoadEventDetail(widget.eventId),
+                ),
+              );
+            },
           ),
-      ],
-      body: _buildBody(isDesktop),
+        ],
+        body: BlocBuilder<AdminEventsBloc, AdminEventsState>(
+          builder: (context, state) {
+            final isDesktop = MediaQuery.of(context).size.width >= 768;
+
+            if (state is AdminEventsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (state is AdminEventsError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: ${state.message}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => context.read<AdminEventsBloc>().add(
+                        LoadEventDetail(widget.eventId),
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (state is AdminEventLoaded) {
+              return _buildBody(isDesktop, state.event);
+            }
+
+            return const Center(child: Text('Event tidak ditemukan'));
+          },
+        ),
+      ),
     );
   }
 
-  Widget _buildBody(bool isDesktop) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Error: $_error'),
-            const SizedBox(height: 16),
-            ElevatedButton(onPressed: _loadEvent, child: const Text('Retry')),
-          ],
-        ),
-      );
-    }
-
-    if (_event == null) {
-      return const Center(child: Text('Event tidak ditemukan'));
-    }
-
+  Widget _buildBody(bool isDesktop, Event event) {
     return Column(
       children: [
         // Stats Cards
@@ -203,7 +196,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                EventEditFormTab(event: _event!),
+                EventEditFormTab(event: event),
                 const ParticipantsPlaceholderTab(),
                 const FinancePlaceholderTab(),
                 const TicketsPlaceholderTab(),

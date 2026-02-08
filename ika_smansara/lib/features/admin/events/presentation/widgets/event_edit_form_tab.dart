@@ -6,6 +6,8 @@ import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/admin_events_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../events/domain/entities/event.dart';
 
@@ -117,24 +119,19 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
     final String description = converter.convert();
     debugPrint('Saved description HTML: $description');
 
-    // TODO: Implement UpdateEventEvent in bloc
-    // ...
-    // final timeString = '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
-    // final updatedData = {
-    //   'title': _titleController.text,
-    //   'location': _locationController.text,
-    //   'description': description,
-    //   'date': DateFormat('yyyy-MM-dd').format(_selectedDate),
-    //   'time': timeString,
-    //   'status': _selectedStatus,
-    // };
-    // context.read<AdminEventsBloc>().add(UpdateEventEvent(widget.event.id, updatedData));
+    final timeString =
+        '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
+    final updatedData = {
+      'title': _titleController.text,
+      'location': _locationController.text,
+      'description': description,
+      'date': DateFormat('yyyy-MM-dd').format(_selectedDate),
+      'time': timeString,
+      'status': _selectedStatus,
+    };
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Event berhasil diupdate!'),
-        backgroundColor: AppColors.success,
-      ),
+    context.read<AdminEventsBloc>().add(
+      UpdateEvent(widget.event.id, updatedData),
     );
   }
 
@@ -161,239 +158,261 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
     if (confirmed == true && mounted) {
       // Navigate back before deleting
       Navigator.pop(context);
-      // TODO: Trigger delete event
+      context.read<AdminEventsBloc>().add(DeleteEventAction(widget.event.id));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Edit Detail Event',
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+    return BlocListener<AdminEventsBloc, AdminEventsState>(
+      listener: (context, state) {
+        if (state is AdminEventsActionSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.success,
             ),
-            const SizedBox(height: 20),
-
-            // Judul Event
-            _buildInputGroup(
-              label: 'Judul Event',
-              child: TextFormField(
-                controller: _titleController,
-                decoration: _inputDecoration('Masukkan judul event'),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Judul harus diisi' : null,
-              ),
+          );
+        } else if (state is AdminEventsError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
             ),
+          );
+        }
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Edit Detail Event',
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 20),
 
-            // Tanggal & Waktu
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInputGroup(
-                    label: 'Tanggal',
-                    child: InkWell(
-                      onTap: _selectDate,
-                      child: InputDecorator(
-                        decoration: _inputDecoration('Pilih tanggal'),
-                        child: Text(
-                          DateFormat('dd MMM yyyy', 'id').format(_selectedDate),
-                          style: GoogleFonts.inter(fontSize: 14),
+              // Judul Event
+              _buildInputGroup(
+                label: 'Judul Event',
+                child: TextFormField(
+                  controller: _titleController,
+                  decoration: _inputDecoration('Masukkan judul event'),
+                  validator: (value) =>
+                      value?.isEmpty ?? true ? 'Judul harus diisi' : null,
+                ),
+              ),
+
+              // Tanggal & Waktu
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildInputGroup(
+                      label: 'Tanggal',
+                      child: InkWell(
+                        onTap: _selectDate,
+                        child: InputDecorator(
+                          decoration: _inputDecoration('Pilih tanggal'),
+                          child: Text(
+                            DateFormat(
+                              'dd MMM yyyy',
+                              'id',
+                            ).format(_selectedDate),
+                            style: GoogleFonts.inter(fontSize: 14),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildInputGroup(
-                    label: 'Waktu',
-                    child: InkWell(
-                      onTap: _selectTime,
-                      child: InputDecorator(
-                        decoration: _inputDecoration('Pilih waktu'),
-                        child: Text(
-                          _selectedTime.format(context),
-                          style: GoogleFonts.inter(fontSize: 14),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildInputGroup(
+                      label: 'Waktu',
+                      child: InkWell(
+                        onTap: _selectTime,
+                        child: InputDecorator(
+                          decoration: _inputDecoration('Pilih waktu'),
+                          child: Text(
+                            _selectedTime.format(context),
+                            style: GoogleFonts.inter(fontSize: 14),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-
-            // Lokasi
-            _buildInputGroup(
-              label: 'Lokasi',
-              child: TextFormField(
-                controller: _locationController,
-                decoration: _inputDecoration('Masukkan lokasi event'),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Lokasi harus diisi' : null,
+                ],
               ),
-            ),
 
-            // Deskripsi
-            _buildInputGroup(
-              label: 'Deskripsi',
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white,
+              // Lokasi
+              _buildInputGroup(
+                label: 'Lokasi',
+                child: TextFormField(
+                  controller: _locationController,
+                  decoration: _inputDecoration('Masukkan lokasi event'),
+                  validator: (value) =>
+                      value?.isEmpty ?? true ? 'Lokasi harus diisi' : null,
                 ),
-                child: Column(
-                  children: [
-                    QuillSimpleToolbar(
-                      controller: _quillController,
-                      config: const QuillSimpleToolbarConfig(
-                        showFontFamily: false,
-                        showFontSize: false,
-                        showSubscript: false,
-                        showSuperscript: false,
-                        showSmallButton: false,
-                        showInlineCode: false,
-                        showLink: true,
-                        showCodeBlock: false,
-                        showDirection: false,
-                        showAlignmentButtons: true,
-                        multiRowsDisplay: true,
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    Container(
-                      height: 300,
-                      padding: const EdgeInsets.all(12),
-                      child: QuillEditor.basic(
+              ),
+
+              // Deskripsi
+              _buildInputGroup(
+                label: 'Deskripsi',
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: [
+                      QuillSimpleToolbar(
                         controller: _quillController,
-                        focusNode: _focusNode,
-                        scrollController: _scrollController,
-                        config: QuillEditorConfig(
-                          autoFocus: false,
-                          expands: false,
-                          padding: EdgeInsets.zero,
-                          placeholder: 'Tulis deskripsi event...',
-                          embedBuilders: kIsWeb
-                              ? FlutterQuillEmbeds.editorWebBuilders()
-                              : FlutterQuillEmbeds.editorBuilders(),
+                        config: const QuillSimpleToolbarConfig(
+                          showFontFamily: false,
+                          showFontSize: false,
+                          showSubscript: false,
+                          showSuperscript: false,
+                          showSmallButton: false,
+                          showInlineCode: false,
+                          showLink: true,
+                          showCodeBlock: false,
+                          showDirection: false,
+                          showAlignmentButtons: true,
+                          multiRowsDisplay: true,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Banner Upload (Placeholder)
-            _buildInputGroup(
-              label: 'Banner Event',
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(12),
-                  color: AppColors.background,
-                ),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.image,
-                      size: 48,
-                      color: AppColors.textGrey,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Klik untuk upload banner',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: AppColors.textGrey,
-                      ),
-                    ),
-                    if (widget.event.banner != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        'Current: ${widget.event.banner!.split('/').last}',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppColors.primary,
+                      const Divider(height: 1),
+                      Container(
+                        height: 300,
+                        padding: const EdgeInsets.all(12),
+                        child: QuillEditor.basic(
+                          controller: _quillController,
+                          focusNode: _focusNode,
+                          scrollController: _scrollController,
+                          config: QuillEditorConfig(
+                            autoFocus: false,
+                            expands: false,
+                            padding: EdgeInsets.zero,
+                            placeholder: 'Tulis deskripsi event...',
+                            embedBuilders: kIsWeb
+                                ? FlutterQuillEmbeds.editorWebBuilders()
+                                : FlutterQuillEmbeds.editorBuilders(),
+                          ),
                         ),
                       ),
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
 
-            // Status Event
-            _buildInputGroup(
-              label: 'Status Event',
-              child: DropdownButtonFormField<String>(
-                initialValue: _selectedStatus,
-                decoration: _inputDecoration('Pilih status'),
-                items: const [
-                  DropdownMenuItem(value: 'draft', child: Text('Draft')),
-                  DropdownMenuItem(value: 'active', child: Text('Active')),
-                  DropdownMenuItem(
-                    value: 'completed',
-                    child: Text('Completed'),
+              // Banner Upload (Placeholder)
+              _buildInputGroup(
+                label: 'Banner Event',
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.background,
                   ),
-                ],
-                onChanged: (value) {
-                  if (value != null) setState(() => _selectedStatus = value);
-                },
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.image,
+                        size: 48,
+                        color: AppColors.textGrey,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Klik untuk upload banner',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: AppColors.textGrey,
+                        ),
+                      ),
+                      if (widget.event.banner != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Current: ${widget.event.banner!.split('/').last}',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 24),
+              // Status Event
+              _buildInputGroup(
+                label: 'Status Event',
+                child: DropdownButtonFormField<String>(
+                  initialValue: _selectedStatus,
+                  decoration: _inputDecoration('Pilih status'),
+                  items: const [
+                    DropdownMenuItem(value: 'draft', child: Text('Draft')),
+                    DropdownMenuItem(value: 'active', child: Text('Active')),
+                    DropdownMenuItem(
+                      value: 'completed',
+                      child: Text('Completed'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) setState(() => _selectedStatus = value);
+                  },
+                ),
+              ),
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _saveChanges,
-                    icon: const Icon(Icons.save),
-                    label: const Text('Simpan Perubahan'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+              const SizedBox(height: 24),
+
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _saveChanges,
+                      icon: const Icon(Icons.save),
+                      label: const Text('Simpan Perubahan'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  OutlinedButton.icon(
+                    onPressed: _deleteEvent,
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Hapus'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 20,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                OutlinedButton.icon(
-                  onPressed: _deleteEvent,
-                  icon: const Icon(Icons.delete),
-                  label: const Text('Hapus'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                    side: const BorderSide(color: AppColors.error),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 20,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

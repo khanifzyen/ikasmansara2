@@ -33,6 +33,28 @@ class DeleteEventAction extends AdminEventsEvent {
   List<Object?> get props => [eventId];
 }
 
+class UpdateEvent extends AdminEventsEvent {
+  final String eventId;
+  final Map<String, dynamic> data;
+  const UpdateEvent(this.eventId, this.data);
+  @override
+  List<Object?> get props => [eventId, data];
+}
+
+class LoadEventDetail extends AdminEventsEvent {
+  final String eventId;
+  const LoadEventDetail(this.eventId);
+  @override
+  List<Object?> get props => [eventId];
+}
+
+class AdminEventLoaded extends AdminEventsState {
+  final Event event;
+  const AdminEventLoaded(this.event);
+  @override
+  List<Object?> get props => [event];
+}
+
 // States
 abstract class AdminEventsState extends Equatable {
   const AdminEventsState();
@@ -76,9 +98,14 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
   AdminEventsBloc()
     : _repository = AdminEventsRepositoryImpl(AdminEventsRemoteDataSource()),
       super(AdminEventsInitial()) {
+    on<AdminEventsEvent>(
+      (event, emit) {},
+    ); // Placeholder for base if needed, but not common
     on<LoadAllEvents>(_onLoadAllEvents);
     on<UpdateEventStatus>(_onUpdateEventStatus);
     on<DeleteEventAction>(_onDeleteEvent);
+    on<UpdateEvent>(_onUpdateEvent);
+    on<LoadEventDetail>(_onLoadEventDetail);
   }
 
   Future<void> _onLoadAllEvents(
@@ -95,13 +122,39 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
     }
   }
 
+  Future<void> _onLoadEventDetail(
+    LoadEventDetail event,
+    Emitter<AdminEventsState> emit,
+  ) async {
+    emit(AdminEventsLoading());
+    try {
+      final eventDetail = await _repository.getEventById(event.eventId);
+      emit(AdminEventLoaded(eventDetail));
+    } catch (e) {
+      emit(AdminEventsError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateEvent(
+    UpdateEvent event,
+    Emitter<AdminEventsState> emit,
+  ) async {
+    try {
+      await _repository.updateEvent(event.eventId, event.data);
+      emit(const AdminEventsActionSuccess('Event berhasil diupdate'));
+      add(LoadAllEvents(filter: _currentFilter));
+    } catch (e) {
+      emit(AdminEventsError(e.toString()));
+    }
+  }
+
   Future<void> _onUpdateEventStatus(
     UpdateEventStatus event,
     Emitter<AdminEventsState> emit,
   ) async {
     try {
       await _repository.updateEventStatus(event.eventId, event.status);
-      emit(AdminEventsActionSuccess('Status event berhasil diupdate'));
+      emit(const AdminEventsActionSuccess('Status event berhasil diupdate'));
       add(LoadAllEvents(filter: _currentFilter));
     } catch (e) {
       emit(AdminEventsError(e.toString()));
