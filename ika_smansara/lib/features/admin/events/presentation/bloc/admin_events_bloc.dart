@@ -139,10 +139,11 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
     UpdateEvent event,
     Emitter<AdminEventsState> emit,
   ) async {
+    emit(AdminEventsLoading());
     try {
       await _repository.updateEvent(event.eventId, event.data);
       emit(const AdminEventsActionSuccess('Event berhasil diupdate'));
-      add(LoadAllEvents(filter: _currentFilter));
+      add(LoadEventDetail(event.eventId));
     } catch (e) {
       emit(AdminEventsError(e.toString()));
     }
@@ -152,9 +153,14 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
     UpdateEventStatus event,
     Emitter<AdminEventsState> emit,
   ) async {
+    emit(AdminEventsLoading());
     try {
       await _repository.updateEventStatus(event.eventId, event.status);
       emit(const AdminEventsActionSuccess('Status event berhasil diupdate'));
+      // If we are in detail view, we might want to refresh detail too,
+      // but status change is usually from list view.
+      // If it's from detail view, LoadEventDetail is better.
+      // For now, let's refresh both to be safe or just LoadAll if list.
       add(LoadAllEvents(filter: _currentFilter));
     } catch (e) {
       emit(AdminEventsError(e.toString()));
@@ -165,6 +171,7 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
     DeleteEventAction event,
     Emitter<AdminEventsState> emit,
   ) async {
+    emit(AdminEventsLoading());
     try {
       await _repository.deleteEvent(event.eventId);
       emit(const AdminEventsActionSuccess('Event berhasil dihapus'));

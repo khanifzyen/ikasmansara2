@@ -64,7 +64,8 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
           builder: (context, state) {
             final isDesktop = MediaQuery.of(context).size.width >= 768;
 
-            if (state is AdminEventsLoading) {
+            if (state is AdminEventsLoading ||
+                state is AdminEventsActionSuccess) {
               return const Center(child: CircularProgressIndicator());
             }
 
