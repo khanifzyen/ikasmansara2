@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart';
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../events/domain/entities/event.dart';
 
@@ -276,11 +278,14 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
                         controller: _quillController,
                         focusNode: _focusNode,
                         scrollController: _scrollController,
-                        config: const QuillEditorConfig(
+                        config: QuillEditorConfig(
                           autoFocus: false,
                           expands: false,
                           padding: EdgeInsets.zero,
                           placeholder: 'Tulis deskripsi event...',
+                          embedBuilders: kIsWeb
+                              ? FlutterQuillEmbeds.editorWebBuilders()
+                              : FlutterQuillEmbeds.editorBuilders(),
                         ),
                       ),
                     ),
