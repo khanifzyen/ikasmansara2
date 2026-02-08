@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../widgets/admin_drawer.dart';
+import '../widgets/admin_responsive_scaffold.dart';
 import '../widgets/admin_stat_card.dart';
 import '../widgets/admin_list_card.dart';
 import '../../bloc/admin_stats_bloc.dart';
@@ -25,35 +25,16 @@ class _AdminDashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.textDark),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+    return AdminResponsiveScaffold(
+      title: 'Admin Dashboard',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh, color: AppColors.textGrey),
+          onPressed: () {
+            context.read<AdminStatsBloc>().add(const LoadAdminStats());
+          },
         ),
-        title: Text(
-          'Admin Dashboard',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.textGrey),
-            onPressed: () {
-              context.read<AdminStatsBloc>().add(const LoadAdminStats());
-            },
-          ),
-        ],
-      ),
-      drawer: const AdminDrawer(),
+      ],
       body: BlocBuilder<AdminStatsBloc, AdminStatsState>(
         builder: (context, state) {
           if (state is AdminStatsLoading) {
@@ -82,257 +63,291 @@ class _AdminDashboardView extends StatelessWidget {
 
           final stats = state is AdminStatsLoaded ? state : null;
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              context.read<AdminStatsBloc>().add(const LoadAdminStats());
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Welcome Header
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Selamat Datang! 👋',
-                                style: GoogleFonts.inter(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth > 900;
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<AdminStatsBloc>().add(const LoadAdminStats());
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(
+                    isDesktop ? 24 : 16,
+                    isDesktop ? 0 : 16,
+                    isDesktop ? 24 : 16,
+                    isDesktop ? 16 : 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Welcome Header
+                      Container(
+                        padding: EdgeInsets.all(isDesktop ? 16 : 20),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Selamat Datang! 👋',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Admin Panel IKA SMANSARA',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  '🎓',
+                                  style: TextStyle(fontSize: 28),
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Admin Panel IKA SMANSARA',
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  color: Colors.white.withValues(alpha: 0.9),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: isDesktop ? 20 : 16),
+
+                      // Stats Grid
+                      Text(
+                        'Statistik',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      LayoutBuilder(
+                        builder: (context, gridConstraints) {
+                          final spacing = isDesktop ? 16.0 : 12.0;
+                          final crossAxisCount = isDesktop ? 2 : 2;
+                          final totalSpacing = spacing * (crossAxisCount - 1);
+                          final cardWidth =
+                              (gridConstraints.maxWidth - totalSpacing) /
+                              crossAxisCount;
+
+                          return Wrap(
+                            spacing: spacing,
+                            runSpacing: spacing,
+                            children: [
+                              SizedBox(
+                                width: cardWidth,
+                                child: AdminStatCard(
+                                  icon: '👥',
+                                  value: stats?.totalUsers.toString() ?? '0',
+                                  label: 'Total Users',
+                                  onTap: () => context.push('/admin/users'),
+                                ),
+                              ),
+                              SizedBox(
+                                width: cardWidth,
+                                child: AdminStatCard(
+                                  icon: '📅',
+                                  value: stats?.totalEvents.toString() ?? '0',
+                                  label: 'Events',
+                                  onTap: () => context.push('/admin/events'),
+                                ),
+                              ),
+                              SizedBox(
+                                width: cardWidth,
+                                child: AdminStatCard(
+                                  icon: '💰',
+                                  value:
+                                      stats?.totalDonations.toString() ?? '0',
+                                  label: 'Donasi',
+                                  onTap: () => context.push('/admin/donations'),
+                                ),
+                              ),
+                              SizedBox(
+                                width: cardWidth,
+                                child: AdminStatCard(
+                                  icon: '📰',
+                                  value: stats?.totalNews.toString() ?? '0',
+                                  label: 'Berita',
+                                  onTap: () => context.push('/admin/news'),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: isDesktop ? 20 : 24),
+
+                      // Pending Items Section
+                      Text(
+                        'Perlu Perhatian',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      if ((stats?.pendingUsers ?? 0) > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: AdminListCard(
+                            avatarEmoji: '👤',
+                            avatarColor: AppColors.warningLight,
+                            title: 'User Pending Verifikasi',
+                            subtitle:
+                                '${stats?.pendingUsers} user menunggu verifikasi',
+                            badge: const AdminBadge(
+                              text: 'Pending',
+                              type: AdminBadgeType.warning,
+                            ),
+                            onTap: () => context.push('/admin/users'),
+                          ),
+                        ),
+
+                      if ((stats?.pendingLokers ?? 0) > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: AdminListCard(
+                            avatarEmoji: '💼',
+                            avatarColor: AppColors.infoLight,
+                            title: 'Loker Pending Approval',
+                            subtitle:
+                                '${stats?.pendingLokers} lowongan menunggu approval',
+                            badge: const AdminBadge(
+                              text: 'Review',
+                              type: AdminBadgeType.info,
+                            ),
+                            onTap: () => context.push('/admin/loker'),
+                          ),
+                        ),
+
+                      if ((stats?.pendingMarkets ?? 0) > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: AdminListCard(
+                            avatarEmoji: '🛒',
+                            avatarColor: AppColors.infoLight,
+                            title: 'Market Pending Approval',
+                            subtitle:
+                                '${stats?.pendingMarkets} iklan menunggu approval',
+                            badge: const AdminBadge(
+                              text: 'Review',
+                              type: AdminBadgeType.info,
+                            ),
+                            onTap: () => context.push('/admin/market'),
+                          ),
+                        ),
+
+                      if ((stats?.pendingMemories ?? 0) > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: AdminListCard(
+                            avatarEmoji: '📷',
+                            avatarColor: AppColors.primaryLight,
+                            title: 'Memory Pending Approval',
+                            subtitle:
+                                '${stats?.pendingMemories} foto menunggu approval',
+                            badge: const AdminBadge(
+                              text: 'Review',
+                              type: AdminBadgeType.info,
+                            ),
+                            onTap: () => context.push('/admin/memory'),
+                          ),
+                        ),
+
+                      if ((stats?.pendingUsers ?? 0) == 0 &&
+                          (stats?.pendingLokers ?? 0) == 0 &&
+                          (stats?.pendingMarkets ?? 0) == 0 &&
+                          (stats?.pendingMemories ?? 0) == 0)
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.successLight,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const Text('✅', style: TextStyle(fontSize: 24)),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Tidak ada item yang perlu perhatian',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: AppColors.success,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: const Center(
-                            child: Text('🎓', style: TextStyle(fontSize: 28)),
-                          ),
+
+                      SizedBox(height: isDesktop ? 20 : 24),
+
+                      // Quick Actions
+                      Text(
+                        'Aksi Cepat',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textDark,
                         ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Stats Grid
-                  Text(
-                    'Statistik',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1.3,
-                    children: [
-                      AdminStatCard(
-                        icon: '👥',
-                        value: stats?.totalUsers.toString() ?? '0',
-                        label: 'Total Users',
-                        onTap: () => context.push('/admin/users'),
                       ),
-                      AdminStatCard(
-                        icon: '📅',
-                        value: stats?.totalEvents.toString() ?? '0',
-                        label: 'Events',
-                        onTap: () => context.push('/admin/events'),
-                      ),
-                      AdminStatCard(
-                        icon: '💰',
-                        value: stats?.totalDonations.toString() ?? '0',
-                        label: 'Donasi',
-                        onTap: () => context.push('/admin/donations'),
-                      ),
-                      AdminStatCard(
-                        icon: '📰',
-                        value: stats?.totalNews.toString() ?? '0',
-                        label: 'Berita',
-                        onTap: () => context.push('/admin/news'),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Pending Items Section
-                  Text(
-                    'Perlu Perhatian',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  if ((stats?.pendingUsers ?? 0) > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: AdminListCard(
-                        avatarEmoji: '👤',
-                        avatarColor: AppColors.warningLight,
-                        title: 'User Pending Verifikasi',
-                        subtitle:
-                            '${stats?.pendingUsers} user menunggu verifikasi',
-                        badge: const AdminBadge(
-                          text: 'Pending',
-                          type: AdminBadgeType.warning,
-                        ),
-                        onTap: () => context.push('/admin/users'),
-                      ),
-                    ),
-
-                  if ((stats?.pendingLokers ?? 0) > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: AdminListCard(
-                        avatarEmoji: '💼',
-                        avatarColor: AppColors.infoLight,
-                        title: 'Loker Pending Approval',
-                        subtitle:
-                            '${stats?.pendingLokers} lowongan menunggu approval',
-                        badge: const AdminBadge(
-                          text: 'Review',
-                          type: AdminBadgeType.info,
-                        ),
-                        onTap: () => context.push('/admin/loker'),
-                      ),
-                    ),
-
-                  if ((stats?.pendingMarkets ?? 0) > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: AdminListCard(
-                        avatarEmoji: '🛒',
-                        avatarColor: AppColors.infoLight,
-                        title: 'Market Pending Approval',
-                        subtitle:
-                            '${stats?.pendingMarkets} iklan menunggu approval',
-                        badge: const AdminBadge(
-                          text: 'Review',
-                          type: AdminBadgeType.info,
-                        ),
-                        onTap: () => context.push('/admin/market'),
-                      ),
-                    ),
-
-                  if ((stats?.pendingMemories ?? 0) > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: AdminListCard(
-                        avatarEmoji: '📷',
-                        avatarColor: AppColors.primaryLight,
-                        title: 'Memory Pending Approval',
-                        subtitle:
-                            '${stats?.pendingMemories} foto menunggu approval',
-                        badge: const AdminBadge(
-                          text: 'Review',
-                          type: AdminBadgeType.info,
-                        ),
-                        onTap: () => context.push('/admin/memory'),
-                      ),
-                    ),
-
-                  if ((stats?.pendingUsers ?? 0) == 0 &&
-                      (stats?.pendingLokers ?? 0) == 0 &&
-                      (stats?.pendingMarkets ?? 0) == 0 &&
-                      (stats?.pendingMemories ?? 0) == 0)
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppColors.successLight,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
-                          const Text('✅', style: TextStyle(fontSize: 24)),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Tidak ada item yang perlu perhatian',
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                color: AppColors.success,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                          _QuickActionChip(
+                            icon: '➕',
+                            label: 'Tambah Event',
+                            onTap: () => context.push('/admin/events/create'),
+                          ),
+                          _QuickActionChip(
+                            icon: '📝',
+                            label: 'Tulis Berita',
+                            onTap: () => context.push('/admin/news/create'),
+                          ),
+                          _QuickActionChip(
+                            icon: '📷',
+                            label: 'Scan QR',
+                            onTap: () => context.push('/ticket-scanner'),
                           ),
                         ],
                       ),
-                    ),
 
-                  const SizedBox(height: 24),
-
-                  // Quick Actions
-                  Text(
-                    'Aksi Cepat',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _QuickActionChip(
-                        icon: '➕',
-                        label: 'Tambah Event',
-                        onTap: () => context.push('/admin/events/create'),
-                      ),
-                      _QuickActionChip(
-                        icon: '📝',
-                        label: 'Tulis Berita',
-                        onTap: () => context.push('/admin/news/create'),
-                      ),
-                      _QuickActionChip(
-                        icon: '📷',
-                        label: 'Scan QR',
-                        onTap: () => context.push('/ticket-scanner'),
-                      ),
+                      const SizedBox(height: 32),
                     ],
                   ),
-
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

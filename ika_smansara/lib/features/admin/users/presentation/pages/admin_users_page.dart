@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_constants.dart';
-import '../../../core/presentation/widgets/admin_drawer.dart';
+import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_list_card.dart';
 import '../bloc/admin_users_bloc.dart';
 
@@ -29,12 +29,33 @@ class _AdminUsersView extends StatefulWidget {
 
 class _AdminUsersViewState extends State<_AdminUsersView> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _selectedFilter = 'all';
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<AdminUsersBloc>().add(const LoadMoreUsers());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.8); // Trigger at 80%
   }
 
   void _onFilterChanged(String filter) {
@@ -69,33 +90,14 @@ class _AdminUsersViewState extends State<_AdminUsersView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.textDark),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+    return AdminResponsiveScaffold(
+      title: 'Kelola Users',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh, color: AppColors.textGrey),
+          onPressed: () => _onFilterChanged(_selectedFilter),
         ),
-        title: Text(
-          'Kelola Users',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.textGrey),
-            onPressed: () => _onFilterChanged(_selectedFilter),
-          ),
-        ],
-      ),
-      drawer: const AdminDrawer(),
+      ],
       body: BlocConsumer<AdminUsersBloc, AdminUsersState>(
         listener: (context, state) {
           if (state is AdminUsersActionSuccess) {
@@ -229,9 +231,22 @@ class _AdminUsersViewState extends State<_AdminUsersView> {
       return RefreshIndicator(
         onRefresh: () async => _onFilterChanged(_selectedFilter),
         child: ListView.builder(
+          controller: _scrollController,
           padding: const EdgeInsets.all(16),
-          itemCount: state.users.length,
+          itemCount: state.users.length + (state.hasMore ? 1 : 0),
           itemBuilder: (context, index) {
+            if (index >= state.users.length) {
+              // Loading indicator at bottom
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: state.isLoadingMore
+                      ? const CircularProgressIndicator()
+                      : const SizedBox.shrink(),
+                ),
+              );
+            }
+
             final user = state.users[index];
             final avatarUrl = user.avatar != null && user.avatar!.isNotEmpty
                 ? '${AppConstants.pocketBaseUrl}/api/files/users/${user.id}/${user.avatar}'

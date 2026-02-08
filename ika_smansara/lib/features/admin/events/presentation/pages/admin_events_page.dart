@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../core/presentation/widgets/admin_drawer.dart';
+
+import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_list_card.dart';
 import '../bloc/admin_events_bloc.dart';
 
@@ -58,33 +59,14 @@ class _AdminEventsViewState extends State<_AdminEventsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.textDark),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+    return AdminResponsiveScaffold(
+      title: 'Kelola Events',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh, color: AppColors.textGrey),
+          onPressed: () => _onFilterChanged(_selectedFilter),
         ),
-        title: Text(
-          'Kelola Events',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.textGrey),
-            onPressed: () => _onFilterChanged(_selectedFilter),
-          ),
-        ],
-      ),
-      drawer: const AdminDrawer(),
+      ],
       body: BlocConsumer<AdminEventsBloc, AdminEventsState>(
         listener: (context, state) {
           if (state is AdminEventsActionSuccess) {

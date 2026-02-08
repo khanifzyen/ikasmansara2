@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../widgets/admin_drawer.dart';
+import '../widgets/admin_responsive_scaffold.dart';
 
 /// Placeholder page for admin submodules not yet implemented
 class AdminPlaceholderPage extends StatelessWidget {
@@ -18,27 +18,8 @@ class AdminPlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.textDark),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        title: Text(
-          title,
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-      ),
-      drawer: const AdminDrawer(),
+    return AdminResponsiveScaffold(
+      title: title,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),

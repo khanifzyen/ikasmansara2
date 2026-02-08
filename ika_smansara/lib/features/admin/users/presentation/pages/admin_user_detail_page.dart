@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../auth/domain/entities/user_entity.dart';
+import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_list_card.dart';
 import '../../data/datasources/admin_users_remote_data_source.dart';
 import '../../data/repositories/admin_users_repository_impl.dart';
@@ -130,23 +131,11 @@ class _AdminUserDetailPageState extends State<AdminUserDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          'Detail User',
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
+    return AdminResponsiveScaffold(
+      title: 'Detail User',
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+        onPressed: () => context.pop(),
       ),
       body: _buildBody(),
     );
