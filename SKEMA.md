@@ -189,7 +189,9 @@ Satu record = satu pesanan (bisa berisi banyak tiket).
 | `event` | relation | ✅ | → events |
 | `user` | relation | ✅ | → users |
 | `metadata` | json | ✅ | Snapshot item tiket (array of `{ticket_id, quantity, options}`) |
-| `total_price` | number | ✅ | Total harga (tiket + opsi) |
+| `subtotal` | number | ✅ | Total harga murni (tiket + opsi) |
+| `service_fee` | number | ✅ | Biaya layanan aplikasi |
+| `total_price` | number | ✅ | Total biaya (subtotal + service_fee) |
 | `payment_status` | select | ✅ | `pending`, `paid`, `expired`, `refunded` |
 | `payment_method` | text | ❌ | Metode pembayaran |
 | `payment_date` | date | ❌ | Tanggal bayar |

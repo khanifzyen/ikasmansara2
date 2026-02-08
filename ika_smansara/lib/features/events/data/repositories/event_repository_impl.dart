@@ -63,14 +63,20 @@ class EventRepositoryImpl implements EventRepository {
   Future<EventBooking> createBooking({
     required String eventId,
     required List<Map<String, dynamic>> metadata,
+    required int subtotal,
+    required int serviceFee,
     required int totalPrice,
     required String paymentMethod,
+    String? registrationChannel,
   }) async {
     return await _remoteDataSource.createBooking(
       eventId: eventId,
       metadata: metadata,
+      subtotal: subtotal,
+      serviceFee: serviceFee,
       totalPrice: totalPrice,
       paymentMethod: paymentMethod,
+      registrationChannel: registrationChannel,
     );
   }
 

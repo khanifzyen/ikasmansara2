@@ -44,6 +44,21 @@ class UpdateEvent extends AdminEventsEvent {
   List<Object?> get props => [eventId, data, bannerFile];
 }
 
+class CreateEvent extends AdminEventsEvent {
+  final Map<String, dynamic> eventData;
+  final File? bannerFile;
+  final List<Map<String, dynamic>> tickets;
+
+  const CreateEvent({
+    required this.eventData,
+    this.bannerFile,
+    required this.tickets,
+  });
+
+  @override
+  List<Object?> get props => [eventData, bannerFile, tickets];
+}
+
 class LoadEventDetail extends AdminEventsEvent {
   final String eventId;
   const LoadEventDetail(this.eventId);
@@ -108,7 +123,37 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
     on<UpdateEventStatus>(_onUpdateEventStatus);
     on<DeleteEventAction>(_onDeleteEvent);
     on<UpdateEvent>(_onUpdateEvent);
+    on<CreateEvent>(_onCreateEvent);
     on<LoadEventDetail>(_onLoadEventDetail);
+  }
+
+  Future<void> _onCreateEvent(
+    CreateEvent event,
+    Emitter<AdminEventsState> emit,
+  ) async {
+    emit(AdminEventsLoading());
+    try {
+      final Map<String, dynamic> eventBody = Map.from(event.eventData);
+      if (event.bannerFile != null) {
+        eventBody['banner'] = await http.MultipartFile.fromPath(
+          'banner',
+          event.bannerFile!.path,
+        );
+      }
+
+      final createdEvent = await _repository.createEvent(eventBody);
+
+      for (final ticket in event.tickets) {
+        final ticketBody = Map<String, dynamic>.from(ticket);
+        ticketBody['event'] = createdEvent.id;
+        await _repository.createEventTicket(ticketBody);
+      }
+
+      emit(const AdminEventsActionSuccess('Event berhasil dibuat'));
+      add(LoadAllEvents(filter: _currentFilter));
+    } catch (e) {
+      emit(AdminEventsError(e.toString()));
+    }
   }
 
   Future<void> _onLoadAllEvents(

@@ -12,11 +12,14 @@ class EventBookingModel extends EventBooking {
     required super.bookingId,
     required super.created,
     required super.metadata,
+    required super.subtotal,
+    required super.serviceFee,
     required super.totalPrice,
     required super.paymentStatus,
     super.snapToken,
     super.snapRedirectUrl,
     super.event,
+    super.registrationChannel,
   });
 
   factory EventBookingModel.fromRecord(RecordModel record) {
@@ -29,6 +32,8 @@ class EventBookingModel extends EventBooking {
       bookingId: record.getStringValue('booking_id'),
       created: DateTime.parse(record.get<String>('created')),
       metadata: record.data['metadata'] is List ? record.data['metadata'] : [],
+      subtotal: record.getIntValue('subtotal'),
+      serviceFee: record.getIntValue('service_fee'),
       totalPrice: record.getIntValue('total_price'),
       paymentStatus: record.getStringValue('payment_status'),
       snapToken: record.getStringValue('snap_token').isNotEmpty
@@ -44,6 +49,10 @@ class EventBookingModel extends EventBooking {
         }
         return null;
       }(),
+      registrationChannel:
+          record.getStringValue('registration_channel').isNotEmpty
+          ? record.getStringValue('registration_channel')
+          : null,
     );
   }
 
@@ -52,8 +61,11 @@ class EventBookingModel extends EventBooking {
       'event': eventId,
       'user': userId,
       'metadata': metadata,
+      'subtotal': subtotal,
+      'service_fee': serviceFee,
       'total_price': totalPrice,
       'payment_status': paymentStatus,
+      'registration_channel': registrationChannel,
     };
   }
 }

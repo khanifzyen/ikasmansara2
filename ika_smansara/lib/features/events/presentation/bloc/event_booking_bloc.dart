@@ -9,24 +9,38 @@ abstract class EventBookingEvent extends Equatable {
   const EventBookingEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class CreateBooking extends EventBookingEvent {
   final String eventId;
   final List<Map<String, dynamic>> metadata;
+  final int subtotal;
+  final int serviceFee;
   final int totalPrice;
   final String paymentMethod;
+  final String? registrationChannel;
 
   const CreateBooking({
     required this.eventId,
     required this.metadata,
+    required this.subtotal,
+    required this.serviceFee,
     required this.totalPrice,
     required this.paymentMethod,
+    this.registrationChannel,
   });
 
   @override
-  List<Object> get props => [eventId, metadata, totalPrice, paymentMethod];
+  List<Object?> get props => [
+    eventId,
+    metadata,
+    subtotal,
+    serviceFee,
+    totalPrice,
+    paymentMethod,
+    registrationChannel,
+  ];
 }
 
 // States
@@ -76,8 +90,11 @@ class EventBookingBloc extends Bloc<EventBookingEvent, EventBookingState> {
       final booking = await createEventBooking(
         eventId: event.eventId,
         metadata: event.metadata,
+        subtotal: event.subtotal,
+        serviceFee: event.serviceFee,
         totalPrice: event.totalPrice,
         paymentMethod: event.paymentMethod,
+        registrationChannel: event.registrationChannel,
       );
       emit(EventBookingSuccess(booking));
     } catch (e) {

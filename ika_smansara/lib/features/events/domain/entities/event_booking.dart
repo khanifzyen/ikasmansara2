@@ -8,15 +8,17 @@ class EventBooking extends Equatable {
   final String eventId;
   final String userId;
   final String bookingId;
-  final List<dynamic>
+  final List<Map<String, dynamic>>
   metadata; // Using dynamic for flexibility with JSON cart items
+  final int subtotal;
+  final int serviceFee;
   final int totalPrice;
   final String paymentStatus;
   final String? snapToken;
   final String? snapRedirectUrl;
   final DateTime created;
   final Event? event;
-  final int isDeleted;
+  final String? registrationChannel;
 
   const EventBooking({
     required this.id,
@@ -27,12 +29,14 @@ class EventBooking extends Equatable {
     required this.bookingId,
     required this.created,
     required this.metadata,
+    required this.subtotal,
+    required this.serviceFee,
     required this.totalPrice,
     required this.paymentStatus,
     this.snapToken,
     this.snapRedirectUrl,
     this.event,
-    this.isDeleted = 0,
+    this.registrationChannel,
   });
 
   @override
@@ -45,11 +49,16 @@ class EventBooking extends Equatable {
     bookingId,
     created,
     metadata,
+    subtotal,
+    serviceFee,
     totalPrice,
     paymentStatus,
     snapToken,
     snapRedirectUrl,
+    paymentStatus,
+    snapToken,
+    snapRedirectUrl,
     event,
-    isDeleted,
+    registrationChannel,
   ];
 }

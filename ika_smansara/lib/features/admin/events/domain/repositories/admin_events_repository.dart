@@ -13,7 +13,10 @@ abstract class AdminEventsRepository {
   Future<Event> getEventById(String id);
 
   /// Create new event
-  Future<void> createEvent(Map<String, dynamic> data);
+  Future<Event> createEvent(Map<String, dynamic> data);
+
+  /// Create event ticket
+  Future<void> createEventTicket(Map<String, dynamic> data);
 
   /// Update event
   Future<void> updateEvent(String eventId, Map<String, dynamic> data);

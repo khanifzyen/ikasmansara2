@@ -24,11 +24,17 @@ class AdminEventDetailPage extends StatefulWidget {
 class _AdminEventDetailPageState extends State<AdminEventDetailPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  int _currentTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        _currentTabIndex = _tabController.index;
+      });
+    });
   }
 
   @override
@@ -164,29 +170,24 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
           ),
         ),
 
-        // TabBar
+        // Custom Tab Pills
         Container(
           color: Colors.white,
-          child: TabBar(
-            controller: _tabController,
-            isScrollable: !isDesktop,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.textGrey,
-            indicatorColor: AppColors.primary,
-            labelStyle: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildTabPill(0, 'Deskripsi'),
+                const SizedBox(width: 8),
+                _buildTabPill(1, 'Peserta'),
+                const SizedBox(width: 8),
+                _buildTabPill(2, 'Keuangan'),
+                const SizedBox(width: 8),
+                _buildTabPill(3, 'Tiket'),
+              ],
             ),
-            unselectedLabelStyle: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-            tabs: const [
-              Tab(text: 'Deskripsi'),
-              Tab(text: 'Peserta'),
-              Tab(text: 'Keuangan'),
-              Tab(text: 'Tiket'),
-            ],
           ),
         ),
 
@@ -206,6 +207,34 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTabPill(int index, String label) {
+    final isSelected = _currentTabIndex == index;
+    return GestureDetector(
+      onTap: () {
+        _tabController.animateTo(index);
+        setState(() => _currentTabIndex = index);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.border,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: isSelected ? Colors.white : AppColors.textDark,
+          ),
+        ),
+      ),
     );
   }
 }

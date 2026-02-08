@@ -22,8 +22,13 @@ class AdminEventsRepositoryImpl implements AdminEventsRepository {
   }
 
   @override
-  Future<void> createEvent(Map<String, dynamic> data) {
+  Future<Event> createEvent(Map<String, dynamic> data) {
     return _dataSource.createEvent(data);
+  }
+
+  @override
+  Future<void> createEventTicket(Map<String, dynamic> data) {
+    return _dataSource.createEventTicket(data);
   }
 
   @override

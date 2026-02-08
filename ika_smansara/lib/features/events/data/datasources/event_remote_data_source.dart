@@ -22,8 +22,11 @@ abstract class EventRemoteDataSource {
   Future<EventBookingModel> createBooking({
     required String eventId,
     required List<Map<String, dynamic>> metadata,
+    required int subtotal,
+    required int serviceFee,
     required int totalPrice,
     required String paymentMethod,
+    String? registrationChannel,
   });
   Future<List<EventBookingModel>> getUserBookings(String userId);
   Future<List<EventBookingTicketModel>> getBookingTickets(String bookingId);
@@ -147,8 +150,11 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   Future<EventBookingModel> createBooking({
     required String eventId,
     required List<Map<String, dynamic>> metadata,
+    required int subtotal,
+    required int serviceFee,
     required int totalPrice,
     required String paymentMethod,
+    String? registrationChannel,
   }) async {
     try {
       final userId = _pbClient.pb.authStore.record?.id;
@@ -160,9 +166,12 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
         'event': eventId,
         'user': userId,
         'metadata': metadata,
+        'subtotal': subtotal,
+        'service_fee': serviceFee,
         'total_price': totalPrice,
         'payment_status': 'pending',
         'payment_method': paymentMethod,
+        'registration_channel': registrationChannel,
         'is_deleted': 0,
       };
 

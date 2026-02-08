@@ -8,6 +8,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_list_card.dart';
 import '../bloc/admin_events_bloc.dart';
+import 'admin_event_wizard_page.dart';
 
 class AdminEventsPage extends StatelessWidget {
   const AdminEventsPage({super.key});
@@ -67,6 +68,21 @@ class _AdminEventsViewState extends State<_AdminEventsView> {
           onPressed: () => _onFilterChanged(_selectedFilter),
         ),
       ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AdminEventWizardPage()),
+          );
+          if (result == true) {
+            if (mounted) {
+              _onFilterChanged(_selectedFilter);
+            }
+          }
+        },
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: BlocConsumer<AdminEventsBloc, AdminEventsState>(
         listener: (context, state) {
           if (state is AdminEventsActionSuccess) {

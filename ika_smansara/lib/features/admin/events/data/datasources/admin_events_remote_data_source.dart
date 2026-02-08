@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
 import '../../../../../core/network/pb_client.dart';
 import '../../../../events/data/models/event_model.dart';
@@ -31,8 +32,37 @@ class AdminEventsRemoteDataSource {
   }
 
   /// Create new event
-  Future<void> createEvent(Map<String, dynamic> data) async {
-    await _pb.collection('events').create(body: data);
+  Future<Event> createEvent(Map<String, dynamic> data) async {
+    // Separate files from body if using specific creates,
+    // but PocketBase Dart SDK `create` with `body` handles MultipartFile if passing http.MultipartFile
+    // However, explicit `files` param is safer if we want to be strict, but sticking to body for consistency with update
+    // as long as the SDK supports it.
+    // Checking the SDK, `create` takes `body` and `files`.
+    // If we pass `MultipartFile` in `body`, the SDK *might* not extract it to `files` automatically depending on version.
+    // Let's use `files` param explicitly if there's a file.
+
+    final List<http.MultipartFile> files = [];
+    final Map<String, dynamic> body = Map.from(data);
+
+    // Ensure created_by is set
+    if (!body.containsKey('created_by') && _pb.authStore.isValid) {
+      body['created_by'] = _pb.authStore.model.id;
+    }
+
+    if (body.containsKey('banner') && body['banner'] is http.MultipartFile) {
+      files.add(body['banner'] as http.MultipartFile);
+      body.remove('banner');
+    }
+
+    final record = await _pb
+        .collection('events')
+        .create(body: body, files: files);
+    return EventModel.fromRecord(record).toEntity();
+  }
+
+  /// Create event ticket
+  Future<void> createEventTicket(Map<String, dynamic> data) async {
+    await _pb.collection('event_tickets').create(body: data);
   }
 
   /// Update event

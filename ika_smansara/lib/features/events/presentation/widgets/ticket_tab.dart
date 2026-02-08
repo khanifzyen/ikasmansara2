@@ -467,8 +467,11 @@ class _TicketTabState extends State<TicketTab> {
                 onPressed: isLoading
                     ? null
                     : () {
+                        final subtotal = _calculateTicketTotal();
+                        final serviceFee = _calculateServiceFee();
                         final total = _calculateGrandTotal();
-                        if (_calculateTicketTotal() == 0) {
+
+                        if (subtotal == 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Pilih minimal 1 tiket'),
@@ -514,8 +517,11 @@ class _TicketTabState extends State<TicketTab> {
                           CreateBooking(
                             eventId: eventId,
                             metadata: metadata,
+                            subtotal: subtotal,
+                            serviceFee: serviceFee,
                             totalPrice: total,
                             paymentMethod: _selectedPaymentMethod,
+                            registrationChannel: 'app',
                           ),
                         );
                       },

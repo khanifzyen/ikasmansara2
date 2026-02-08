@@ -18,8 +18,11 @@ abstract class EventRepository {
   Future<EventBooking> createBooking({
     required String eventId,
     required List<Map<String, dynamic>> metadata,
+    required int subtotal,
+    required int serviceFee,
     required int totalPrice,
     required String paymentMethod,
+    String? registrationChannel,
   });
   Future<List<EventBooking>> getUserBookings(String userId);
   Future<List<EventBookingTicket>> getBookingTickets(String bookingId);
