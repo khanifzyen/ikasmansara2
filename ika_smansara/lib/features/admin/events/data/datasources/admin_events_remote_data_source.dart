@@ -121,7 +121,7 @@ class AdminEventsRemoteDataSource {
           filter:
               'event = "$eventId" && payment_status != "expired" && payment_status != "cancelled" && (is_deleted = 0 || is_deleted = null)',
           sort: '-created',
-          expand: 'user',
+          expand: 'user,event',
         );
 
     return result.items.map((record) {
@@ -139,7 +139,7 @@ class AdminEventsRemoteDataSource {
           page: 1,
           perPage: 100,
           filter: 'booking = "$bookingId"',
-          expand: 'ticket_type,booking,booking.user',
+          expand: 'ticket_type,booking,booking.user,booking.event',
         );
 
     return result.items.map((record) {

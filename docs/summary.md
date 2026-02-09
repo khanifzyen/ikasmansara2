@@ -37,6 +37,17 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
 9.  **Pembaruan Dokumentasi**
     - Memperbarui `docs/pb_hooks.md` dengan detail teknis terbaru mengenai logika hook, termasuk penanganan *null-safety* dan jalur ganda pembuatan tiket.
 
+10. **Fitur Lihat Tiket & Printing (Baru)**
+    - Menambahkan tombol **Lihat Tiket** di tabel (Desktop) dan card (Mobile) pendaftar berstatus 'paid'.
+    - Implementasi modal **Ticket Preview** dengan desain ala struk kertas (thermal print).
+    - Format QR Code: `id_database:kode_tiket`.
+    - Dukungan **Share All** (mengirim semua foto tiket sekaligus) dan **Print All** (antrian cetak ke printer Bluetooth).
+    - Logika dinamis: Untuk manual, NAMA menggunakan nama koordinator dan OPSI menggunakan catatan booking.
+
+11. **Perbaikan Bug & Lint**
+    - Memperbaiki error `BlocProvider.of()` dengan menangani *context shadowing* pada dialog.
+    - Membersihkan peringatan *deprecated* API dan asinkron *BuildContext*.
+
 ## Operasi Git
 - Melakukan pendataan seluruh perubahan file (`git add .`).
 - Melakukan commit dengan ringkasan perubahan.
