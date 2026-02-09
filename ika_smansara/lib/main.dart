@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/constants/app_colors.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
@@ -65,21 +67,12 @@ class IkaSmanSaraApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
-          ThemeMode themeMode = ThemeMode.light;
-          if (state is SettingsLoaded) {
-            if (state.settings.themeMode == 'dark') {
-              themeMode = ThemeMode.dark;
-            } else if (state.settings.themeMode == 'light') {
-              themeMode = ThemeMode.light;
-            }
-          }
-
+          // Lock to light theme only
           return MaterialApp.router(
             title: 'IKA SMANSARA',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
+            themeMode: ThemeMode.light,
             routerConfig: AppRouter.router,
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

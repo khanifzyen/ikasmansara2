@@ -8,7 +8,7 @@ class AdminSidebar extends StatelessWidget {
   final bool showFooter;
   final bool isPermanent;
 
-  const AdminSidebar({
+  AdminSidebar({
     super.key,
     this.showHeader = true,
     this.showFooter = true,
@@ -21,7 +21,7 @@ class AdminSidebar extends StatelessWidget {
 
     return Container(
       width: 280,
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           if (showHeader)
@@ -37,12 +37,12 @@ class AdminSidebar extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text('🎓', style: TextStyle(fontSize: 24)),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
+                  SizedBox(width: 12),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -51,7 +51,7 @@ class AdminSidebar extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                         ),
                         Text(
@@ -153,19 +153,15 @@ class AdminSidebar extends StatelessWidget {
           if (showFooter)
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Color(0xFFE5E7EB))),
               ),
               child: InkWell(
                 onTap: () => context.go('/home'),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.arrow_back,
-                      size: 18,
-                      color: AppColors.textGrey,
-                    ),
-                    const SizedBox(width: 8),
+                    Icon(Icons.arrow_back, size: 18, color: AppColors.textGrey),
+                    SizedBox(width: 8),
                     Text(
                       'Kembali ke Aplikasi',
                       style: GoogleFonts.inter(
@@ -197,7 +193,7 @@ class _AdminMenuItem extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _AdminMenuItem({
+  _AdminMenuItem({
     required this.icon,
     required this.label,
     this.subtitle,
@@ -239,11 +235,9 @@ class _AdminMenuItem extends StatelessWidget {
                       ]
                     : null,
               ),
-              child: Center(
-                child: Text(icon, style: const TextStyle(fontSize: 18)),
-              ),
+              child: Center(child: Text(icon, style: TextStyle(fontSize: 18))),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -37,8 +37,8 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Tiketku'),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 0,
         ),
         body: BlocBuilder<MyTicketsBloc, MyTicketsState>(

@@ -13,18 +13,17 @@ import 'edit_profile_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<ProfileBloc>()..add(FetchProfile()),
       child: Scaffold(
-        backgroundColor: AppColors.background,
         body: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
             if (state is ProfileLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
             } else if (state is ProfileError) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is ProfileLoaded ||
@@ -38,32 +37,34 @@ class ProfilePage extends StatelessWidget {
                     // Header with Gradient
                     _buildHeader(context, user),
 
-                    const SizedBox(height: 60),
+                    SizedBox(height: 60),
 
                     // Name & Info
                     Text(
                       user.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textDark,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       user.isAlumni
                           ? 'Alumni Angkatan ${user.angkatan ?? '-'}'
                           : 'Masyarakat Umum',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textGrey,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     if (user.jobStatus != null) ...[
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         user.jobStatus!.displayName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           color: AppColors.primary,
                           fontWeight: FontWeight.w500,
@@ -71,14 +72,14 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ],
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // Menu List
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -152,7 +153,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     TextButton(
                       onPressed: () {
@@ -160,7 +161,7 @@ class ProfilePage extends StatelessWidget {
                         PBClient.instance.logout();
                         context.go('/login');
                       },
-                      child: const Text(
+                      child: Text(
                         'Keluar',
                         style: TextStyle(
                           color: AppColors.error,
@@ -168,7 +169,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40),
                   ],
                 ),
               );
@@ -191,7 +192,7 @@ class ProfilePage extends StatelessWidget {
       children: [
         Container(
           height: 180,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [AppColors.primary, Color(0xFF004D38)],
               begin: Alignment.centerLeft,
@@ -203,16 +204,16 @@ class ProfilePage extends StatelessWidget {
           top: 40,
           left: 16,
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => context.pop(),
           ),
         ),
-        const Positioned(
+        Positioned(
           top: 52,
           child: Text(
             'Profil Saya',
             style: TextStyle(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -224,9 +225,12 @@ class ProfilePage extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 4),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surface,
+                width: 4,
+              ),
             ),
             child: ClipOval(
               child: avatarUrl != null
@@ -234,7 +238,7 @@ class ProfilePage extends StatelessWidget {
                       imageUrl: avatarUrl,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
-                          const Center(child: CircularProgressIndicator()),
+                          Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) => Image.asset(
                         'assets/images/logo-ika.png',
                         fit: BoxFit.cover,
@@ -257,7 +261,7 @@ class _ProfileMenuItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _ProfileMenuItem({
+  _ProfileMenuItem({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -269,7 +273,7 @@ class _ProfileMenuItem extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: AppColors.primary, size: 20),
@@ -279,12 +283,12 @@ class _ProfileMenuItem extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: AppColors.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right,
-        color: AppColors.textGrey,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         size: 20,
       ),
       onTap: onTap,

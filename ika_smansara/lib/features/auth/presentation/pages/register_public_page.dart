@@ -76,7 +76,6 @@ class _RegisterPublicPageState extends State<RegisterPublicPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(

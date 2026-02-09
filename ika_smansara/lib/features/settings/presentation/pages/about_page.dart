@@ -31,19 +31,20 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
           'Tentang Aplikasi',
           style: GoogleFonts.inter(
             fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -58,7 +59,9 @@ class _AboutPageState extends State<AboutPage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.shadow.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -69,7 +72,7 @@ class _AboutPageState extends State<AboutPage> {
                   'assets/images/logo-ika-1.png',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     child: const Icon(
                       Icons.people,
                       size: 60,
@@ -85,13 +88,16 @@ class _AboutPageState extends State<AboutPage> {
               style: GoogleFonts.inter(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Versi $_version',
-              style: GoogleFonts.inter(fontSize: 14, color: AppColors.textGrey),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              ),
             ),
             const SizedBox(height: 48),
             Padding(
@@ -102,7 +108,7 @@ class _AboutPageState extends State<AboutPage> {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   height: 1.5,
-                  color: AppColors.textDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -120,7 +126,10 @@ class _AboutPageState extends State<AboutPage> {
             const SizedBox(height: 48),
             Text(
               '© ${DateTime.now().year} IKA SMANSARA',
-              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textGrey),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              ),
             ),
           ],
         ),
@@ -135,7 +144,7 @@ class _AboutPageState extends State<AboutPage> {
           title,
           style: GoogleFonts.inter(
             fontSize: 12,
-            color: AppColors.textGrey,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -144,7 +153,7 @@ class _AboutPageState extends State<AboutPage> {
           name,
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: AppColors.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),

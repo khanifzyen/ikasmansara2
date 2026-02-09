@@ -7,19 +7,19 @@ import '../bloc/news_bloc.dart';
 import '../widgets/news_card.dart';
 
 class NewsListPage extends StatelessWidget {
-  const NewsListPage({super.key});
+  NewsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<NewsBloc>()..add(const FetchNewsList()),
-      child: const NewsListView(),
+      child: NewsListView(),
     );
   }
 }
 
 class NewsListView extends StatefulWidget {
-  const NewsListView({super.key});
+  NewsListView({super.key});
 
   @override
   State<NewsListView> createState() => _NewsListViewState();
@@ -77,9 +77,8 @@ class _NewsListViewState extends State<NewsListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Kabar SMANSARA',
           style: TextStyle(
             color: AppColors.textDark,
@@ -87,10 +86,10 @@ class _NewsListViewState extends State<NewsListView> {
             fontSize: 18,
           ),
         ),
-        backgroundColor: Colors.white,
+
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+          icon: Icon(Icons.arrow_back, color: AppColors.textDark),
           onPressed: () => context.pop(),
         ),
         bottom: PreferredSize(
@@ -103,15 +102,15 @@ class _NewsListViewState extends State<NewsListView> {
           // Categories
           Container(
             height: 60,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               border: Border(bottom: BorderSide(color: AppColors.border)),
             ),
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               scrollDirection: Axis.horizontal,
               itemCount: _categories.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
+              separatorBuilder: (context, index) => SizedBox(width: 8),
               itemBuilder: (context, index) {
                 final category = _categories[index];
                 final isSelected = category == _selectedCategory;
@@ -147,12 +146,12 @@ class _NewsListViewState extends State<NewsListView> {
             child: BlocBuilder<NewsBloc, NewsState>(
               builder: (context, state) {
                 if (state is NewsLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 } else if (state is NewsError) {
                   return Center(child: Text('Error: ${state.message}'));
                 } else if (state is NewsLoaded) {
                   if (state.newsList.isEmpty) {
-                    return const Center(child: Text('Belum ada berita.'));
+                    return Center(child: Text('Belum ada berita.'));
                   }
                   return RefreshIndicator(
                     onRefresh: () async {
@@ -172,7 +171,7 @@ class _NewsListViewState extends State<NewsListView> {
                           : state.newsList.length + 1,
                       itemBuilder: (context, index) {
                         if (index >= state.newsList.length) {
-                          return const Center(
+                          return Center(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: CircularProgressIndicator(strokeWidth: 2),

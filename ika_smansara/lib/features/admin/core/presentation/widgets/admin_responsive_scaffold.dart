@@ -72,7 +72,7 @@ class _AdminResponsiveScaffoldState extends State<AdminResponsiveScaffold> {
             child: Row(
               children: [
                 if (isDesktop && _isSidebarVisible)
-                  const AdminSidebar(showHeader: false, isPermanent: true),
+                  AdminSidebar(showHeader: false, isPermanent: true),
                 Expanded(child: widget.body),
               ],
             ),

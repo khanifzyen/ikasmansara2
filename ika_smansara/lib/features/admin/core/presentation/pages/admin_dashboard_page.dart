@@ -100,7 +100,7 @@ class _AdminDashboardView extends StatelessWidget {
                                     style: GoogleFonts.inter(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.surface,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -374,7 +374,7 @@ class _QuickActionChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.border),
         ),

@@ -10,7 +10,7 @@ import '../bloc/admin_participants_bloc.dart';
 class ParticipantsTab extends StatefulWidget {
   final String eventId;
 
-  const ParticipantsTab({super.key, required this.eventId});
+  ParticipantsTab({super.key, required this.eventId});
 
   @override
   State<ParticipantsTab> createState() => _ParticipantsTabState();
@@ -43,7 +43,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
         child: BlocBuilder<AdminParticipantsBloc, AdminParticipantsState>(
           builder: (context, state) {
             if (state is AdminParticipantsLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
             }
 
             if (state is AdminParticipantsLoaded) {
@@ -54,7 +54,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
               return Center(child: Text('Error: ${state.message}'));
             }
 
-            return const Center(child: Text('Memuat data...'));
+            return Center(child: Text('Memuat data...'));
           },
         ),
       ),
@@ -87,7 +87,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           if (state.bookings.isEmpty)
             _buildEmptyState()
           else if (isDesktop)
@@ -105,12 +105,12 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
           children: [
-            const Icon(
+            Icon(
               Icons.people_outline,
               size: 64,
               color: AppColors.textLight,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               'Belum ada peserta',
               style: GoogleFonts.inter(
@@ -129,7 +129,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border),
       ),
@@ -167,7 +167,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
         DataCell(
           Text(
             booking.bookingId,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         DataCell(Text(booking.displayName)),
@@ -191,7 +191,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
                     'id',
                   ).format(booking.paymentDate!.toLocal())
                 : '-',
-            style: const TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 12),
           ),
         ),
         DataCell(
@@ -201,7 +201,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
               booking.displayNotes,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12),
             ),
           ),
         ),
@@ -210,12 +210,12 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.info_outline, color: AppColors.primary),
+                icon: Icon(Icons.info_outline, color: AppColors.primary),
                 onPressed: () => _showBookingDetail(context, booking),
               ),
               if (booking.paymentStatus == 'pending')
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.check_circle_outline,
                     color: AppColors.success,
                   ),
@@ -233,7 +233,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: bookings.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      separatorBuilder: (context, index) => SizedBox(height: 12),
       itemBuilder: (context, index) =>
           _buildMobileCard(context, bookings[index]),
     );
@@ -243,7 +243,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border),
       ),
@@ -255,32 +255,32 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
             children: [
               Text(
                 booking.bookingId,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               _buildStatusBadge(booking),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             booking.displayName,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Text(booking.displayPhone),
           if (booking.displayNotes != '-') ...[
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               'Catatan: ${booking.displayNotes}',
-              style: const TextStyle(fontSize: 12, color: AppColors.textGrey),
+              style: TextStyle(fontSize: 12, color: AppColors.textGrey),
             ),
           ],
           if (booking.paymentDate != null) ...[
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               'Tgl Bayar: ${DateFormat('d MMM yyyy, HH:mm', 'id').format(booking.paymentDate!.toLocal())}',
-              style: const TextStyle(fontSize: 12, color: AppColors.textGrey),
+              style: TextStyle(fontSize: 12, color: AppColors.textGrey),
             ),
           ],
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -291,7 +291,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
                   symbol: 'Rp',
                   decimalDigits: 0,
                 ).format(booking.displayPrice),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
                 ),
@@ -308,7 +308,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
                 onPressed: () => _showBookingDetail(context, booking),
               ),
               if (booking.paymentStatus == 'pending') ...[
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 PrimaryButton(
                   text: 'Validasi',
                   isExpanded: false,
@@ -381,14 +381,14 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Validasi Pembayaran'),
+        title: Text('Validasi Pembayaran'),
         content: Text(
           'Apakah Anda yakin ingin mengganti status booking ${booking.bookingId} menjadi LUNAS?\n\nTiket peserta akan otomatis di-generate.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -402,7 +402,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
-            child: const Text('Ya, Validasi'),
+            child: Text('Ya, Validasi'),
           ),
         ],
       ),
@@ -413,7 +413,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
 class _ManualBookingModal extends StatefulWidget {
   final String eventId;
 
-  const _ManualBookingModal({required this.eventId});
+  _ManualBookingModal({required this.eventId});
 
   @override
   State<_ManualBookingModal> createState() => _ManualBookingModalState();
@@ -453,8 +453,8 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
 
     return Container(
       margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -479,11 +479,11 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
@@ -497,7 +497,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                       ),
                       validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -512,7 +512,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                             validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: 16),
                         Expanded(
                           child: TextFormField(
                             controller: _angkatanController,
@@ -526,7 +526,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     BlocBuilder<AdminParticipantsBloc, AdminParticipantsState>(
                       builder: (context, state) {
                         if (state is AdminParticipantsLoaded) {
@@ -548,10 +548,10 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                             validator: (v) => v == null ? 'Pilih tiket' : null,
                           );
                         }
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(child: CircularProgressIndicator());
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -570,7 +570,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                                 : null,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: 16),
                         Expanded(
                           child: TextFormField(
                             controller: _priceController,
@@ -588,7 +588,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _selectedChannel,
                       decoration: const InputDecoration(
@@ -608,7 +608,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                       onChanged: (v) => setState(() => _selectedChannel = v),
                       validator: (v) => v == null ? 'Pilih channel' : null,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextFormField(
                       controller: _notesController,
                       maxLines: 3,
@@ -618,12 +618,12 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
                     PrimaryButton(
                       text: 'Simpan Pendaftaran',
                       onPressed: _submit,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -663,7 +663,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
 class _BookingDetailModal extends StatelessWidget {
   final EventBooking booking;
 
-  const _BookingDetailModal({required this.booking});
+  _BookingDetailModal({required this.booking});
 
   @override
   Widget build(BuildContext context) {
@@ -674,7 +674,7 @@ class _BookingDetailModal extends StatelessWidget {
           Text(booking.bookingId),
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close),
           ),
         ],
       ),
@@ -706,7 +706,7 @@ class _BookingDetailModal extends StatelessWidget {
             ),
             _buildInfoRow('Status', booking.paymentStatus.toUpperCase()),
             _buildInfoRow('Catatan', booking.displayNotes),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
           ],
         ),
       ),
@@ -723,13 +723,13 @@ class _BookingDetailModal extends StatelessWidget {
             width: 100,
             child: Text(
               '$label:',
-              style: const TextStyle(color: AppColors.textGrey),
+              style: TextStyle(color: AppColors.textGrey),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

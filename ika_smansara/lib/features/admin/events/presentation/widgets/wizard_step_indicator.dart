@@ -7,7 +7,7 @@ class WizardStepIndicator extends StatelessWidget {
   final int totalSteps;
   final List<String> stepLabels;
 
-  const WizardStepIndicator({
+  WizardStepIndicator({
     super.key,
     required this.currentStep,
     required this.totalSteps,
@@ -18,7 +18,7 @@ class WizardStepIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // Progress Bar background
@@ -81,9 +81,9 @@ class WizardStepIndicator extends StatelessWidget {
                           ),
                           child: Center(
                             child: isCompleted
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
-                                    color: Colors.white,
+                                    color: Theme.of(context).colorScheme.surface,
                                     size: 20,
                                   )
                                 : Text(
@@ -97,7 +97,7 @@ class WizardStepIndicator extends StatelessWidget {
                                   ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           stepLabels[index],
                           textAlign: TextAlign.center,

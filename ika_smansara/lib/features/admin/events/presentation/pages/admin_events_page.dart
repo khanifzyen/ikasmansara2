@@ -72,7 +72,7 @@ class _AdminEventsViewState extends State<_AdminEventsView> {
         onPressed: () async {
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AdminEventWizardPage()),
+            MaterialPageRoute(builder: (_) => AdminEventWizardPage()),
           );
           if (result == true) {
             if (mounted) {
@@ -106,7 +106,7 @@ class _AdminEventsViewState extends State<_AdminEventsView> {
             children: [
               // Filter Chips
               Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 padding: const EdgeInsets.all(16),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,

@@ -384,7 +384,7 @@ class _EventEditFormTabState extends State<EventEditFormTab> {
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.border),
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                   child: Column(
                     children: [

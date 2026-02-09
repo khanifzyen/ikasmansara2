@@ -27,7 +27,7 @@ class ForumCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
         boxShadow: [
@@ -54,7 +54,7 @@ class ForumCard extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 16,
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                       backgroundImage:
                           (post.authorAvatar != null &&
                               post.authorAvatar!.isNotEmpty)
@@ -161,12 +161,12 @@ class ForumCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
                         height: 180,
-                        color: Colors.grey[200],
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         child: const Center(child: CircularProgressIndicator()),
                       ),
                       errorWidget: (context, url, error) => Container(
                         height: 180,
-                        color: Colors.grey[200],
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         child: const Icon(Icons.error),
                       ),
                     ),

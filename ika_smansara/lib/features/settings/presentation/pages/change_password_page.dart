@@ -5,7 +5,7 @@ import '../../../../core/di/injection.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key});
+  ChangePasswordPage({super.key});
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -66,19 +66,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
           'Ubah Kata Sandi',
           style: GoogleFonts.inter(
             fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -101,7 +102,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _buildPasswordField(
                 controller: _newPasswordController,
                 label: 'Kata Sandi Baru',
@@ -118,7 +119,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _buildPasswordField(
                 controller: _confirmPasswordController,
                 label: 'Konfirmasi Kata Sandi Baru',
@@ -132,7 +133,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -145,18 +146,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                   ),
                   child: _isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                             strokeWidth: 2,
                           ),
                         )
                       : Text(
                           'Simpan Perubahan',
                           style: GoogleFonts.inter(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -184,11 +185,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           label,
           style: GoogleFonts.inter(
             fontWeight: FontWeight.w500,
-            color: AppColors.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 14,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         TextFormField(
           controller: controller,
           obscureText: obscureText,
@@ -196,29 +197,33 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           decoration: InputDecoration(
             hintText: 'Masukkan $label',
             hintStyle: GoogleFonts.inter(
-              color: AppColors.textGrey,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               fontSize: 14,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.primary),
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             suffixIcon: IconButton(
               icon: Icon(
                 obscureText
                     ? Icons.visibility_outlined
                     : Icons.visibility_off_outlined,
-                color: AppColors.textGrey,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               ),
               onPressed: onToggleObscure,
             ),

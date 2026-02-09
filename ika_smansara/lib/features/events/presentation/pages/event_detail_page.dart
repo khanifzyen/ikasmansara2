@@ -23,7 +23,7 @@ import '../bloc/event_booking_bloc.dart';
 class EventDetailPage extends StatefulWidget {
   final String eventId;
 
-  const EventDetailPage({super.key, required this.eventId});
+  EventDetailPage({super.key, required this.eventId});
 
   @override
   State<EventDetailPage> createState() => _EventDetailPageState();
@@ -100,12 +100,12 @@ class _EventDetailPageState extends State<EventDetailPage>
         future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             // Log error here if possible, but for UI just show generic
-            return const Center(child: Text('Gagal memuat detail event'));
+            return Center(child: Text('Gagal memuat detail event'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('Event not found'));
+            return Center(child: Text('Event not found'));
           }
 
           final data = snapshot.data!;
@@ -158,8 +158,8 @@ class _EventDetailPageState extends State<EventDetailPage>
                     title: _isTitleVisible
                         ? Text(
                             event.title,
-                            style: const TextStyle(
-                              color: AppColors.textDark,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
@@ -174,14 +174,14 @@ class _EventDetailPageState extends State<EventDetailPage>
                         decoration: BoxDecoration(
                           color: _isTitleVisible
                               ? Colors.transparent
-                              : Colors.white,
+                              : Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.arrow_back,
                           color: _isTitleVisible
-                              ? AppColors.textDark
-                              : Colors.black,
+                              ? Theme.of(context).colorScheme.onSurface
+                              : Theme.of(context).colorScheme.onSurface,
                           size: 20,
                         ),
                       ),
@@ -194,8 +194,8 @@ class _EventDetailPageState extends State<EventDetailPage>
                               imageUrl: event.banner!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
-                                color: Colors.grey[200],
-                                child: const Center(
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                child: Center(
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                   ),
@@ -214,8 +214,8 @@ class _EventDetailPageState extends State<EventDetailPage>
                   ),
                   SliverToBoxAdapter(
                     child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(24),
                         ),
@@ -238,64 +238,74 @@ class _EventDetailPageState extends State<EventDetailPage>
                             ),
                             child: Text(
                               fullDateString.toUpperCase(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text(
                             event.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.access_time,
                                 size: 16,
-                                color: AppColors.textGrey,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Text(
                                 event.time,
-                                style: const TextStyle(
-                                  color: AppColors.textGrey,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                                   fontSize: 13,
                                 ),
                               ),
-                              const SizedBox(width: 16),
-                              const Icon(
+                              SizedBox(width: 16),
+                              Icon(
                                 Icons.location_on_outlined,
                                 size: 16,
-                                color: AppColors.textGrey,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Expanded(
                                 child: Text(
                                   event.location,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: AppColors.textGrey,
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
                                     fontSize: 13,
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           Html(
                             data: event.description,
                             style: {
                               "body": Style(
-                                color: AppColors.textGrey,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                                 fontSize: FontSize(14),
                                 lineHeight: LineHeight(1.5),
                                 margin: Margins.zero,
@@ -303,16 +313,18 @@ class _EventDetailPageState extends State<EventDetailPage>
                               ),
                             },
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
                           // Tabs
                           TabBar(
                             controller: _tabController,
                             labelColor: AppColors.primary,
-                            unselectedLabelColor: AppColors.textGrey,
+                            unselectedLabelColor: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                             indicatorColor: AppColors.primary,
                             isScrollable: true,
                             tabAlignment: TabAlignment.start,
-                            labelStyle: const TextStyle(
+                            labelStyle: TextStyle(
                               fontWeight: FontWeight.w600,
                             ),
                             tabs: const [
@@ -322,7 +334,7 @@ class _EventDetailPageState extends State<EventDetailPage>
                               // Tab(text: 'Donasi'),
                             ],
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
                           SizedBox(child: _buildTabContent(data)),
                         ],
                       ),

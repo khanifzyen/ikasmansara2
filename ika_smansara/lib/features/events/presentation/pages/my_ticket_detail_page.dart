@@ -19,7 +19,7 @@ class MyTicketDetailPage extends StatefulWidget {
   final String bookingId;
   final EventBooking? booking;
 
-  const MyTicketDetailPage({super.key, required this.bookingId, this.booking});
+  MyTicketDetailPage({super.key, required this.bookingId, this.booking});
 
   @override
   State<MyTicketDetailPage> createState() => _MyTicketDetailPageState();
@@ -60,14 +60,14 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Detail Tiket'),
+              title: Text('Detail Tiket'),
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
               elevation: 0,
               actions: [
                 if (canShareAll)
                   IconButton(
-                    icon: const Icon(Icons.share),
+                    icon: Icon(Icons.share),
                     tooltip: 'Bagikan Semua Tiket',
                     onPressed: () => _shareAllTickets(context, tickets),
                   ),
@@ -76,12 +76,12 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             body: Builder(
               builder: (context) {
                 if (state is MyTicketsLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 } else if (state is MyTicketsFailure) {
                   return Center(child: Text('Error: ${state.message}'));
                 } else if (state is MyBookingTicketsLoaded) {
                   if (state.tickets.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text('Tidak ada tiket ditemukan'),
                     );
                   }
@@ -93,15 +93,15 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                         // Event Info Card
                         if (widget.booking?.event != null) ...[
                           _buildEventInfoCard(widget.booking!.event!),
-                          const SizedBox(height: 24),
-                          const Text(
+                          SizedBox(height: 24),
+                          Text(
                             'Tiket Anda',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                         ],
 
                         // Tickets List
@@ -144,7 +144,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             controller: screenshotController,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -153,7 +153,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                     offset: const Offset(0, 4),
                   ),
                 ],
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
               ),
               child: Column(
                 children: [
@@ -161,7 +161,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Color(0xFF006D4E),
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(16),
@@ -172,8 +172,8 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                       children: [
                         Text(
                           ticket.ticketName,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.surface,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -200,7 +200,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                           version: QrVersions.auto,
                           size: 200.0,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           ticket.ticketCode,
                           style: TextStyle(
@@ -211,15 +211,15 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                             letterSpacing: 1.2,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         Text(
                           ticket.userName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           ticket.userEmail,
                           style: TextStyle(
@@ -235,7 +235,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Action Buttons
           Row(
@@ -244,18 +244,18 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
               ElevatedButton.icon(
                 onPressed: () =>
                     _shareTicket(context, ticket, screenshotController),
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('Bagikan'),
+                icon: Icon(Icons.share, size: 18),
+                label: Text('Bagikan'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[600],
                   foregroundColor: Colors.white,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               ElevatedButton.icon(
                 onPressed: () => _printTicket(context, ticket),
-                icon: const Icon(Icons.print, size: 18),
-                label: const Text('Cetak'),
+                icon: Icon(Icons.print, size: 18),
+                label: Text('Cetak'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[800],
                   foregroundColor: Colors.white,
@@ -273,7 +273,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -282,39 +282,39 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             event.title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-              const SizedBox(width: 8),
+              Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+              SizedBox(width: 8),
               Text(
                 dateFormat.format(event.date.toLocal()),
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: TextStyle(fontSize: 14, color: Colors.black87),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_outlined,
                 size: 16,
                 color: Colors.grey,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   event.location,
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
                 ),
               ),
             ],
@@ -334,7 +334,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const Center(
+          builder: (context) => Center(
             child: Card(
               child: Padding(
                 padding: EdgeInsets.all(16),
@@ -456,7 +456,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const Center(
+        builder: (context) => Center(
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(16),

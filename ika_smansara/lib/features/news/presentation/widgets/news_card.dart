@@ -18,7 +18,7 @@ class NewsCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.border),
         ),
@@ -31,7 +31,7 @@ class NewsCard extends StatelessWidget {
               height: 70,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[200],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               child: news.thumbnail != null
                   ? CachedNetworkImage(

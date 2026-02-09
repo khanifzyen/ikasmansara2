@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EventDonationTab extends StatelessWidget {
-  const EventDonationTab({super.key});
+  EventDonationTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +24,20 @@ class EventDonationTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Total Donasi Terkumpul',
                 style: TextStyle(color: Colors.white70, fontSize: 13),
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 8),
+              Text(
                 'Rp 0',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -50,11 +50,11 @@ class EventDonationTab extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.people, color: Colors.white, size: 14),
+                    Icon(Icons.people, color: Theme.of(context).colorScheme.surface, size: 14),
                     SizedBox(width: 6),
                     Text(
                       '0 Donatur',
-                      style: TextStyle(color: Colors.white, fontSize: 13),
+                      style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 13),
                     ),
                   ],
                 ),
@@ -63,17 +63,17 @@ class EventDonationTab extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 24),
-        const Text(
+        SizedBox(height: 24),
+        Text(
           'Donasi Personal',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           'Dukungan sukarela untuk operasional acara.',
           style: TextStyle(fontSize: 13, color: Colors.grey[600]),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         // Form placeholder
         TextField(
@@ -83,7 +83,7 @@ class EventDonationTab extends StatelessWidget {
           ),
           keyboardType: TextInputType.number,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         TextField(
           decoration: InputDecoration(
             labelText: 'Pesan / Doa (Opsional)',
@@ -91,7 +91,7 @@ class EventDonationTab extends StatelessWidget {
           ),
           maxLines: 3,
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -104,7 +104,7 @@ class EventDonationTab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('Lanjut Pembayaran'),
+            child: Text('Lanjut Pembayaran'),
           ),
         ),
       ],

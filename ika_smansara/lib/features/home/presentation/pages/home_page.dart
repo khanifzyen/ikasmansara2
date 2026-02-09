@@ -14,7 +14,7 @@ import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../news/presentation/bloc/news_bloc.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,20 +58,23 @@ class HomePage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Halo, Alumni!',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.textGrey,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(
                                 name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textDark,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -86,7 +89,7 @@ class HomePage extends StatelessWidget {
                                 state.user.isAdmin)
                               IconButton(
                                 onPressed: () => context.push('/admin'),
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.admin_panel_settings,
                                   color: AppColors.primary,
                                 ),
@@ -99,10 +102,10 @@ class HomePage extends StatelessWidget {
                               ),
                             if (state is AuthAuthenticated &&
                                 state.user.isAdmin)
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                             IconButton(
                               onPressed: () => context.push('/ticket-scanner'),
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.qr_code_scanner,
                                 color: AppColors.primary,
                               ),
@@ -112,12 +115,12 @@ class HomePage extends StatelessWidget {
                                 shape: const CircleBorder(),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Container(
                               width: 45,
                               height: 45,
                               decoration: BoxDecoration(
-                                color: AppColors.border,
+                                color: Theme.of(context).colorScheme.outline,
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   image: avatarUrl != null
@@ -198,8 +201,10 @@ class HomePage extends StatelessWidget {
                                   children: [
                                     Text(
                                       angkatanText,
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 1,
@@ -214,11 +219,13 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(height: 12),
                                 Text(
                                   ektaDisplay,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Courier',
@@ -231,12 +238,12 @@ class HomePage extends StatelessWidget {
                         },
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       // Menu Grid
-                      const _MenuGrid(),
+                      _MenuGrid(),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
                       // Agenda Section
                       _SectionHeader(
                         title: 'Agenda Kegiatan',
@@ -244,12 +251,12 @@ class HomePage extends StatelessWidget {
                           context.push('/events');
                         },
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       BlocBuilder<EventsBloc, EventsState>(
                         builder: (context, state) {
                           if (state is EventsLoaded) {
                             if (state.events.isEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text('Belum ada agenda kegiatan'),
                               );
                             }
@@ -286,13 +293,11 @@ class HomePage extends StatelessWidget {
                               ),
                             );
                           }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return Center(child: CircularProgressIndicator());
                         },
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       // Donation Slider
                       _SectionHeader(
@@ -301,12 +306,12 @@ class HomePage extends StatelessWidget {
                           context.push('/donation-list');
                         },
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       BlocBuilder<DonationListBloc, DonationListState>(
                         builder: (context, state) {
                           if (state is DonationListLoaded) {
                             if (state.donations.isEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text('Belum ada program donasi'),
                               );
                             }
@@ -338,13 +343,11 @@ class HomePage extends StatelessWidget {
                               ),
                             );
                           }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return Center(child: CircularProgressIndicator());
                         },
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       // News Section
                       _SectionHeader(
@@ -353,12 +356,12 @@ class HomePage extends StatelessWidget {
                           context.push('/news');
                         },
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       BlocBuilder<NewsBloc, NewsState>(
                         builder: (context, state) {
                           if (state is NewsLoaded) {
                             if (state.newsList.isEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text('Belum ada berita terbaru'),
                               );
                             }
@@ -381,12 +384,10 @@ class HomePage extends StatelessWidget {
                               }).toList(),
                             );
                           }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return Center(child: CircularProgressIndicator());
                         },
                       ),
-                      const SizedBox(height: 80), // Bottom padding
+                      SizedBox(height: 80), // Bottom padding
                     ],
                   ),
                 ),
@@ -400,7 +401,7 @@ class HomePage extends StatelessWidget {
 }
 
 class _MenuGrid extends StatelessWidget {
-  const _MenuGrid();
+  _MenuGrid();
 
   @override
   Widget build(BuildContext context) {
@@ -480,11 +481,7 @@ class _MenuItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _MenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+  _MenuItem({required this.icon, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -497,18 +494,18 @@ class _MenuItem extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: AppColors.primary, size: 24),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -521,7 +518,7 @@ class _SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback onViewAll;
 
-  const _SectionHeader({required this.title, required this.onViewAll});
+  _SectionHeader({required this.title, required this.onViewAll});
 
   @override
   Widget build(BuildContext context) {
@@ -530,10 +527,10 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         TextButton(
@@ -543,7 +540,7 @@ class _SectionHeader extends StatelessWidget {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: const Text('Lihat Semua'),
+          child: Text('Lihat Semua'),
         ),
       ],
     );
@@ -559,7 +556,7 @@ class _AgendaCard extends StatelessWidget {
   final bool isRegisterOpen;
   final String? imageUrl;
 
-  const _AgendaCard({
+  _AgendaCard({
     required this.day,
     required this.time,
     required this.title,
@@ -574,12 +571,14 @@ class _AgendaCard extends StatelessWidget {
     return Container(
       width: 260,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -594,7 +593,7 @@ class _AgendaCard extends StatelessWidget {
                 height: 140,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
@@ -608,21 +607,25 @@ class _AgendaCard extends StatelessWidget {
                           imageUrl: imageUrl!,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
-                            child: const Center(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            child: Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.image, color: Colors.grey),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.image, color: Colors.grey),
                           ),
                         )
                       : Image.asset(
                           imageUrl ?? 'assets/images/placeholder_event.png',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.event, color: Colors.grey),
+                              Icon(Icons.event, color: Colors.grey),
                         ),
                 ),
               ),
@@ -639,10 +642,10 @@ class _AgendaCard extends StatelessWidget {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
+                    child: Text(
                       'OPEN REGISTRATION',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -658,29 +661,31 @@ class _AgendaCard extends StatelessWidget {
               children: [
                 Text(
                   '$day, $date • $time',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: AppColors.secondary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '📍 $location',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: AppColors.textGrey,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -697,19 +702,21 @@ class _NewsCard extends StatelessWidget {
   final String tag;
   final String? imageUrl;
 
-  const _NewsCard({required this.title, required this.tag, this.imageUrl});
+  _NewsCard({required this.title, required this.tag, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -721,7 +728,7 @@ class _NewsCard extends StatelessWidget {
             width: 80,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: imageUrl != null && imageUrl!.startsWith('http')
@@ -731,14 +738,18 @@ class _NewsCard extends StatelessWidget {
                       imageUrl: imageUrl!,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
-                        color: Colors.grey[200],
-                        child: const Center(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        child: Center(
                           child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.image, size: 20),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        child: Icon(Icons.image, size: 20),
                       ),
                     ),
                   )
@@ -754,26 +765,26 @@ class _NewsCard extends StatelessWidget {
                     ),
                   ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   tag,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: AppColors.secondary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -792,7 +803,7 @@ class _DonationCard extends StatelessWidget {
   final bool isUrgent;
   final String? imageUrl;
 
-  const _DonationCard({
+  _DonationCard({
     required this.title,
     required this.amount,
     required this.percent,
@@ -806,12 +817,14 @@ class _DonationCard extends StatelessWidget {
       width: 200,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -826,7 +839,7 @@ class _DonationCard extends StatelessWidget {
                 height: 100,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: (imageUrl != null && imageUrl!.startsWith('http'))
@@ -836,14 +849,18 @@ class _DonationCard extends StatelessWidget {
                           imageUrl: imageUrl!,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
-                            child: const Center(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            child: Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.image),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.image),
                           ),
                         ),
                       )
@@ -853,7 +870,7 @@ class _DonationCard extends StatelessWidget {
                           imageUrl ?? 'assets/images/placeholder_donation.png',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.volunteer_activism),
+                              Icon(Icons.volunteer_activism),
                         ),
                       ),
               ),
@@ -870,10 +887,10 @@ class _DonationCard extends StatelessWidget {
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
+                    child: Text(
                       'URGENT',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -882,32 +899,34 @@ class _DonationCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           LinearProgressIndicator(
             value: percent,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
             color: AppColors.primary,
             minHeight: 4,
             borderRadius: BorderRadius.circular(2),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 amount,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                   color: AppColors.primary,
@@ -915,7 +934,12 @@ class _DonationCard extends StatelessWidget {
               ),
               Text(
                 '${(percent * 100).toInt()}%',
-                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
             ],
           ),

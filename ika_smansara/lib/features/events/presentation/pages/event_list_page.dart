@@ -17,11 +17,9 @@ class EventListPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Agenda Kegiatan'),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 0,
         ),
-        backgroundColor: Colors.white,
         body: BlocBuilder<EventsBloc, EventsState>(
           builder: (context, state) {
             if (state is EventsLoaded) {
@@ -45,7 +43,7 @@ class EventListPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppColors.border),
                           boxShadow: [
@@ -65,7 +63,9 @@ class EventListPage extends StatelessWidget {
                                   height: 180,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[200],
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
                                     borderRadius: const BorderRadius.vertical(
                                       top: Radius.circular(16),
                                     ),
@@ -82,7 +82,9 @@ class EventListPage extends StatelessWidget {
                                             fit: BoxFit.cover,
                                             placeholder: (context, url) =>
                                                 Container(
-                                                  color: Colors.grey[200],
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainerHighest,
                                                   child: const Center(
                                                     child:
                                                         CircularProgressIndicator(
@@ -91,14 +93,19 @@ class EventListPage extends StatelessWidget {
                                                   ),
                                                 ),
                                             errorWidget:
-                                                (context, url, error) =>
-                                                    Container(
-                                                      color: Colors.grey[200],
-                                                      child: const Icon(
-                                                        Icons.image,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
+                                                (
+                                                  context,
+                                                  url,
+                                                  error,
+                                                ) => Container(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainerHighest,
+                                                  child: const Icon(
+                                                    Icons.image,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
                                           )
                                         : Image.asset(
                                             event.banner ??
@@ -126,10 +133,12 @@ class EventListPage extends StatelessWidget {
                                         color: AppColors.primary,
                                         borderRadius: BorderRadius.circular(4),
                                       ),
-                                      child: const Text(
+                                      child: Text(
                                         'OPEN REGISTRATION',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
                                         ),

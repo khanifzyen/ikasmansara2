@@ -24,8 +24,8 @@ class SubEventTab extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey[200]!),
+            color: Theme.of(context).colorScheme.surface,
+            border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(

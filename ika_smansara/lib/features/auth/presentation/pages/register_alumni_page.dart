@@ -104,7 +104,6 @@ class _RegisterAlumniPageState extends State<RegisterAlumniPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(

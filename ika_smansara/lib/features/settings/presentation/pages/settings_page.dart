@@ -18,19 +18,20 @@ class SettingsPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<SettingsBloc>()..add(LoadAppSettings()),
       child: Scaffold(
-        backgroundColor: AppColors.background,
         appBar: AppBar(
           title: Text(
             'Pengaturan',
             style: GoogleFonts.inter(
               fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () => context.pop(),
           ),
         ),
@@ -43,7 +44,7 @@ class SettingsPage extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildSectionLabel('Perangkat'),
+                _buildSectionLabel(context, 'Perangkat'),
                 _buildListTile(
                   context,
                   icon: Icons.print_outlined,
@@ -59,7 +60,7 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                _buildSectionLabel('Akun & Keamanan'),
+                _buildSectionLabel(context, 'Akun & Keamanan'),
                 _buildListTile(
                   context,
                   icon: Icons.lock_outline,
@@ -67,9 +68,7 @@ class SettingsPage extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const ChangePasswordPage(),
-                      ),
+                      MaterialPageRoute(builder: (_) => ChangePasswordPage()),
                     );
                   },
                 ),
@@ -83,7 +82,6 @@ class SettingsPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                _buildSectionLabel('Preferensi'),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   secondary: Container(
@@ -102,7 +100,7 @@ class SettingsPage extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.textDark,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   value: isNotifEnabled,
@@ -114,7 +112,8 @@ class SettingsPage extends StatelessWidget {
                   activeThumbColor: AppColors.primary,
                 ),
 
-                // const Divider(height: 1),
+                //                 const Divider(height: 1),
+                // Theme selection disabled - app locked to light theme
                 // _buildListTile(
                 //   context,
                 //   icon: Icons.brightness_6_outlined,
@@ -134,7 +133,7 @@ class SettingsPage extends StatelessWidget {
                 //   },
                 // ),
                 const SizedBox(height: 24),
-                _buildSectionLabel('Informasi'),
+                _buildSectionLabel(context, 'Informasi'),
                 _buildListTile(
                   context,
                   icon: Icons.privacy_tip_outlined,
@@ -187,7 +186,9 @@ class SettingsPage extends StatelessWidget {
                   child: Text(
                     'Versi 2.0.1+32',
                     style: GoogleFonts.inter(
-                      color: AppColors.textGrey,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
                       fontSize: 12,
                     ),
                   ),
@@ -200,7 +201,7 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionLabel(String text) {
+  Widget _buildSectionLabel(BuildContext context, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Text(
@@ -208,7 +209,7 @@ class SettingsPage extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: AppColors.textGrey,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
         ),
       ),
     );
@@ -220,14 +221,16 @@ class SettingsPage extends StatelessWidget {
     required String title,
     String? subtitle,
     required VoidCallback onTap,
-    Color titleColor = AppColors.textDark,
+    Color? titleColor,
   }) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Theme.of(
+            context,
+          ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -243,16 +246,22 @@ class SettingsPage extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: titleColor,
+          color: titleColor ?? Theme.of(context).colorScheme.onSurface,
         ),
       ),
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textGrey),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              ),
             )
           : null,
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textGrey),
+      trailing: Icon(
+        Icons.chevron_right,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+      ),
       onTap: onTap,
     );
   }
@@ -318,7 +327,7 @@ class SettingsPage extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -357,7 +366,7 @@ class SettingsPage extends StatelessWidget {
         label,
         style: GoogleFonts.inter(
           fontSize: 16,
-          color: AppColors.textDark,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: value == groupValue ? FontWeight.w600 : FontWeight.w400,
         ),
       ),
