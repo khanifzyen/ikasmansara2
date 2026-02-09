@@ -1,48 +1,36 @@
-# Ringkasan Sesi Pengembangan IKA SMANSARA
+# Ringkasan Sesi Refinement Admin Event
 
-Sesi ini berfokus pada peningkatan fitur Admin untuk manajemen event dan optimalisasi alur pendaftaran tiket. Berikut adalah poin-poin utama yang telah diimplementasikan:
+Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event pada Dashboard Admin.
 
-## 1. Refactor Dashboard Detail Event
-- Mengubah halaman edit event tunggal menjadi dashboard berbasis Tab.
-- Implementasi 4 tab utama: **Deskripsi**, **Peserta**, **Keuangan**, dan **Tiket**.
-- Menggunakan desain custom "Pills" untuk navigasi tab yang lebih modern dan responsif.
+## Perubahan Utama
 
-## 2. Implementasi Rich Text Editor (Flutter Quill)
-- Mengganti input teks biasa dengan editor kaya (Rich Text) menggunakan `flutter_quill` 11.5.0.
-- Implementasi konversi HTML ke Delta (saat load) dan Delta ke HTML (saat save).
-- Fitur upload banner event dengan pratinjau langsung dan kompresi gambar di sisi klien (1024px, 85% quality).
+1.  **Sinkronisasi Data Profil (Nama, HP, Angkatan)**
+    - Data peserta yang mendaftar melalui aplikasi kini secara otomatis disinkronkan dengan profil user terbaru (`users.phone`, `users.angkatan`).
+    - Pendaftaran manual tetap menggunakan data koordinator yang diinput.
 
-## 3. Admin Event Wizard (Buat Event Baru)
-- Implementasi wizard 5 langkah untuk pembuatan event baru:
-    1.  **Konfigurasi**: Prefix kode event, format ID booking, dan format ID tiket.
-    2.  **Info Dasar**: Judul, tanggal, waktu, lokasi, deskripsi (Rich Text), dan banner.
-    3.  **Ticketing**: Penambahan dan pengaturan paket tiket.
-    4.  **Fitur**: Aktivasi fitur sub-event, sponsorship, dan donasi.
-    5.  **Review**: Ringkasan seluruh data sebelum publikasi.
-- Logika pembuatan sekuensial: Event dibuat terlebih dahulu, diikuti oleh pembuatan tiket terkait.
+2.  **Logika Harga & Akurasi Tiket**
+    - Kolom **Total** pada tabel peserta kini memprioritaskan `subtotal` dengan fallback ke `total_price`.
+    - Perhitungan jumlah tiket kini menghitung total kuantitas dari semua item tiket dalam satu booking (untuk pendaftaran aplikasi).
 
-## 4. Ekspansi Skema Entity & Model
-- Menambahkan field-field penting ke entity `Event`:
-    - `code`, `status`, `enable_sponsorship`, `enable_donation`, `donation_target`, `donation_description`.
-    - `booking_id_format`, `ticket_id_format`, `last_booking_seq`, `last_ticket_seq`.
-- Sinkronisasi data antara domain layer, data layer, dan PocketBase.
+3.  **Statistik Live Real-time**
+    - Kartu statistik **Pendaftar** dan **Pemasukan** pada halaman detail event kini mengambil data asli dari PocketBase (hanya menghitung booking dengan status 'paid').
 
-## 5. Optimalisasi Event Booking (Subtotal & Fee)
-- Menambahkan field `registration_channel` yang secara otomatis diisi "app" untuk pembelian melalui aplikasi mobile.
-- Implementasi breakdown harga baru:
-    - `subtotal`: Harga tiket murni + biaya opsi tambahan.
-    - `service_fee`: Biaya layanan sebesar 1.5% dari subtotal.
-    - `total_price`: Jumlah akhir (Subtotal + Service Fee).
-- Migrasi database PocketBase untuk mendukung field `subtotal` dan `service_fee`.
-- Update UI `TicketTab` untuk menampilkan rincian biaya kepada pengguna.
+4.  **Kolom Catatan (Catatan/Pilihan Tiket)**
+    - Menambahkan kolom **Catatan** yang menampilkan pilihan tiket (misal: ukuran kaos) untuk pendaftaran aplikasi, atau catatan khusus untuk pendaftaran manual.
 
-## 6. Peningkatan Infrastruktur & UI
-- Implementasi **Infinite Scroll** untuk daftar user di panel admin.
-- Penyesuaian layout responsive (Admin Desktop) dan penanganan `SafeArea`.
-- Perbaikan sinkronisasi UI setelah update data (Load detail setelah save).
+5.  **Kolom Tanggal Pembayaran**
+    - Menambahkan kolom **Tgl Bayar** setelah Status untuk memudahkan pelacakan waktu transaksi lunas.
 
-## 7. Workflow & Dokumentasi
-- Pembaruan rutin pada `task.md`, `implementation_plan.md`, dan `walkthrough.md`.
-- Sinkronisasi kode menggunakan Git (Add, Commit dengan log poin-poin, dan Push).
+6.  **Peningkatkan Fitur Tambah Peserta Manual**
+    - Menambahkan form **Total Biaya** (masuk ke `subtotal` dan `total_price`).
+    - Menambahkan pilihan **Channel Pendaftaran** (Manual Transfer / Manual Cash).
+    - Biaya layanan (`service_fee`) otomatis diset ke **0**.
+    - Status default diset ke **Pending**.
 
-Semua fitur di atas telah diverifikasi menggunakan `flutter analyze` dan dipastikan tidak ada error sintaksis atau konflik tipe data.
+7.  **Penyesuaian Tema**
+    - Mengubah pengaturan default aplikasi ke **Light Mode** (mengabaikan preferensi sistem/auto).
+
+## Operasi Git
+- Melakukan pendataan seluruh perubahan file (`git add .`).
+- Melakukan commit dengan ringkasan perubahan.
+- Melakukan push ke repository.

@@ -65,13 +65,12 @@ class IkaSmanSaraApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
-          ThemeMode themeMode = ThemeMode.system;
+          ThemeMode themeMode = ThemeMode.light;
           if (state is SettingsLoaded) {
-            if (state.settings.themeMode == 'light') {
-              themeMode = ThemeMode.light;
-            }
             if (state.settings.themeMode == 'dark') {
               themeMode = ThemeMode.dark;
+            } else if (state.settings.themeMode == 'light') {
+              themeMode = ThemeMode.light;
             }
           }
 

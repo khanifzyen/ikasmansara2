@@ -68,9 +68,10 @@ class LoadEventDetail extends AdminEventsEvent {
 
 class AdminEventLoaded extends AdminEventsState {
   final Event event;
-  const AdminEventLoaded(this.event);
+  final Map<String, dynamic>? stats;
+  const AdminEventLoaded(this.event, {this.stats});
   @override
-  List<Object?> get props => [event];
+  List<Object?> get props => [event, stats];
 }
 
 // States
@@ -177,7 +178,8 @@ class AdminEventsBloc extends Bloc<AdminEventsEvent, AdminEventsState> {
     emit(AdminEventsLoading());
     try {
       final eventDetail = await _repository.getEventById(event.eventId);
-      emit(AdminEventLoaded(eventDetail));
+      final stats = await _repository.getEventStats(event.eventId);
+      emit(AdminEventLoaded(eventDetail, stats: stats));
     } catch (e) {
       emit(AdminEventsError(e.toString()));
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../events/domain/entities/event.dart';
@@ -8,7 +9,7 @@ import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_stat_card.dart';
 import '../bloc/admin_events_bloc.dart';
 import '../widgets/event_edit_form_tab.dart';
-import '../widgets/participants_placeholder_tab.dart';
+import '../widgets/participants_tab.dart';
 import '../widgets/finance_placeholder_tab.dart';
 import '../widgets/tickets_placeholder_tab.dart';
 
@@ -94,7 +95,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
             }
 
             if (state is AdminEventLoaded) {
-              return _buildBody(isDesktop, state.event);
+              return _buildBody(isDesktop, state.event, state.stats);
             }
 
             return const Center(child: Text('Event tidak ditemukan'));
@@ -104,7 +105,15 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
     );
   }
 
-  Widget _buildBody(bool isDesktop, Event event) {
+  Widget _buildBody(bool isDesktop, Event event, Map<String, dynamic>? stats) {
+    final totalParticipants = stats?['totalParticipants']?.toString() ?? '0';
+    final totalIncome = stats?['totalIncome'] ?? 0;
+    final formatter = NumberFormat.compactCurrency(
+      locale: 'id',
+      symbol: 'Rp',
+      decimalDigits: 1,
+    );
+
     return Column(
       children: [
         // Stats Cards
@@ -132,7 +141,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
                     width: cardWidth,
                     child: AdminStatCard(
                       icon: '👥',
-                      value: '856',
+                      value: totalParticipants,
                       label: 'Pendaftar',
                       backgroundColor: const Color(0xFFE0F2FE),
                     ),
@@ -141,7 +150,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
                     width: cardWidth,
                     child: AdminStatCard(
                       icon: '💰',
-                      value: 'Rp 42.8jt',
+                      value: formatter.format(totalIncome),
                       label: 'Pemasukan',
                       backgroundColor: const Color(0xFFD1FAE5),
                     ),
@@ -150,7 +159,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
                     width: cardWidth,
                     child: AdminStatCard(
                       icon: '💸',
-                      value: 'Rp 12.5jt',
+                      value: 'Rp 0',
                       label: 'Pengeluaran',
                       backgroundColor: const Color(0xFFFEE2E2),
                     ),
@@ -159,7 +168,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
                     width: cardWidth,
                     child: AdminStatCard(
                       icon: '⚖️',
-                      value: 'Rp 30.3jt',
+                      value: formatter.format(totalIncome),
                       label: 'Saldo',
                       backgroundColor: const Color(0xFFFEF3C7),
                     ),
@@ -199,7 +208,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
               controller: _tabController,
               children: [
                 EventEditFormTab(event: event),
-                const ParticipantsPlaceholderTab(),
+                ParticipantsTab(eventId: widget.eventId),
                 const FinancePlaceholderTab(),
                 const TicketsPlaceholderTab(),
               ],
