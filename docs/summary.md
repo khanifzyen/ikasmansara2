@@ -31,7 +31,8 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - Mengubah pengaturan default aplikasi ke **Light Mode** (mengabaikan preferensi sistem/auto).
 
 8.  **Perbaikan Hook Ticket Generation**
-    - Memperbaiki `pb_hooks/ticket_generation.pb.js` agar tetap memproses pembuatan tiket untuk pendaftaran manual meskipun field `metadata` kosong.
+    - Memperbaiki `pb_hooks/ticket_generation.pb.js` agar lebih robust dan null-safe saat memproses `metadata`.
+    - Menangani kasus di mana PocketBase mengembalikan byte array bertipe `"null"` yang sebelumnya menyebabkan hook terhenti (crash), sehingga pembuatan tiket untuk pendaftaran manual kini berjalan lancar.
 
 ## Operasi Git
 - Melakukan pendataan seluruh perubahan file (`git add .`).
