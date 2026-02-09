@@ -30,6 +30,9 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
 7.  **Penyesuaian Tema**
     - Mengubah pengaturan default aplikasi ke **Light Mode** (mengabaikan preferensi sistem/auto).
 
+8.  **Perbaikan Hook Ticket Generation**
+    - Memperbaiki `pb_hooks/ticket_generation.pb.js` agar tetap memproses pembuatan tiket untuk pendaftaran manual meskipun field `metadata` kosong.
+
 ## Operasi Git
 - Melakukan pendataan seluruh perubahan file (`git add .`).
 - Melakukan commit dengan ringkasan perubahan.

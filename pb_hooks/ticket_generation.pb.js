@@ -48,6 +48,13 @@ onRecordAfterUpdateSuccess((e) => {
         }
 
         // -----------------------------------------------------------------
+        // Get Manual Booking Info
+        // -----------------------------------------------------------------
+        const manualCount = e.record.getInt("manual_ticket_count");
+        const manualTicketTypeId = e.record.getString("manual_ticket_type");
+        const coordinatorName = e.record.getString("coordinator_name");
+
+        // -----------------------------------------------------------------
         // Parse Metadata
         // -----------------------------------------------------------------
         console.log("[Hook] 📦 Parsing metadata...");
@@ -55,58 +62,44 @@ onRecordAfterUpdateSuccess((e) => {
         let items = [];
 
         try {
-            // Case 1: Metadata is already a JS object/array (rare but possible)
-            if (Array.isArray(metadata)) {
-                // Check if it's a byte array (PocketBase sometimes returns []uint8 as array of numbers)
-                if (metadata.length > 0 && typeof metadata[0] === 'number') {
-                    console.log("[Hook] 🔢 Detected Byte Array metadata. Converting to string...");
-                    // Convert byte array to string
-                    const jsonString = metadata.map(b => String.fromCharCode(b)).join('');
-                    items = JSON.parse(jsonString);
-                } else {
-                    // It's a regular array of objects
-                    items = metadata;
+            if (metadata) {
+                // Case 1: Metadata is already a JS object/array
+                if (Array.isArray(metadata)) {
+                    if (metadata.length > 0 && typeof metadata[0] === 'number') {
+                        console.log("[Hook] 🔢 Detected Byte Array metadata. Converting to string...");
+                        const jsonString = metadata.map(b => String.fromCharCode(b)).join('');
+                        items = JSON.parse(jsonString);
+                    } else {
+                        items = metadata;
+                    }
                 }
-            }
-            // Case 2: Metadata is a string
-            else if (typeof metadata === 'string') {
-                items = JSON.parse(metadata);
-            }
-            // Case 3: Metadata is an object (single item or weird wrapper)
-            else if (metadata && typeof metadata === 'object') {
-                // Try to stringify and parse again if it's some internal Go wrapper
-                const raw = JSON.stringify(metadata);
-                // If raw looks like a byte array string "[91, 123...]", we might need to handle it,
-                // but typically JSON.stringify on object handles it.
-                // However, if it was an object like {0: 91, 1: 123...}, that's different.
-                // Let's assume standard object behavior first.
-                try {
-                    const parsed = JSON.parse(raw);
-                    if (Array.isArray(parsed)) items = parsed;
-                    else items = [parsed];
-                } catch (_) {
-                    // Fallback: assume it's a single item object
-                    items = [metadata];
+                // Case 2: Metadata is a string
+                else if (typeof metadata === 'string') {
+                    items = JSON.parse(metadata);
+                }
+                // Case 3: Metadata is an object
+                else if (typeof metadata === 'object') {
+                    const raw = JSON.stringify(metadata);
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (Array.isArray(parsed)) items = parsed;
+                        else items = [parsed];
+                    } catch (_) {
+                        items = [metadata];
+                    }
                 }
             }
         } catch (err) {
             console.warn(`[Hook] ⚠️ Metadata parse error: ${err.message}`);
         }
 
-        // Final validation
-        if (!Array.isArray(items)) {
-            items = [];
-        }
-
-        // Debug log
-        try {
-            console.log(`[Hook] 🛒 Parsed ${items.length} items. First item type: ${items.length > 0 ? typeof items[0] : 'N/A'}`);
-        } catch (_) { }
-
-        if (items.length === 0) {
-            console.warn(`[Hook] ⚠️ No valid items found in metadata for booking ${bookingId}.`);
+        // Final validation: skip if no metadata AND no manual booking info
+        if ((!Array.isArray(items) || items.length === 0) && (manualCount <= 0 || !manualTicketTypeId)) {
+            console.warn(`[Hook] ⚠️ No valid items found in metadata and not a valid manual booking for ${bookingId}.`);
             return;
         }
+
+        console.log(`[Hook] 🛒 Items: ${items.length}, Manual Count: ${manualCount}`);
 
         // -----------------------------------------------------------------
         // Prepare Event & Sequences
@@ -119,13 +112,6 @@ onRecordAfterUpdateSuccess((e) => {
         const ticketFormat = event.getString("ticket_id_format") || "TIX-{CODE}-{SEQ}";
         const eventCode = event.getString("code") || "EVT";
         console.log(`[Hook] 🔢 Current Last Seq: ${eventLastSeq}, Code: ${eventCode}`);
-
-        // -----------------------------------------------------------------
-        // Generate Tickets (Transaction)
-        // -----------------------------------------------------------------
-        const manualCount = e.record.getInt("manual_ticket_count");
-        const manualTicketTypeId = e.record.getString("manual_ticket_type");
-        const coordinatorName = e.record.getString("coordinator_name");
 
         // -----------------------------------------------------------------
         // Generate Tickets
