@@ -68,24 +68,26 @@ onRecordAfterUpdateSuccess((e) => {
                     if (metadata.length > 0 && typeof metadata[0] === 'number') {
                         console.log("[Hook] 🔢 Detected Byte Array metadata. Converting to string...");
                         const jsonString = metadata.map(b => String.fromCharCode(b)).join('');
-                        items = JSON.parse(jsonString);
+                        console.log(`[Hook] 📝 Raw JSON: ${jsonString}`);
+                        if (jsonString && jsonString !== 'null') {
+                            const parsed = JSON.parse(jsonString);
+                            items = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
+                        }
                     } else {
                         items = metadata;
                     }
                 }
                 // Case 2: Metadata is a string
-                else if (typeof metadata === 'string') {
-                    items = JSON.parse(metadata);
+                else if (typeof metadata === 'string' && metadata !== 'null') {
+                    const parsed = JSON.parse(metadata);
+                    items = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
                 }
                 // Case 3: Metadata is an object
                 else if (typeof metadata === 'object') {
                     const raw = JSON.stringify(metadata);
-                    try {
+                    if (raw !== 'null') {
                         const parsed = JSON.parse(raw);
-                        if (Array.isArray(parsed)) items = parsed;
-                        else items = [parsed];
-                    } catch (_) {
-                        items = [metadata];
+                        items = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
                     }
                 }
             }
@@ -93,13 +95,18 @@ onRecordAfterUpdateSuccess((e) => {
             console.warn(`[Hook] ⚠️ Metadata parse error: ${err.message}`);
         }
 
+        // Ensure items is always an array
+        if (!Array.isArray(items)) {
+            items = [];
+        }
+
         // Final validation: skip if no metadata AND no manual booking info
-        if ((!Array.isArray(items) || items.length === 0) && (manualCount <= 0 || !manualTicketTypeId)) {
+        if (items.length === 0 && (manualCount <= 0 || !manualTicketTypeId)) {
             console.warn(`[Hook] ⚠️ No valid items found in metadata and not a valid manual booking for ${bookingId}.`);
             return;
         }
 
-        console.log(`[Hook] 🛒 Items: ${items.length}, Manual Count: ${manualCount}`);
+        console.log(`[Hook] 🛒 Items Found: ${items.length}, Manual Count: ${manualCount}`);
 
         // -----------------------------------------------------------------
         // Prepare Event & Sequences
