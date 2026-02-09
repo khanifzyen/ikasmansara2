@@ -34,6 +34,9 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - Memperbaiki `pb_hooks/ticket_generation.pb.js` agar lebih robust dan null-safe saat memproses `metadata`.
     - Menangani kasus di mana PocketBase mengembalikan byte array bertipe `"null"` yang sebelumnya menyebabkan hook terhenti (crash), sehingga pembuatan tiket untuk pendaftaran manual kini berjalan lancar.
 
+9.  **Pembaruan Dokumentasi**
+    - Memperbarui `docs/pb_hooks.md` dengan detail teknis terbaru mengenai logika hook, termasuk penanganan *null-safety* dan jalur ganda pembuatan tiket.
+
 ## Operasi Git
 - Melakukan pendataan seluruh perubahan file (`git add .`).
 - Melakukan commit dengan ringkasan perubahan.
