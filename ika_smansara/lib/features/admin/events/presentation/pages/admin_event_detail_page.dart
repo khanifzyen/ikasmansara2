@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,10 +51,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
           AdminEventsBloc()..add(LoadEventDetail(widget.eventId)),
       child: AdminResponsiveScaffold(
         title: 'Event Dashboard',
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
-          onPressed: () => context.pop(),
-        ),
+
         actions: [
           BlocBuilder<AdminEventsBloc, AdminEventsState>(
             builder: (context, state) {

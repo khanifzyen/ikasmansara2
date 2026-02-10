@@ -62,6 +62,7 @@ class _AdminEventsViewState extends State<_AdminEventsView> {
   Widget build(BuildContext context) {
     return AdminResponsiveScaffold(
       title: 'Kelola Events',
+      hideBackButton: true,
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh, color: AppColors.textGrey),
