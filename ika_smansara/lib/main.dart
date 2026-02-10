@@ -91,7 +91,7 @@ class IkaSmanSaraApp extends StatelessWidget {
             builder: (context, child) {
               return UpgradeAlert(
                 upgrader: Upgrader(
-                  minAppVersion: '2.0.1',
+                  minAppVersion: '2.0.3',
                   debugLogging: true,
                   // debugDisplayAlways: true, // Uncomment untuk testing
                 ),

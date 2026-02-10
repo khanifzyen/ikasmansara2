@@ -37,39 +37,95 @@ class _MainShellState extends State<MainShell> {
           context.go('/login');
         }
       },
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: widget.navigationShell,
-        endDrawer: const _SideDrawer(),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: widget.navigationShell.currentIndex > 3
-              ? 3
-              : widget.navigationShell.currentIndex,
-          onTap: _onTap,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Home',
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 800;
+
+          if (isDesktop) {
+            return Scaffold(
+              key: _scaffoldKey,
+              endDrawer: const _SideDrawer(),
+              body: Row(
+                children: [
+                  NavigationRail(
+                    selectedIndex: widget.navigationShell.currentIndex > 3
+                        ? 4
+                        : widget.navigationShell.currentIndex,
+                    onDestinationSelected: _onTap,
+                    labelType: NavigationRailLabelType.all,
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home_outlined),
+                        selectedIcon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.volunteer_activism_outlined),
+                        selectedIcon: Icon(Icons.volunteer_activism),
+                        label: Text('Donasiku'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.confirmation_number_outlined),
+                        selectedIcon: Icon(Icons.confirmation_number),
+                        label: Text('Tiketku'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.work_outline),
+                        selectedIcon: Icon(Icons.work),
+                        label: Text('Loker'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.menu),
+                        label: Text('Lainnya'),
+                      ),
+                    ],
+                  ),
+                  const VerticalDivider(thickness: 1, width: 1),
+                  Expanded(child: widget.navigationShell),
+                ],
+              ),
+            );
+          }
+
+          return Scaffold(
+            key: _scaffoldKey,
+            body: widget.navigationShell,
+            endDrawer: const _SideDrawer(),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: widget.navigationShell.currentIndex > 3
+                  ? 3
+                  : widget.navigationShell.currentIndex,
+              onTap: _onTap,
+              type: BottomNavigationBarType.fixed,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.volunteer_activism_outlined),
+                  activeIcon: Icon(Icons.volunteer_activism),
+                  label: 'Donasiku',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.confirmation_number_outlined),
+                  activeIcon: Icon(Icons.confirmation_number),
+                  label: 'Tiketku',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.work_outline),
+                  activeIcon: Icon(Icons.work),
+                  label: 'Loker',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.menu),
+                  label: 'Lainnya',
+                ),
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.volunteer_activism_outlined),
-              activeIcon: Icon(Icons.volunteer_activism),
-              label: 'Donasiku',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.confirmation_number_outlined),
-              activeIcon: Icon(Icons.confirmation_number),
-              label: 'Tiketku',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline),
-              activeIcon: Icon(Icons.work),
-              label: 'Loker',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Lainnya'),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

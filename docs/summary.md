@@ -66,3 +66,9 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
 - Melakukan pendataan seluruh perubahan file (`git add .`).
 - Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
 - Melakukan push ke repository.
+
+16. **Responsive Alumni Dashboard**
+    - Mengimplementasikan layout responsif pada `MainShell` dan `HomePage`.
+    - **Desktop (Width ≥ 800px)**: Menggunakan `NavigationRail` (sidebar) di sebelah kiri dan layout multikolom untuk konten dashboard.
+    - **Mobile**: Mempertahankan `BottomNavigationBar` dan layout single-column yang familiar.
+    - Menyesuaikan `GridView` pada menu akses cepat agar tampilan desktop lebih proporsional (`childAspectRatio: 1.5`).
