@@ -7,7 +7,7 @@ import '../bloc/news_bloc.dart';
 import '../widgets/news_card.dart';
 
 class NewsListPage extends StatelessWidget {
-  NewsListPage({super.key});
+  const NewsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class NewsListPage extends StatelessWidget {
 }
 
 class NewsListView extends StatefulWidget {
-  NewsListView({super.key});
+  const NewsListView({super.key});
 
   @override
   State<NewsListView> createState() => _NewsListViewState();

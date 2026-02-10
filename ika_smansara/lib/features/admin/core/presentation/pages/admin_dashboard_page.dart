@@ -100,7 +100,9 @@ class _AdminDashboardView extends StatelessWidget {
                                     style: GoogleFonts.inter(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
-                                      color: Theme.of(context).colorScheme.surface,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -108,7 +110,9 @@ class _AdminDashboardView extends StatelessWidget {
                                     'Admin Panel IKA SMANSARA',
                                     style: GoogleFonts.inter(
                                       fontSize: 13,
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -118,7 +122,7 @@ class _AdminDashboardView extends StatelessWidget {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: const Center(

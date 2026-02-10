@@ -5,7 +5,7 @@ import '../../../../core/di/injection.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  ChangePasswordPage({super.key});
+  const ChangePasswordPage({super.key});
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -197,19 +197,25 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           decoration: InputDecoration(
             hintText: 'Masukkan $label',
             hintStyle: GoogleFonts.inter(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 14,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -223,7 +229,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 obscureText
                     ? Icons.visibility_outlined
                     : Icons.visibility_off_outlined,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               onPressed: onToggleObscure,
             ),

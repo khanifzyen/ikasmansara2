@@ -10,7 +10,7 @@ import '../../../auth/presentation/bloc/auth_state.dart';
 
 class DonationPaymentSheet extends StatefulWidget {
   final Donation donation;
-  DonationPaymentSheet({super.key, required this.donation});
+  const DonationPaymentSheet({super.key, required this.donation});
 
   @override
   State<DonationPaymentSheet> createState() => _DonationPaymentSheetState();
@@ -178,7 +178,9 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                           ),
                           selected: isSelected,
                           selectedColor: AppColors.primary,
-                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
                           checkmarkColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -274,7 +276,9 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                             side: BorderSide(
                               color: _selectedPaymentMethod == method
                                   ? AppColors.primary
-                                  : Theme.of(context).colorScheme.surfaceContainerHighest!,
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
                             ),
                           ),
                           tileColor: _selectedPaymentMethod == method

@@ -11,7 +11,7 @@ import '../../domain/usecases/get_news_detail.dart';
 class NewsDetailPage extends StatelessWidget {
   final String newsId; // Should be passed from router
 
-  NewsDetailPage({super.key, required this.newsId});
+  const NewsDetailPage({super.key, required this.newsId});
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +57,11 @@ class NewsDetailPage extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: news.thumbnail!,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
+                          placeholder: (context, url) => Container(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                          ),
                           errorWidget: (context, url, error) => Image.asset(
                             'assets/images/placeholder_news.png',
                             fit: BoxFit.cover,

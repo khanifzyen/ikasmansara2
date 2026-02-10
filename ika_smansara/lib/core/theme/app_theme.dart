@@ -198,17 +198,13 @@ class AppTheme {
       surfaceContainerLow: const Color(0xFF1E1E1E),
       outline: const Color(0xFF3E3E3E),
       outlineVariant: const Color(0xFF2C2C2C),
-
-      // Slightly brighter background for contrast
-      background: const Color(0xFF0D0D0D),
-      onBackground: const Color(0xFFE3E3E3),
     );
 
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: const Color(0xFF0D0D0D),
       colorScheme: colorScheme,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(

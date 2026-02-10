@@ -14,7 +14,7 @@ import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../news/presentation/bloc/news_bloc.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -401,7 +401,7 @@ class HomePage extends StatelessWidget {
 }
 
 class _MenuGrid extends StatelessWidget {
-  _MenuGrid();
+  const _MenuGrid();
 
   @override
   Widget build(BuildContext context) {
@@ -481,7 +481,11 @@ class _MenuItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  _MenuItem({required this.icon, required this.label, required this.onTap});
+  const _MenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -518,7 +522,7 @@ class _SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback onViewAll;
 
-  _SectionHeader({required this.title, required this.onViewAll});
+  const _SectionHeader({required this.title, required this.onViewAll});
 
   @override
   Widget build(BuildContext context) {
@@ -556,7 +560,7 @@ class _AgendaCard extends StatelessWidget {
   final bool isRegisterOpen;
   final String? imageUrl;
 
-  _AgendaCard({
+  const _AgendaCard({
     required this.day,
     required this.time,
     required this.title,
@@ -702,7 +706,7 @@ class _NewsCard extends StatelessWidget {
   final String tag;
   final String? imageUrl;
 
-  _NewsCard({required this.title, required this.tag, this.imageUrl});
+  const _NewsCard({required this.title, required this.tag, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -803,7 +807,7 @@ class _DonationCard extends StatelessWidget {
   final bool isUrgent;
   final String? imageUrl;
 
-  _DonationCard({
+  const _DonationCard({
     required this.title,
     required this.amount,
     required this.percent,

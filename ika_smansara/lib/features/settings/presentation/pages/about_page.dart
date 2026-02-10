@@ -12,7 +12,7 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   String _version = '';
-  String _appName = 'IKA SMANSARA';
+  final String _appName = 'IKA SMANSARA';
 
   @override
   void initState() {
@@ -96,7 +96,9 @@ class _AboutPageState extends State<AboutPage> {
               'Versi $_version',
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 48),
@@ -128,7 +130,9 @@ class _AboutPageState extends State<AboutPage> {
               '© ${DateTime.now().year} IKA SMANSARA',
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -144,7 +148,9 @@ class _AboutPageState extends State<AboutPage> {
           title,
           style: GoogleFonts.inter(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w500,
           ),
         ),

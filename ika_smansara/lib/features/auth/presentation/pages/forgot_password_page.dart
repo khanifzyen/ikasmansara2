@@ -4,7 +4,7 @@ import '../../../../core/di/injection.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  ForgotPasswordPage({super.key});
+  const ForgotPasswordPage({super.key});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -82,7 +82,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         title: Text(
           'Lupa Password',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SingleChildScrollView(

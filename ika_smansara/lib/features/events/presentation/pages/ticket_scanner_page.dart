@@ -7,7 +7,7 @@ import '../../domain/repositories/event_repository.dart';
 import '../bloc/ticket_verification_bloc.dart';
 
 class TicketScannerPage extends StatelessWidget {
-  TicketScannerPage({super.key});
+  const TicketScannerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class TicketScannerPage extends StatelessWidget {
 }
 
 class _TicketScannerView extends StatefulWidget {
-  _TicketScannerView();
+  const _TicketScannerView();
 
   @override
   State<_TicketScannerView> createState() => _TicketScannerViewState();
@@ -288,7 +288,7 @@ class _ScannerOverlayShape extends ShapeBorder {
   final double borderLength;
   final double cutOutSize;
 
-  _ScannerOverlayShape({
+  const _ScannerOverlayShape({
     this.borderColor = Colors.red,
     this.borderWidth = 10.0,
     this.overlayColor = const Color.fromRGBO(0, 0, 0, 80),

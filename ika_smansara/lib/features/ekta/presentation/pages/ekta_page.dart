@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 
 class EKTAPage extends StatelessWidget {
-  EKTAPage({super.key});
+  const EKTAPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         title: Text('Kartu Anggota Digital'),
         elevation: 0,
         surfaceTintColor: Colors.white,
-        
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -72,12 +70,20 @@ class EKTAPage extends StatelessWidget {
                             height: 35,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Theme.of(context).colorScheme.surfaceContainerHighest!, Colors.grey[400]!],
+                                colors: [
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                                  Colors.grey[400] ?? const Color(0xFFBDBDBD),
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: Colors.grey[500]!),
+                              border: Border.all(
+                                color:
+                                    Colors.grey[500] ?? const Color(0xFF9E9E9E),
+                              ),
                             ),
                           ),
                         ],

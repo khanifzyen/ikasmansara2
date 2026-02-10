@@ -23,7 +23,7 @@ import '../bloc/event_booking_bloc.dart';
 class EventDetailPage extends StatefulWidget {
   final String eventId;
 
-  EventDetailPage({super.key, required this.eventId});
+  const EventDetailPage({super.key, required this.eventId});
 
   @override
   State<EventDetailPage> createState() => _EventDetailPageState();
@@ -194,7 +194,9 @@ class _EventDetailPageState extends State<EventDetailPage>
                               imageUrl: event.banner!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
-                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
                                 child: Center(
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
@@ -324,9 +326,7 @@ class _EventDetailPageState extends State<EventDetailPage>
                             indicatorColor: AppColors.primary,
                             isScrollable: true,
                             tabAlignment: TabAlignment.start,
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            labelStyle: TextStyle(fontWeight: FontWeight.w600),
                             tabs: const [
                               Tab(text: 'Tiket'),
                               // Tab(text: 'Sub-event'),

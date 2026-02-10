@@ -115,7 +115,11 @@ class _TicketTabState extends State<TicketTab> {
                 decoration: BoxDecoration(
                   color: Colors.grey[50],
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -172,7 +176,11 @@ class _TicketTabState extends State<TicketTab> {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+                                  border: Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
                                   color: Theme.of(context).colorScheme.surface,
                                 ),
@@ -194,7 +202,11 @@ class _TicketTabState extends State<TicketTab> {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+                                  border: Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
                                   color: Theme.of(context).colorScheme.surface,
                                 ),
@@ -219,7 +231,11 @@ class _TicketTabState extends State<TicketTab> {
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.surface,
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                                ),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +289,9 @@ class _TicketTabState extends State<TicketTab> {
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                                 borderSide: BorderSide(
-                                                  color: Theme.of(context).colorScheme.surfaceContainerHighest!,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainerHighest,
                                                 ),
                                               ),
                                             ),
@@ -329,7 +347,9 @@ class _TicketTabState extends State<TicketTab> {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: RadioGroup<String>(

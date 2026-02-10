@@ -8,7 +8,7 @@ class AdminSidebar extends StatelessWidget {
   final bool showFooter;
   final bool isPermanent;
 
-  AdminSidebar({
+  const AdminSidebar({
     super.key,
     this.showHeader = true,
     this.showFooter = true,
@@ -193,7 +193,7 @@ class _AdminMenuItem extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  _AdminMenuItem({
+  const _AdminMenuItem({
     required this.icon,
     required this.label,
     this.subtitle,

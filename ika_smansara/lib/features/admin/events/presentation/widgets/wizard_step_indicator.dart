@@ -7,7 +7,7 @@ class WizardStepIndicator extends StatelessWidget {
   final int totalSteps;
   final List<String> stepLabels;
 
-  WizardStepIndicator({
+  const WizardStepIndicator({
     super.key,
     required this.currentStep,
     required this.totalSteps,
@@ -72,7 +72,9 @@ class WizardStepIndicator extends StatelessWidget {
                             boxShadow: isActive
                                 ? [
                                     BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.3),
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -83,7 +85,9 @@ class WizardStepIndicator extends StatelessWidget {
                             child: isCompleted
                                 ? Icon(
                                     Icons.check,
-                                    color: Theme.of(context).colorScheme.surface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     size: 20,
                                   )
                                 : Text(

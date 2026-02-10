@@ -11,7 +11,7 @@ import '../widgets/donation_payment_sheet.dart';
 class DonationDetailPage extends StatelessWidget {
   final String donationId;
 
-  DonationDetailPage({super.key, required this.donationId});
+  const DonationDetailPage({super.key, required this.donationId});
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,9 @@ class DonationDetailPage extends StatelessWidget {
                                   imageUrl: imageUrl,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(
-                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
                                     child: Center(
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
@@ -110,13 +112,21 @@ class DonationDetailPage extends StatelessWidget {
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
-                                      Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
+                                      Container(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerHighest,
+                                      ),
                                 )
                               : Image.asset(
                                   imageUrl,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
+                                      Container(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerHighest,
+                                      ),
                                 ),
                           if (donation.isUrgent)
                             Positioned(
@@ -134,7 +144,9 @@ class DonationDetailPage extends StatelessWidget {
                                 child: Text(
                                   'URGENT',
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.surface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
                                   ),
@@ -382,7 +394,7 @@ class _DonorItem extends StatelessWidget {
   final String initials;
   final MaterialColor color;
 
-  _DonorItem({
+  const _DonorItem({
     required this.name,
     required this.amount,
     required this.time,
@@ -419,10 +431,7 @@ class _DonorItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                 ),
                 Text(
                   time,

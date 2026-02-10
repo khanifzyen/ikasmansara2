@@ -13,7 +13,7 @@ import 'edit_profile_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +261,7 @@ class _ProfileMenuItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  _ProfileMenuItem({
+  const _ProfileMenuItem({
     required this.icon,
     required this.label,
     required this.onTap,

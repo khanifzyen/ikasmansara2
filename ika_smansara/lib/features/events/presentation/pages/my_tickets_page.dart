@@ -37,7 +37,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Tiketku'),
-          
+
           foregroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 0,
         ),
@@ -88,20 +88,16 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
     List<String> shirtSizes = [];
 
     for (var item in booking.metadata) {
-      if (item is Map) {
-        // Quantity
-        final qty = item['quantity'] as int? ?? 0;
-        totalTicketCount += qty;
+      final qty = item['quantity'] as int? ?? 0;
+      totalTicketCount += qty;
 
-        // Options (Sizes)
-        final options = item['options'];
-        if (options is Map) {
-          options.forEach((key, value) {
-            if (value != null) {
-              shirtSizes.add(value.toString());
-            }
-          });
-        }
+      final options = item['options'];
+      if (options is Map) {
+        options.forEach((key, value) {
+          if (value != null) {
+            shirtSizes.add(value.toString());
+          }
+        });
       }
     }
 

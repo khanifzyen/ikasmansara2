@@ -80,7 +80,7 @@ class PrinterSettingsPage extends StatelessWidget {
                             fontSize: 12,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.6),
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                         value: settings.autoPrintEnabled,
@@ -167,7 +167,7 @@ class PrinterSettingsPage extends StatelessWidget {
                         style: GoogleFonts.inter(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -258,7 +258,7 @@ class PrinterSettingsPage extends StatelessWidget {
         title,
         style: GoogleFonts.inter(
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           fontSize: 14,
         ),
       ),

@@ -15,7 +15,7 @@ import '../bloc/profile_bloc.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserEntity user;
-  EditProfilePage({super.key, required this.user});
+  const EditProfilePage({super.key, required this.user});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();

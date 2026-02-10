@@ -8,17 +8,16 @@ import '../../../../core/di/injection.dart';
 import '../bloc/donation_list_bloc.dart';
 
 class DonationListPage extends StatelessWidget {
-  DonationListPage({super.key});
+  const DonationListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<DonationListBloc>()..add(FetchDonations()),
       child: Scaffold(
-        
         appBar: AppBar(
           title: Text('Program Donasi'),
-          
+
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           actions: [
@@ -86,7 +85,7 @@ class _CampaignCard extends StatelessWidget {
   final DateTime deadline;
   final VoidCallback onTap;
 
-  _CampaignCard({
+  const _CampaignCard({
     required this.title,
     required this.description,
     required this.imageUrl,
@@ -138,7 +137,9 @@ class _CampaignCard extends StatelessWidget {
                       height: 180,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       clipBehavior: Clip.antiAlias,
@@ -151,14 +152,13 @@ class _CampaignCard extends StatelessWidget {
                                   strokeWidth: 2,
                                 ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  Center(
-                                    child: Icon(
-                                      Icons.volunteer_activism,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                              errorWidget: (context, url, error) => Center(
+                                child: Icon(
+                                  Icons.volunteer_activism,
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             )
                           : Image.asset(
                               imageUrl,
@@ -210,10 +210,7 @@ class _CampaignCard extends StatelessWidget {
                 SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textGrey,
-                  ),
+                  style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                 ),
                 SizedBox(height: 16),
 
@@ -230,10 +227,7 @@ class _CampaignCard extends StatelessWidget {
                     SizedBox(width: 4),
                     Text(
                       'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textGrey,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                     ),
                   ],
                 ),
@@ -253,17 +247,16 @@ class _CampaignCard extends StatelessWidget {
                     ),
                     Text(
                       'dari ${currencyFormat.format(targetAmount)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textGrey,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                     ),
                   ],
                 ),
                 SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                   color: AppColors.primary,
                   minHeight: 6,
                   borderRadius: BorderRadius.circular(3),
@@ -273,10 +266,7 @@ class _CampaignCard extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: Text(
                     '$percentage% Terkumpul • $donorCount Donatur',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textGrey,
-                    ),
+                    style: TextStyle(fontSize: 10, color: AppColors.textGrey),
                   ),
                 ),
 

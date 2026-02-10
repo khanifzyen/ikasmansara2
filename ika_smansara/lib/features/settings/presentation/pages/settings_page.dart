@@ -188,7 +188,7 @@ class SettingsPage extends StatelessWidget {
                     style: GoogleFonts.inter(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       fontSize: 12,
                     ),
                   ),
@@ -209,7 +209,7 @@ class SettingsPage extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -230,7 +230,7 @@ class SettingsPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(
             context,
-          ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+          ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -254,13 +254,15 @@ class SettingsPage extends StatelessWidget {
               subtitle,
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             )
           : null,
       trailing: Icon(
         Icons.chevron_right,
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       onTap: onTap,
     );
@@ -294,84 +296,6 @@ class SettingsPage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  String _getThemeText(String mode) {
-    switch (mode) {
-      case 'light':
-        return 'Mode Terang';
-      case 'dark':
-        return 'Mode Gelap';
-      default:
-        return 'Mengikuti Sistem';
-    }
-  }
-
-  void _showThemeSelectionDialog(BuildContext context, String currentMode) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Pilih Tampilan',
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              _buildThemeRadio(
-                context,
-                'system',
-                'Mengikuti Sistem',
-                currentMode,
-              ),
-              _buildThemeRadio(context, 'light', 'Mode Terang', currentMode),
-              _buildThemeRadio(context, 'dark', 'Mode Gelap', currentMode),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildThemeRadio(
-    BuildContext context,
-    String value,
-    String label,
-    String groupValue,
-  ) {
-    return RadioListTile<String>(
-      value: value,
-      groupValue: groupValue,
-      onChanged: (newValue) {
-        if (newValue != null) {
-          context.read<SettingsBloc>().add(ToggleTheme(newValue));
-          Navigator.pop(context);
-        }
-      },
-      title: Text(
-        label,
-        style: GoogleFonts.inter(
-          fontSize: 16,
-          color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: value == groupValue ? FontWeight.w600 : FontWeight.w400,
-        ),
-      ),
-      activeColor: AppColors.primary,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
 }

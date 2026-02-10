@@ -10,7 +10,7 @@ import '../bloc/admin_participants_bloc.dart';
 class ParticipantsTab extends StatefulWidget {
   final String eventId;
 
-  ParticipantsTab({super.key, required this.eventId});
+  const ParticipantsTab({super.key, required this.eventId});
 
   @override
   State<ParticipantsTab> createState() => _ParticipantsTabState();
@@ -105,11 +105,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
           children: [
-            Icon(
-              Icons.people_outline,
-              size: 64,
-              color: AppColors.textLight,
-            ),
+            Icon(Icons.people_outline, size: 64, color: AppColors.textLight),
             SizedBox(height: 16),
             Text(
               'Belum ada peserta',
@@ -134,7 +130,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
         border: Border.all(color: AppColors.border),
       ),
       child: DataTable(
-        headingRowColor: MaterialStateProperty.all(AppColors.background),
+        headingRowColor: WidgetStateProperty.all(AppColors.background),
         columns: const [
           DataColumn(label: Text('No')),
           DataColumn(label: Text('ID Booking')),
@@ -343,7 +339,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color),
       ),
@@ -413,7 +409,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
 class _ManualBookingModal extends StatefulWidget {
   final String eventId;
 
-  _ManualBookingModal({required this.eventId});
+  const _ManualBookingModal({required this.eventId});
 
   @override
   State<_ManualBookingModal> createState() => _ManualBookingModalState();
@@ -532,7 +528,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                         if (state is AdminParticipantsLoaded) {
                           final tickets = state.availableTickets ?? [];
                           return DropdownButtonFormField<String>(
-                            value: _selectedTicketId,
+                            initialValue: _selectedTicketId,
                             decoration: const InputDecoration(
                               labelText: 'Jenis Tiket',
                               border: OutlineInputBorder(),
@@ -590,7 +586,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
                     ),
                     SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: _selectedChannel,
+                      initialValue: _selectedChannel,
                       decoration: const InputDecoration(
                         labelText: 'Channel Pendaftaran',
                         border: OutlineInputBorder(),
@@ -663,7 +659,7 @@ class _ManualBookingModalState extends State<_ManualBookingModal> {
 class _BookingDetailModal extends StatelessWidget {
   final EventBooking booking;
 
-  _BookingDetailModal({required this.booking});
+  const _BookingDetailModal({required this.booking});
 
   @override
   Widget build(BuildContext context) {
@@ -721,16 +717,10 @@ class _BookingDetailModal extends StatelessWidget {
         children: [
           SizedBox(
             width: 100,
-            child: Text(
-              '$label:',
-              style: TextStyle(color: AppColors.textGrey),
-            ),
+            child: Text('$label:', style: TextStyle(color: AppColors.textGrey)),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            child: Text(value, style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

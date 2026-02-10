@@ -19,7 +19,7 @@ class MyTicketDetailPage extends StatefulWidget {
   final String bookingId;
   final EventBooking? booking;
 
-  MyTicketDetailPage({super.key, required this.bookingId, this.booking});
+  const MyTicketDetailPage({super.key, required this.bookingId, this.booking});
 
   @override
   State<MyTicketDetailPage> createState() => _MyTicketDetailPageState();
@@ -81,9 +81,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                   return Center(child: Text('Error: ${state.message}'));
                 } else if (state is MyBookingTicketsLoaded) {
                   if (state.tickets.isEmpty) {
-                    return Center(
-                      child: Text('Tidak ada tiket ditemukan'),
-                    );
+                    return Center(child: Text('Tidak ada tiket ditemukan'));
                   }
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
@@ -153,7 +151,9 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                     offset: const Offset(0, 4),
                   ),
                 ],
-                border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
               ),
               child: Column(
                 children: [
@@ -282,7 +282,9 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,11 +307,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
           SizedBox(height: 8),
           Row(
             children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 16,
-                color: Colors.grey,
-              ),
+              Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
               SizedBox(width: 8),
               Expanded(
                 child: Text(

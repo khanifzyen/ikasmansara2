@@ -13,7 +13,7 @@ import 'package:ika_smansara/features/admin/events/presentation/widgets/wizard_s
 import 'package:ika_smansara/features/admin/events/presentation/bloc/admin_events_bloc.dart';
 
 class AdminEventWizardPage extends StatefulWidget {
-  AdminEventWizardPage({super.key});
+  const AdminEventWizardPage({super.key});
 
   @override
   State<AdminEventWizardPage> createState() => _AdminEventWizardPageState();
@@ -44,7 +44,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
 
   // Form Controllers - Step 3: Ticketing
   // Using a simple list of maps for local state before submission
-  List<Map<String, dynamic>> _ticketTypes = [];
+  final List<Map<String, dynamic>> _ticketTypes = [];
 
   // Form Controllers - Step 4: Features
   bool _enableSponsorship = false;
@@ -100,7 +100,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
       'title': _titleController.text,
       'code': _codeController.text.toUpperCase(),
       'date':
-          DateFormat('yyyy-MM-dd').format(_selectedDate!) + ' 00:00:00.000Z',
+          '${DateFormat('yyyy-MM-dd').format(_selectedDate!)} 00:00:00.000Z',
       'time': _selectedTime!.format(context),
       'location': _locationController.text,
       'description': _descriptionController.text,
@@ -348,7 +348,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                 ),
                 if (state is AdminEventsLoading)
                   Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     child: Center(child: CircularProgressIndicator()),
                   ),
               ],
@@ -704,7 +704,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _ticketTypes.length,
-              separatorBuilder: (_, __) => SizedBox(height: 16),
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final ticket = _ticketTypes[index];
                 return Container(
@@ -1148,7 +1148,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
           Text(
             'OUTPUT:',
             style: GoogleFonts.robotoMono(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 13,
             ),
           ),

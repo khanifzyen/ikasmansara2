@@ -35,7 +35,7 @@ class SponsorTab extends StatelessWidget {
             badgeTextColor = const Color(0xFF4B5563);
             break;
           default:
-            badgeColor = Theme.of(context).colorScheme.surfaceContainerHighest!;
+            badgeColor = Theme.of(context).colorScheme.surfaceContainerHighest;
             badgeTextColor = Colors.black;
         }
 
@@ -44,7 +44,9 @@ class SponsorTab extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            border: Border.all(color: Theme.of(context).colorScheme.surfaceContainerHighest!),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
