@@ -1,8 +1,6 @@
 /// App Constants - IKA SMANSARA
 library;
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class AppConstants {
   AppConstants._();
 
@@ -12,8 +10,7 @@ class AppConstants {
   static const String appTagline = 'Ikatan Alumni SMA Negeri 1 Jepara';
 
   // PocketBase
-  static String get pocketBaseUrl =>
-      dotenv.env['POCKETBASE_URL'] ?? 'http://127.0.0.1:8090';
+  static const String pocketBaseUrl = 'https://pb-ikasmansara.pasarjepara.com';
 
   // Storage Keys
   static const String tokenKey = 'auth_token';
@@ -24,11 +21,9 @@ class AppConstants {
   static const int pageSize = 20;
 
   // App Links
-  static String get privacyPolicyUrl =>
-      dotenv.env['PRIVACY_POLICY_URL'] ??
+  static const String privacyPolicyUrl =
       'https://ikasmansara.com/privacy-policy';
-  static String get termsConditionsUrl =>
-      dotenv.env['TERMS_CONDITIONS_URL'] ?? 'https://ikasmansara.com/terms';
+  static const String termsConditionsUrl = 'https://ikasmansara.com/terms';
 
   // Timeouts
   static const Duration connectionTimeout = Duration(seconds: 30);
