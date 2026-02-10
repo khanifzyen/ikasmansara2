@@ -23,6 +23,13 @@ class AppConstants {
   // Pagination
   static const int pageSize = 20;
 
+  // App Links
+  static String get privacyPolicyUrl =>
+      dotenv.env['PRIVACY_POLICY_URL'] ??
+      'https://ikasmansara.com/privacy-policy';
+  static String get termsConditionsUrl =>
+      dotenv.env['TERMS_CONDITIONS_URL'] ?? 'https://ikasmansara.com/terms';
+
   // Timeouts
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

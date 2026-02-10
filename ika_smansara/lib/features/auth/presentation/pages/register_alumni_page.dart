@@ -131,7 +131,7 @@ class _RegisterAlumniPageState extends State<RegisterAlumniPage> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Lengkapi data untuk mendaftar sebagai alumni SMANSA',
+                    'Lengkapi data untuk mendaftar sebagai alumni SMANSARA',
                     style: TextStyle(fontSize: 14, color: AppColors.textGrey),
                   ),
 

@@ -51,6 +51,7 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
     final List<Barcode> barcodes = capture.barcodes;
     for (final barcode in barcodes) {
       if (barcode.rawValue != null) {
+        debugPrint('QR SCANNED RESULT: ${barcode.rawValue}');
         setState(() {
           isScanning = false;
         });

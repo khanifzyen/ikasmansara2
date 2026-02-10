@@ -48,7 +48,21 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - Memperbaiki error `BlocProvider.of()` dengan menangani *context shadowing* pada dialog.
     - Membersihkan peringatan *deprecated* API dan asinkron *BuildContext*.
 
+12. **Perbaikan Verifikasi Tiket (QR Scan)**
+    - Menyelesaikan masalah error 404 saat scan tiket dengan memperbarui **API Rules** pada koleksi `event_booking_tickets`.
+    - Rule baru: `booking.user = @request.auth.id || @request.auth.role = "admin"`. Ini memastikan pemilik tiket dan admin dapat melakukan verifikasi, sementara akses publik tetap dibatasi.
+
+13. **Refaktorisasi Link Eksternal ke ENV**
+    - Memindahkan URL **Kebijakan Privasi** dan **Syarat & Ketentuan** dari kode hardcoded ke file `.env`.
+    - Menambahkan getter pada `AppConstants` untuk pembacaan dinamis. Hal ini memudahkan perubahan link di masa depan (misal: saat migrasi ke website resmi) tanpa perlu mengubah kode sumber.
+
+14. **Dokumen Legal Baru**
+    - Membuat draft dokumen **[Privacy Policy](file:///mnt/data1/www/ikasmansara2/docs/privacy_policy.md)** dan **[Terms & Conditions](file:///mnt/data1/www/ikasmansara2/docs/terms.md)** sesuai dengan konteks aplikasi IKA SMANSARA.
+
+15. **Penyelarasan Brand (SMANSARA)**
+    - Memperbarui penyebutan nama organisasi dari "SMANSA" menjadi "SMANSARA" pada halaman pemilihan role dan registrasi alumni untuk konsistensi brand.
+
 ## Operasi Git
 - Melakukan pendataan seluruh perubahan file (`git add .`).
-- Melakukan commit dengan ringkasan perubahan.
+- Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
 - Melakukan push ke repository.
