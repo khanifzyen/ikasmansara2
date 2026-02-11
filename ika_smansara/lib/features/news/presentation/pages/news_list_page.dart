@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_breakpoints.dart';
+import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/di/injection.dart';
 import '../bloc/news_bloc.dart';
 import '../widgets/news_card.dart';
@@ -13,7 +15,7 @@ class NewsListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<NewsBloc>()..add(const FetchNewsList()),
-      child: NewsListView(),
+      child: const NewsListView(),
     );
   }
 }
@@ -80,126 +82,137 @@ class _NewsListViewState extends State<NewsListView> {
       appBar: AppBar(
         title: Text(
           'Kabar SMANSARA',
-          style: TextStyle(
+          style: const TextStyle(
             color: AppColors.textDark,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
-
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.textDark),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
           onPressed: () => context.pop(),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.border, height: 1),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1, color: AppColors.border),
         ),
       ),
       body: Column(
         children: [
-          // Categories
-          Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(bottom: BorderSide(color: AppColors.border)),
-            ),
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
-              separatorBuilder: (context, index) => SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                final category = _categories[index];
-                final isSelected = category == _selectedCategory;
-                return InkWell(
-                  onTap: () => _onCategorySelected(category),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.primary
-                          : AppColors.background,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      category,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : AppColors.textGrey,
-                        fontSize: 12,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // News List
-          Expanded(
-            child: BlocBuilder<NewsBloc, NewsState>(
-              builder: (context, state) {
-                if (state is NewsLoading) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (state is NewsError) {
-                  return Center(child: Text('Error: ${state.message}'));
-                } else if (state is NewsLoaded) {
-                  if (state.newsList.isEmpty) {
-                    return Center(child: Text('Belum ada berita.'));
-                  }
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<NewsBloc>().add(
-                        RefreshNewsList(
-                          category: _selectedCategory == 'Semua'
-                              ? null
-                              : _selectedCategory,
-                        ),
-                      );
-                    },
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(16),
-                      itemCount: state.hasReachedMax
-                          ? state.newsList.length
-                          : state.newsList.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index >= state.newsList.length) {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          );
-                        }
-                        final news = state.newsList[index];
-                        return NewsCard(
-                          news: news,
-                          onTap: () {
-                            if (news.id.isNotEmpty) {
-                              context.pushNamed(
-                                'news-detail',
-                                extra: news.id,
-                              ); // Assuming route is defined
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
+          _buildCategoryFilter(context),
+          Expanded(child: _buildNewsList(context)),
         ],
       ),
+    );
+  }
+
+  Widget _buildCategoryFilter(BuildContext context) {
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: const Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        scrollDirection: Axis.horizontal,
+        itemCount: _categories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final category = _categories[index];
+          final isSelected = category == _selectedCategory;
+          return MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: InkWell(
+              onTap: () => _onCategorySelected(category),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : AppColors.background,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  category,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppColors.textGrey,
+                    fontSize: 12,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildNewsList(BuildContext context) {
+    return BlocBuilder<NewsBloc, NewsState>(
+      builder: (context, state) {
+        if (state is NewsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is NewsError) {
+          return Center(child: Text('Error: ${state.message}'));
+        } else if (state is NewsLoaded) {
+          if (state.newsList.isEmpty) {
+            return const Center(child: Text('Belum ada berita.'));
+          }
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppBreakpoints.maxContentWidth,
+              ),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<NewsBloc>().add(
+                    RefreshNewsList(
+                      category: _selectedCategory == 'Semua'
+                          ? null
+                          : _selectedCategory,
+                    ),
+                  );
+                },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: EdgeInsets.all(AppSizes.horizontalPadding(context)),
+                  itemCount: state.hasReachedMax
+                      ? state.newsList.length
+                      : state.newsList.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index >= state.newsList.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    }
+                    final news = state.newsList[index];
+                    return MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: NewsCard(
+                        news: news,
+                        onTap: () {
+                          if (news.id.isNotEmpty) {
+                            context.pushNamed('news-detail', extra: news.id);
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }

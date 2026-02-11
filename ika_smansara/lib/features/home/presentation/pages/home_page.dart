@@ -1,3 +1,6 @@
+/// Home Page - Adaptive layout with 3 breakpoints
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +9,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/utils/adaptive/adaptive_builder.dart';
+import '../../../../core/utils/adaptive/adaptive_breakpoints.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../../donations/presentation/bloc/donation_list_bloc.dart';
@@ -30,16 +35,20 @@ class HomePage extends StatelessWidget {
           create: (context) => getIt<NewsBloc>()..add(const FetchNewsList()),
         ),
       ],
-      child: Scaffold(
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth >= 800) {
-              return const _DesktopLayout();
-            }
-            return const _MobileLayout();
-          },
-        ),
-      ),
+      child: const Scaffold(body: SafeArea(child: _AdaptiveHomeLayout())),
+    );
+  }
+}
+
+class _AdaptiveHomeLayout extends StatelessWidget {
+  const _AdaptiveHomeLayout();
+
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveBuilder(
+      compact: (context) => const _MobileLayout(),
+      medium: (context) => const _TabletLayout(),
+      expanded: (context) => const _DesktopLayout(),
     );
   }
 }
@@ -49,38 +58,114 @@ class _MobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          _buildHeader(context, isDesktop: false),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                context.read<DonationListBloc>().add(FetchDonations());
-                context.read<EventsBloc>().add(const FetchEvents());
-                context.read<NewsBloc>().add(const FetchNewsList());
-                context.read<AuthBloc>().add(const AuthCheckRequested());
-                await Future.delayed(const Duration(seconds: 1));
-              },
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                children: const [
-                  _EktaCard(),
-                  SizedBox(height: 30),
-                  _MenuGrid(),
-                  SizedBox(height: 30),
-                  _AgendaSection(),
-                  SizedBox(height: 30),
-                  _DonationSection(),
-                  SizedBox(height: 30),
-                  _NewsSection(),
-                  SizedBox(height: 80),
-                ],
-              ),
+    final padding = AdaptiveBreakpoints.adaptivePadding(context);
+
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            padding.left,
+            padding.top,
+            padding.right,
+            0,
+          ),
+          child: _buildHeader(context),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<DonationListBloc>().add(FetchDonations());
+              context.read<EventsBloc>().add(const FetchEvents());
+              context.read<NewsBloc>().add(const FetchNewsList());
+              context.read<AuthBloc>().add(const AuthCheckRequested());
+              await Future.delayed(const Duration(seconds: 1));
+            },
+            child: ListView(
+              padding: padding,
+              children: const [
+                _EktaCard(),
+                SizedBox(height: 24),
+                _MenuGrid(crossAxisCount: 4, childAspectRatio: 0.75),
+                SizedBox(height: 24),
+                _AgendaSection(),
+                SizedBox(height: 24),
+                _DonationSection(),
+                SizedBox(height: 24),
+                _NewsSection(),
+                SizedBox(height: 80),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TabletLayout extends StatelessWidget {
+  const _TabletLayout();
+
+  @override
+  Widget build(BuildContext context) {
+    final padding = AdaptiveBreakpoints.adaptivePadding(context);
+
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            padding.left,
+            padding.top,
+            padding.right,
+            0,
+          ),
+          child: _buildHeader(context),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<DonationListBloc>().add(FetchDonations());
+              context.read<EventsBloc>().add(const FetchEvents());
+              context.read<NewsBloc>().add(const FetchNewsList());
+              context.read<AuthBloc>().add(const AuthCheckRequested());
+              await Future.delayed(const Duration(seconds: 1));
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 4,
+                  child: ListView(
+                    padding: padding,
+                    children: const [
+                      _EktaCard(),
+                      SizedBox(height: 24),
+                      _QuickActionsLabel(),
+                      SizedBox(height: 16),
+                      _MenuGrid(crossAxisCount: 2, childAspectRatio: 1.5),
+                      SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+                const VerticalDivider(width: 1, thickness: 1),
+                Flexible(
+                  flex: 6,
+                  child: ListView(
+                    padding: padding,
+                    children: const [
+                      _AgendaSection(),
+                      SizedBox(height: 24),
+                      _DonationSection(),
+                      SizedBox(height: 24),
+                      _NewsSection(),
+                      SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -90,69 +175,85 @@ class _DesktopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          _buildHeader(context, isDesktop: true),
-          Expanded(
+    final padding = AdaptiveBreakpoints.adaptivePadding(context);
+
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            padding.left,
+            padding.top,
+            padding.right,
+            0,
+          ),
+          child: _buildHeader(context),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<DonationListBloc>().add(FetchDonations());
+              context.read<EventsBloc>().add(const FetchEvents());
+              context.read<NewsBloc>().add(const FetchNewsList());
+              context.read<AuthBloc>().add(const AuthCheckRequested());
+              await Future.delayed(const Duration(seconds: 1));
+            },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left Column: E-KTA, Quick Actions, Profile
                 SizedBox(
-                  width: 350,
+                  width: 380,
                   child: ListView(
-                    padding: const EdgeInsets.all(24),
+                    padding: padding,
                     children: const [
                       _EktaCard(),
                       SizedBox(height: 24),
-                      Text(
-                        'Akses Cepat',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark,
-                        ),
-                      ),
+                      _QuickActionsLabel(),
                       SizedBox(height: 16),
                       _MenuGrid(crossAxisCount: 2, childAspectRatio: 1.5),
+                      SizedBox(height: 24),
                     ],
                   ),
                 ),
                 const VerticalDivider(width: 1, thickness: 1),
-                // Right Column: Content Feed
                 Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<DonationListBloc>().add(FetchDonations());
-                      context.read<EventsBloc>().add(const FetchEvents());
-                      context.read<NewsBloc>().add(const FetchNewsList());
-                      context.read<AuthBloc>().add(const AuthCheckRequested());
-                      await Future.delayed(const Duration(seconds: 1));
-                    },
-                    child: ListView(
-                      padding: const EdgeInsets.all(32),
-                      children: const [
-                        _AgendaSection(),
-                        SizedBox(height: 40),
-                        _DonationSection(),
-                        SizedBox(height: 40),
-                        _NewsSection(),
-                        SizedBox(height: 80),
-                      ],
-                    ),
+                  child: ListView(
+                    padding: padding,
+                    children: const [
+                      _AgendaSection(),
+                      SizedBox(height: 32),
+                      _DonationSection(),
+                      SizedBox(height: 32),
+                      _NewsSection(),
+                      SizedBox(height: 80),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickActionsLabel extends StatelessWidget {
+  const _QuickActionsLabel();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'Akses Cepat',
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textDark,
       ),
     );
   }
 }
 
-Widget _buildHeader(BuildContext context, {required bool isDesktop}) {
+Widget _buildHeader(BuildContext context) {
   return BlocBuilder<AuthBloc, AuthState>(
     builder: (context, state) {
       String name = 'User SMANSARA';
@@ -166,8 +267,10 @@ Widget _buildHeader(BuildContext context, {required bool isDesktop}) {
           ? '${AppConstants.pocketBaseUrl}/api/files/users/${(state as AuthAuthenticated).user.id}/$avatar'
           : null;
 
+      final padding = AdaptiveBreakpoints.adaptivePadding(context);
+
       return Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.symmetric(horizontal: padding.left),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -224,20 +327,27 @@ Widget _buildHeader(BuildContext context, {required bool isDesktop}) {
                     ),
                     shape: const CircleBorder(),
                   ),
+                  tooltip: 'Scan Tiket',
                 ),
                 const SizedBox(width: 8),
-                Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: avatarUrl != null
-                          ? CachedNetworkImageProvider(avatarUrl)
-                          : const AssetImage('assets/images/logo-ika.png')
-                                as ImageProvider,
-                      fit: BoxFit.cover,
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () => context.push('/profile'),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: avatarUrl != null
+                              ? CachedNetworkImageProvider(avatarUrl)
+                              : const AssetImage('assets/images/logo-ika.png')
+                                    as ImageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -353,20 +463,24 @@ class _AgendaSection extends StatelessWidget {
                   children: state.events.map((event) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 16),
-                      child: InkWell(
-                        onTap: () =>
-                            context.push('/event-detail', extra: event.id),
-                        child: _AgendaCard(
-                          day: DateFormat('EEEE', 'id').format(event.date),
-                          time: event.time,
-                          title: event.title,
-                          date: DateFormat(
-                            'dd MMMM yyyy',
-                            'id',
-                          ).format(event.date),
-                          location: event.location,
-                          isRegisterOpen: event.isRegistrationOpen,
-                          imageUrl: event.banner,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: InkWell(
+                          onTap: () =>
+                              context.push('/event-detail', extra: event.id),
+                          borderRadius: BorderRadius.circular(16),
+                          child: _AgendaCard(
+                            day: DateFormat('EEEE', 'id').format(event.date),
+                            time: event.time,
+                            title: event.title,
+                            date: DateFormat(
+                              'dd MMMM yyyy',
+                              'id',
+                            ).format(event.date),
+                            location: event.location,
+                            isRegisterOpen: event.isRegistrationOpen,
+                            imageUrl: event.banner,
+                          ),
                         ),
                       ),
                     );
@@ -408,21 +522,25 @@ class _DonationSection extends StatelessWidget {
                   children: state.donations.map((donation) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 16),
-                      child: InkWell(
-                        onTap: () => context.push(
-                          '/donation-detail',
-                          extra: donation.id,
-                        ),
-                        child: _DonationCard(
-                          title: donation.title,
-                          amount: NumberFormat.currency(
-                            locale: 'id_ID',
-                            symbol: 'Rp ',
-                            decimalDigits: 0,
-                          ).format(donation.collectedAmount),
-                          percent: donation.progress,
-                          isUrgent: donation.priority == 'urgent',
-                          imageUrl: donation.banner,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: InkWell(
+                          onTap: () => context.push(
+                            '/donation-detail',
+                            extra: donation.id,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          child: _DonationCard(
+                            title: donation.title,
+                            amount: NumberFormat.currency(
+                              locale: 'id_ID',
+                              symbol: 'Rp ',
+                              decimalDigits: 0,
+                            ).format(donation.collectedAmount),
+                            percent: donation.progress,
+                            isUrgent: donation.priority == 'urgent',
+                            imageUrl: donation.banner,
+                          ),
                         ),
                       ),
                     );
@@ -462,12 +580,17 @@ class _NewsSection extends StatelessWidget {
                 children: state.newsList.take(3).map((news) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: InkWell(
-                      onTap: () => context.push('/news-detail', extra: news.id),
-                      child: _NewsCard(
-                        title: news.title,
-                        tag: news.category.toUpperCase(),
-                        imageUrl: news.thumbnail,
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: InkWell(
+                        onTap: () =>
+                            context.push('/news-detail', extra: news.id),
+                        borderRadius: BorderRadius.circular(16),
+                        child: _NewsCard(
+                          title: news.title,
+                          tag: news.category.toUpperCase(),
+                          imageUrl: news.thumbnail,
+                        ),
                       ),
                     ),
                   );
@@ -574,32 +697,36 @@ class _MenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(16),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        hoverColor: AppColors.primaryLight.withValues(alpha: 0.2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: AppColors.primary, size: 24),
             ),
-            child: Icon(icon, color: AppColors.primary, size: 24),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -624,14 +751,17 @@ class _SectionHeader extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        TextButton(
-          onPressed: onViewAll,
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: TextButton(
+            onPressed: onViewAll,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text('Lihat Semua'),
           ),
-          child: const Text('Lihat Semua'),
         ),
       ],
     );

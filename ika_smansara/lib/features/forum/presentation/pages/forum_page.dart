@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/utils/adaptive/adaptive_breakpoints.dart';
+import '../../../../core/widgets/adaptive/adaptive_container.dart';
 import '../../presentation/bloc/forum_bloc.dart';
 import '../../presentation/widgets/forum_card.dart';
 
@@ -57,7 +59,6 @@ class _ForumViewState extends State<ForumView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         title: const Text(
           'Forum Diskusi',
@@ -67,7 +68,7 @@ class _ForumViewState extends State<ForumView> {
             fontSize: 18,
           ),
         ),
-        
+
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
@@ -85,10 +86,15 @@ class _ForumViewState extends State<ForumView> {
             height: 60,
             color: Theme.of(context).colorScheme.surface,
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: AdaptiveBreakpoints.adaptivePadding(context).left,
+                vertical: 12,
+              ),
               scrollDirection: Axis.horizontal,
               itemCount: _categories.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
+              separatorBuilder: (context, index) => SizedBox(
+                width: AdaptiveBreakpoints.adaptiveSpacing(context) / 2,
+              ),
               itemBuilder: (context, index) {
                 final category = _categories[index];
                 final isSelected = category == _selectedCategory;
@@ -96,7 +102,11 @@ class _ForumViewState extends State<ForumView> {
                   onTap: () => _onCategorySelected(category),
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AdaptiveBreakpoints.adaptivePadding(
+                        context,
+                      ).left,
+                    ),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: isSelected
@@ -157,7 +167,9 @@ class _ForumViewState extends State<ForumView> {
                           Icon(
                             Icons.forum_outlined,
                             size: 64,
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -171,27 +183,30 @@ class _ForumViewState extends State<ForumView> {
 
                   return RefreshIndicator(
                     onRefresh: _onRefresh,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: state.posts.length,
-                      itemBuilder: (context, index) {
-                        final post = state.posts[index];
-                        return ForumCard(
-                          post: post,
-                          onTap: () {
-                            // Go to detail
-                            context.push('/forum-detail', extra: post.id);
-                          },
-                          onLike: () {
-                            context.read<ForumBloc>().add(
-                              LikePostEvent(post.id),
-                            );
-                          },
-                          onComment: () {
-                            context.push('/forum-detail', extra: post.id);
-                          },
-                        );
-                      },
+                    child: AdaptiveContainer(
+                      widthType: AdaptiveWidthType.content,
+                      child: ListView.builder(
+                        padding: AdaptiveBreakpoints.adaptivePadding(context),
+                        itemCount: state.posts.length,
+                        itemBuilder: (context, index) {
+                          final post = state.posts[index];
+                          return ForumCard(
+                            post: post,
+                            onTap: () {
+                              // Go to detail
+                              context.push('/forum-detail', extra: post.id);
+                            },
+                            onLike: () {
+                              context.read<ForumBloc>().add(
+                                LikePostEvent(post.id),
+                              );
+                            },
+                            onComment: () {
+                              context.push('/forum-detail', extra: post.id);
+                            },
+                          );
+                        },
+                      ),
                     ),
                   );
                 }

@@ -1,7 +1,14 @@
+/// Main Shell - Adaptive navigation with 3 breakpoints
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_breakpoints.dart';
+import '../../../../core/utils/adaptive/adaptive_builder.dart';
+import '../../../../core/utils/adaptive/adaptive_breakpoints.dart';
+import '../../../../core/utils/adaptive/adaptive_destinations.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
@@ -18,8 +25,14 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  int get _selectedIndex {
+    final index = widget.navigationShell.currentIndex;
+    if (index > 3) return AppDestinations.moreIndex;
+    return index;
+  }
+
   void _onTap(int index) {
-    if (index == 4) {
+    if (index == AppDestinations.moreIndex) {
       _scaffoldKey.currentState?.openEndDrawer();
     } else {
       widget.navigationShell.goBranch(
@@ -37,96 +50,79 @@ class _MainShellState extends State<MainShell> {
           context.go('/login');
         }
       },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth >= 800;
-
-          if (isDesktop) {
-            return Scaffold(
-              key: _scaffoldKey,
-              endDrawer: const _SideDrawer(),
-              body: Row(
-                children: [
-                  NavigationRail(
-                    selectedIndex: widget.navigationShell.currentIndex > 3
-                        ? 4
-                        : widget.navigationShell.currentIndex,
-                    onDestinationSelected: _onTap,
-                    labelType: NavigationRailLabelType.all,
-                    destinations: const [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home_outlined),
-                        selectedIcon: Icon(Icons.home),
-                        label: Text('Home'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.volunteer_activism_outlined),
-                        selectedIcon: Icon(Icons.volunteer_activism),
-                        label: Text('Donasiku'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.confirmation_number_outlined),
-                        selectedIcon: Icon(Icons.confirmation_number),
-                        label: Text('Tiketku'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.work_outline),
-                        selectedIcon: Icon(Icons.work),
-                        label: Text('Loker'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.menu),
-                        label: Text('Lainnya'),
-                      ),
-                    ],
-                  ),
-                  const VerticalDivider(thickness: 1, width: 1),
-                  Expanded(child: widget.navigationShell),
-                ],
-              ),
-            );
-          }
-
-          return Scaffold(
-            key: _scaffoldKey,
-            body: widget.navigationShell,
-            endDrawer: const _SideDrawer(),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: widget.navigationShell.currentIndex > 3
-                  ? 3
-                  : widget.navigationShell.currentIndex,
-              onTap: _onTap,
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.volunteer_activism_outlined),
-                  activeIcon: Icon(Icons.volunteer_activism),
-                  label: 'Donasiku',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.confirmation_number_outlined),
-                  activeIcon: Icon(Icons.confirmation_number),
-                  label: 'Tiketku',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.work_outline),
-                  activeIcon: Icon(Icons.work),
-                  label: 'Loker',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.menu),
-                  label: 'Lainnya',
-                ),
-              ],
-            ),
-          );
-        },
+      child: Scaffold(
+        key: _scaffoldKey,
+        endDrawer: const _SideDrawer(),
+        body: AdaptiveBuilder(
+          compact: (context) => _buildMobileLayout(context),
+          medium: (context) => _buildTabletLayout(context),
+          expanded: (context) => _buildDesktopLayout(context),
+        ),
       ),
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: widget.navigationShell),
+        BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onTap,
+          type: BottomNavigationBarType.fixed,
+          items: AppDestinations.primary
+              .map((d) => d.toBottomNavigationBarItem())
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabletLayout(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: AppBreakpoints.navRailWidthCompact,
+          child: NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onTap,
+            labelType: NavigationRailLabelType.selected,
+            destinations: AppDestinations.primary
+                .map((d) => d.toNavigationRailDestination())
+                .toList(),
+          ),
+        ),
+        const VerticalDivider(thickness: 1, width: 1),
+        Expanded(child: widget.navigationShell),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: AppBreakpoints.navRailWidthExpanded,
+          child: NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onTap,
+            labelType: NavigationRailLabelType.all,
+            leading: Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Image.asset(
+                'assets/images/logo-ika.png',
+                width: 40,
+                height: 40,
+              ),
+            ),
+            destinations: AppDestinations.primary
+                .map((d) => d.toNavigationRailDestination())
+                .toList(),
+          ),
+        ),
+        const VerticalDivider(thickness: 1, width: 1),
+        Expanded(child: widget.navigationShell),
+      ],
     );
   }
 }
@@ -136,103 +132,105 @@ class _SideDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final drawerWidth = AdaptiveBreakpoints.drawerWidth(context);
+
     return Drawer(
-      width: 280,
+      width: drawerWidth,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.horizontal(left: Radius.circular(0)),
       ),
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppColors.border)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Menu Lainnya',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close, color: AppColors.textGrey),
-                ),
-              ],
+          _buildHeader(context),
+          Expanded(child: _buildMenuItems(context)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Menu Lainnya',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textDark,
             ),
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                _DrawerItem(
-                  icon: Icons.people_outline,
-                  label: 'Direktori',
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Fitur Direktori akan segera hadir'),
-                      ),
-                    );
-                    // context.push('/directory');
-                  },
-                ),
-                // Placeholders for future phases
-                _DrawerItem(
-                  icon: Icons.shopping_bag_outlined,
-                  label: 'Market',
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Fitur Market akan segera hadir'),
-                      ),
-                    );
-                    // context.push('/market'); // Phase 8
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.forum_outlined,
-                  label: 'Forum Diskusi',
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Fitur Forum Diskusi akan segera hadir'),
-                      ),
-                    );
-                    // context.push('/forum');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.person_outline,
-                  label: 'Profil',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/profile');
-                  },
-                ),
-                const Divider(height: 32, color: AppColors.border),
-                _DrawerItem(
-                  icon: Icons.logout,
-                  label: 'Keluar',
-                  onTap: () {
-                    Navigator.pop(context); // Close drawer
-                    context.read<AuthBloc>().add(AuthLogoutRequested());
-                  },
-                ),
-              ],
-            ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close, color: AppColors.textGrey),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMenuItems(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        _DrawerItem(
+          icon: Icons.people_outline,
+          label: 'Direktori',
+          onTap: () {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Fitur Direktori akan segera hadir'),
+              ),
+            );
+          },
+        ),
+        _DrawerItem(
+          icon: Icons.shopping_bag_outlined,
+          label: 'Market',
+          onTap: () {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Fitur Market akan segera hadir')),
+            );
+          },
+        ),
+        _DrawerItem(
+          icon: Icons.forum_outlined,
+          label: 'Forum Diskusi',
+          onTap: () {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Fitur Forum Diskusi akan segera hadir'),
+              ),
+            );
+          },
+        ),
+        _DrawerItem(
+          icon: Icons.person_outline,
+          label: 'Profil',
+          onTap: () {
+            Navigator.pop(context);
+            context.push('/profile');
+          },
+        ),
+        const Divider(height: 32, color: AppColors.border),
+        _DrawerItem(
+          icon: Icons.logout,
+          label: 'Keluar',
+          onTap: () {
+            Navigator.pop(context);
+            context.read<AuthBloc>().add(AuthLogoutRequested());
+          },
+        ),
+      ],
     );
   }
 }

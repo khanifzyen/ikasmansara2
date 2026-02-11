@@ -7,6 +7,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/buttons.dart';
 import '../../../../core/widgets/inputs.dart';
+import '../../../../core/widgets/adaptive/adaptive_container.dart';
+import '../../../../core/widgets/adaptive/adaptive_padding.dart';
+import '../../../../core/widgets/adaptive/adaptive_spacing.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../bloc/auth_bloc.dart';
@@ -112,224 +115,232 @@ class _RegisterAlumniPageState extends State<RegisterAlumniPage> {
           ),
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  const Text(
-                    'Pendaftaran Alumni',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Lengkapi data untuk mendaftar sebagai alumni SMANSARA',
-                    style: TextStyle(fontSize: 14, color: AppColors.textGrey),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Section: Data Akun
-                  _buildSectionTitle('Data Akun'),
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'Nama Lengkap',
-                    hint: 'Sesuai ijazah',
-                    controller: _nameController,
-                    prefixIcon: const Icon(Icons.person_outline),
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Nama wajib diisi';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'Email',
-                    hint: 'contoh@email.com',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Email wajib diisi';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Email tidak valid';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'No WhatsApp',
-                    hint: '08123456789',
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    prefixIcon: const Icon(Icons.phone_outlined),
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'No WhatsApp wajib diisi';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppPasswordField(
-                    label: 'Password',
-                    hint: 'Minimal 8 karakter',
-                    controller: _passwordController,
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Password wajib diisi';
-                      }
-                      if (value.length < 8) {
-                        return 'Password minimal 8 karakter';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppPasswordField(
-                    label: 'Konfirmasi Password',
-                    hint: 'Ulangi password',
-                    controller: _confirmPasswordController,
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Konfirmasi password wajib diisi';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Password tidak cocok';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Section: Data Sekolah
-                  _buildSectionTitle('Data Sekolah'),
-                  const SizedBox(height: 16),
-
-                  _buildDropdownField(
-                    label: 'Tahun Lulus (Angkatan)',
-                    value: _selectedAngkatan,
-                    items: _angkatanList
-                        .map(
-                          (year) => DropdownMenuItem(
-                            value: year,
-                            child: Text(year.toString()),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() => _selectedAngkatan = value);
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Section: Profil Saat Ini
-                  _buildSectionTitle('Profil Saat Ini (Opsional)'),
-                  const SizedBox(height: 16),
-
-                  _buildDropdownField(
-                    label: 'Status Pekerjaan',
-                    value: _selectedJobStatus,
-                    items: JobStatus.values
-                        .map(
-                          (status) => DropdownMenuItem(
-                            value: status,
-                            child: Text(status.displayName),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() => _selectedJobStatus = value);
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'Instansi/Perusahaan',
-                    hint: 'Tempat bekerja',
-                    controller: _companyController,
-                    prefixIcon: const Icon(Icons.business_outlined),
-                    textInputAction: TextInputAction.next,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'Domisili',
-                    hint: 'Kota tempat tinggal',
-                    controller: _domisiliController,
-                    prefixIcon: const Icon(Icons.location_on_outlined),
-                    textInputAction: TextInputAction.done,
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Submit Button
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      return PrimaryButton(
-                        text: 'Daftar Sekarang',
-                        isLoading: state is AuthLoading,
-                        onPressed: _submit,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Login link
-                  Center(
-                    child: TextButton(
-                      onPressed: () => context.go('/login'),
-                      child: const Text.rich(
-                        TextSpan(
-                          text: 'Sudah punya akun? ',
-                          style: TextStyle(color: AppColors.textGrey),
-                          children: [
-                            TextSpan(
-                              text: 'Masuk',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+          child: AdaptiveContainer(
+            widthType: AdaptiveWidthType.form,
+            child: AdaptivePaddingAll(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      const Text(
+                        'Pendaftaran Alumni',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
                         ),
                       ),
-                    ),
-                  ),
+                      const AdaptiveSpacingV(multiplier: 1.5),
+                      const Text(
+                        'Lengkapi data untuk mendaftar sebagai alumni SMANSARA',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textGrey,
+                        ),
+                      ),
 
-                  const SizedBox(height: 24),
-                ],
+                      const AdaptiveSpacingV(multiplier: 4.5),
+
+                      // Section: Data Akun
+                      _buildSectionTitle('Data Akun'),
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'Nama Lengkap',
+                        hint: 'Sesuai ijazah',
+                        controller: _nameController,
+                        prefixIcon: const Icon(Icons.person_outline),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Nama wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'Email',
+                        hint: 'contoh@email.com',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email wajib diisi';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Email tidak valid';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'No WhatsApp',
+                        hint: '08123456789',
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        prefixIcon: const Icon(Icons.phone_outlined),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'No WhatsApp wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppPasswordField(
+                        label: 'Password',
+                        hint: 'Minimal 8 karakter',
+                        controller: _passwordController,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Password wajib diisi';
+                          }
+                          if (value.length < 8) {
+                            return 'Password minimal 8 karakter';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppPasswordField(
+                        label: 'Konfirmasi Password',
+                        hint: 'Ulangi password',
+                        controller: _confirmPasswordController,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Konfirmasi password wajib diisi';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Password tidak cocok';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 4.5),
+
+                      // Section: Data Sekolah
+                      _buildSectionTitle('Data Sekolah'),
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      _buildDropdownField(
+                        label: 'Tahun Lulus (Angkatan)',
+                        value: _selectedAngkatan,
+                        items: _angkatanList
+                            .map(
+                              (year) => DropdownMenuItem(
+                                value: year,
+                                child: Text(year.toString()),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() => _selectedAngkatan = value);
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 4.5),
+
+                      // Section: Profil Saat Ini
+                      _buildSectionTitle('Profil Saat Ini (Opsional)'),
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      _buildDropdownField(
+                        label: 'Status Pekerjaan',
+                        value: _selectedJobStatus,
+                        items: JobStatus.values
+                            .map(
+                              (status) => DropdownMenuItem(
+                                value: status,
+                                child: Text(status.displayName),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() => _selectedJobStatus = value);
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'Instansi/Perusahaan',
+                        hint: 'Tempat bekerja',
+                        controller: _companyController,
+                        prefixIcon: const Icon(Icons.business_outlined),
+                        textInputAction: TextInputAction.next,
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'Domisili',
+                        hint: 'Kota tempat tinggal',
+                        controller: _domisiliController,
+                        prefixIcon: const Icon(Icons.location_on_outlined),
+                        textInputAction: TextInputAction.done,
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 6.0),
+
+                      // Submit Button
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          return PrimaryButton(
+                            text: 'Daftar Sekarang',
+                            isLoading: state is AuthLoading,
+                            onPressed: _submit,
+                          );
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      // Login link
+                      Center(
+                        child: TextButton(
+                          onPressed: () => context.go('/login'),
+                          child: const Text.rich(
+                            TextSpan(
+                              text: 'Sudah punya akun? ',
+                              style: TextStyle(color: AppColors.textGrey),
+                              children: [
+                                TextSpan(
+                                  text: 'Masuk',
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 4.5),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -340,7 +351,7 @@ class _RegisterAlumniPageState extends State<RegisterAlumniPage> {
 
   Widget _buildSectionTitle(String title) {
     return Container(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 4),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
@@ -372,7 +383,7 @@ class _RegisterAlumniPageState extends State<RegisterAlumniPage> {
             color: AppColors.textDark,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         DropdownButtonFormField<T>(
           initialValue: value,
           items: items,

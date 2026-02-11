@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_breakpoints.dart';
+import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/adaptive/adaptive_grid.dart';
 import '../bloc/donation_list_bloc.dart';
 
 class DonationListPage extends StatelessWidget {
@@ -16,14 +19,13 @@ class DonationListPage extends StatelessWidget {
       create: (context) => getIt<DonationListBloc>()..add(FetchDonations()),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Program Donasi'),
-
+          title: const Text('Program Donasi'),
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           actions: [
             IconButton(
               onPressed: () => context.pushNamed('my-donations'),
-              icon: Icon(Icons.history),
+              icon: const Icon(Icons.history),
               tooltip: 'Riwayat Donasi',
             ),
           ],
@@ -31,39 +33,49 @@ class DonationListPage extends StatelessWidget {
         body: BlocBuilder<DonationListBloc, DonationListState>(
           builder: (context, state) {
             if (state is DonationListLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (state is DonationListError) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is DonationListLoaded) {
               if (state.donations.isEmpty) {
-                return Center(child: Text('Belum ada program donasi.'));
+                return const Center(child: Text('Belum ada program donasi.'));
               }
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: state.donations.length,
-                itemBuilder: (context, index) {
-                  final donation = state.donations[index];
-                  // Use a helper to resolve image URL
-                  final imageUrl = donation.banner.isNotEmpty
-                      ? donation.banner
-                      : 'assets/images/placeholder_donation.png';
-
-                  return _CampaignCard(
-                    title: donation.title,
-                    description: donation
-                        .description, // Note: description might be HTML if editor used
-                    imageUrl: imageUrl,
-                    targetAmount: donation.targetAmount,
-                    currentAmount: donation.collectedAmount,
-                    donorCount: donation.donorCount,
-                    isUrgent: donation.isUrgent,
-                    deadline: donation.deadline,
-                    onTap: () => context.pushNamed(
-                      'donation-detail',
-                      extra: donation.id, // Pass ID to detail page
+              return Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: AdaptiveGridView(
+                    padding: EdgeInsets.all(
+                      AppSizes.horizontalPadding(context),
                     ),
-                  );
-                },
+                    itemCount: state.donations.length,
+                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 20,
+                    childAspectRatio: 0.75,
+                    itemBuilder: (context, index) {
+                      final donation = state.donations[index];
+                      final imageUrl = donation.banner.isNotEmpty
+                          ? donation.banner
+                          : 'assets/images/placeholder_donation.png';
+
+                      return _CampaignCard(
+                        title: donation.title,
+                        description: donation.description,
+                        imageUrl: imageUrl,
+                        targetAmount: donation.targetAmount,
+                        currentAmount: donation.collectedAmount,
+                        donorCount: donation.donorCount,
+                        isUrgent: donation.isUrgent,
+                        deadline: donation.deadline,
+                        onTap: () => context.pushNamed(
+                          'donation-detail',
+                          extra: donation.id,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               );
             }
             return const SizedBox.shrink();
@@ -107,71 +119,76 @@ class _CampaignCard extends StatelessWidget {
     final progress = (currentAmount / targetAmount).clamp(0.0, 1.0);
     final percentage = (progress * 100).toInt();
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+          hoverColor: AppColors.primaryLight.withValues(alpha: 0.15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   children: [
-                    Container(
-                      height: 180,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: imageUrl.startsWith('http')
-                          ? CachedNetworkImage(
-                              imageUrl: imageUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => Center(
-                                child: Icon(
-                                  Icons.volunteer_activism,
-                                  size: 50,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            )
-                          : Image.asset(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Center(
-                                    child: Icon(
-                                      Icons.volunteer_activism,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: imageUrl.startsWith('http')
+                            ? CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
                                   ),
-                            ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Center(
+                                      child: Icon(
+                                        Icons.volunteer_activism,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                              )
+                            : Image.asset(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Center(
+                                      child: Icon(
+                                        Icons.volunteer_activism,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                              ),
+                      ),
                     ),
                     if (isUrgent)
                       Positioned(
@@ -198,92 +215,122 @@ class _CampaignCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                SizedBox(height: 16),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 12, color: AppColors.textGrey),
-                ),
-                SizedBox(height: 16),
-
-                SizedBox(height: 16),
-
-                // Deadline
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time_rounded,
-                      size: 14,
-                      color: AppColors.textGrey,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
-                      style: TextStyle(fontSize: 12, color: AppColors.textGrey),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 12),
-
-                // Progress
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      currencyFormat.format(currentAmount),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textGrey,
+                          height: 1.3,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time_rounded,
+                            size: 14,
+                            color: AppColors.textGrey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textGrey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              currencyFormat.format(currentAmount),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'dari ${currencyFormat.format(targetAmount)}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textGrey,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         color: AppColors.primary,
+                        minHeight: 5,
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                    ),
-                    Text(
-                      'dari ${currencyFormat.format(targetAmount)}',
-                      style: TextStyle(fontSize: 12, color: AppColors.textGrey),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                  color: AppColors.primary,
-                  minHeight: 6,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    '$percentage% Terkumpul • $donorCount Donatur',
-                    style: TextStyle(fontSize: 10, color: AppColors.textGrey),
-                  ),
-                ),
-
-                SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: onTap,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 6),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '$percentage% • $donorCount Donatur',
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: AppColors.textGrey,
+                          ),
+                        ),
                       ),
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text('Donasi Sekarang'),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: onTap,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text(
+                            'Donasi Sekarang',
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

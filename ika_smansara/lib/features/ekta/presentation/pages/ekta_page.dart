@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/adaptive/adaptive_container.dart';
+import '../../../../core/utils/adaptive/adaptive_breakpoints.dart';
 
 class EKTAPage extends StatelessWidget {
   const EKTAPage({super.key});
@@ -13,166 +15,174 @@ class EKTAPage extends StatelessWidget {
         surfaceTintColor: Colors.white,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AdaptiveBreakpoints.adaptivePadding(context),
         child: Column(
           children: [
             // E-KTA Card
-            Container(
-              width: double.infinity,
-              height: 220,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF006400), Color(0xFF004d00)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF006400).withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+            AdaptiveContainer(
+              widthType: AdaptiveWidthType.card,
+              child: Container(
+                width: double.infinity,
+                height: 220,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF006400), Color(0xFF004d00)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  // Pattern (simulated with icon opacity)
-                  Positioned(
-                    right: -20,
-                    bottom: -20,
-                    child: Icon(
-                      Icons.school,
-                      size: 150,
-                      color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF006400).withValues(alpha: 0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
                     ),
-                  ),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'IKA SMANSARA',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          Container(
-                            width: 50,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.surfaceContainerHighest,
-                                  Colors.grey[400] ?? const Color(0xFFBDBDBD),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color:
-                                    Colors.grey[500] ?? const Color(0xFF9E9E9E),
-                              ),
-                            ),
-                          ),
-                        ],
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Pattern (simulated with icon opacity)
+                    Positioned(
+                      right: -20,
+                      bottom: -20,
+                      child: Icon(
+                        Icons.school,
+                        size: 150,
+                        color: Colors.white.withValues(alpha: 0.05),
                       ),
+                    ),
 
-                      const Spacer(),
-
-                      Text(
-                        '1992.2010.045.8821',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.surface,
-                          fontSize: 22,
-                          fontFamily: 'Courier',
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 2,
-                              color: Colors.black26,
-                              offset: Offset(0, 2),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'IKA SMANSARA',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.surface,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            Container(
+                              width: 50,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                    Colors.grey[400] ?? const Color(0xFFBDBDBD),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color:
+                                      Colors.grey[500] ??
+                                      const Color(0xFF9E9E9E),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      ),
 
-                      SizedBox(height: 20),
+                        const Spacer(),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'NAMA ANGGOTA',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 10,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'BUDI SANTOSO',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.surface,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                'ANGKATAN',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 10,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                '2010',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.surface,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
+                        Text(
+                          '1992.2010.045.8821',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.surface,
+                            fontSize: 22,
+                            fontFamily: 'Courier',
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 2,
+                                color: Colors.black26,
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(4),
+                        ),
+
+                        SizedBox(height: 20),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'NAMA ANGGOTA',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 10,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'BUDI SANTOSO',
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'ANGKATAN',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 10,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '2010',
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Icon(
-                              Icons.qr_code,
-                              size: 50,
-                            ), // Placeholder QR
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Icon(
+                                Icons.qr_code,
+                                size: 50,
+                              ), // Placeholder QR
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            SizedBox(height: 32),
+            SizedBox(height: AdaptiveBreakpoints.adaptiveSpacing(context) * 6),
 
             Row(
               children: [
@@ -190,7 +200,9 @@ class EKTAPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                SizedBox(
+                  width: AdaptiveBreakpoints.adaptiveSpacing(context) / 2,
+                ),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {},
@@ -208,7 +220,7 @@ class EKTAPage extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 32),
+            SizedBox(height: AdaptiveBreakpoints.adaptiveSpacing(context) * 6),
 
             Container(
               padding: const EdgeInsets.all(16),
