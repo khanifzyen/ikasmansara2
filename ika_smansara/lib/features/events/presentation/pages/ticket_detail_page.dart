@@ -35,7 +35,7 @@ class TicketDetailPage extends StatelessWidget {
             // Ticket Content
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(

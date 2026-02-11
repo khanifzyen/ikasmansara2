@@ -7,12 +7,10 @@ class EKTAPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Kartu Anggota Digital'),
+        title: Text('Kartu Anggota Digital'),
         elevation: 0,
         surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -58,10 +56,10 @@ class EKTAPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'IKA SMANSARA',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1,
@@ -72,12 +70,20 @@ class EKTAPage extends StatelessWidget {
                             height: 35,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Colors.grey[200]!, Colors.grey[400]!],
+                                colors: [
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                                  Colors.grey[400] ?? const Color(0xFFBDBDBD),
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: Colors.grey[500]!),
+                              border: Border.all(
+                                color:
+                                    Colors.grey[500] ?? const Color(0xFF9E9E9E),
+                              ),
                             ),
                           ),
                         ],
@@ -85,10 +91,10 @@ class EKTAPage extends StatelessWidget {
 
                       const Spacer(),
 
-                      const Text(
+                      Text(
                         '1992.2010.045.8821',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           fontSize: 22,
                           fontFamily: 'Courier',
                           fontWeight: FontWeight.bold,
@@ -103,7 +109,7 @@ class EKTAPage extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,16 +125,16 @@ class EKTAPage extends StatelessWidget {
                                   fontSize: 10,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              const Text(
+                              SizedBox(height: 4),
+                              Text(
                                 'BUDI SANTOSO',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8),
                               Text(
                                 'ANGKATAN',
                                 style: TextStyle(
@@ -136,11 +142,11 @@ class EKTAPage extends StatelessWidget {
                                   fontSize: 10,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              const Text(
+                              SizedBox(height: 4),
+                              Text(
                                 '2010',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
@@ -150,10 +156,10 @@ class EKTAPage extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.qr_code,
                               size: 50,
                             ), // Placeholder QR
@@ -166,15 +172,15 @@ class EKTAPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
 
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {},
-                    icon: const Icon(Icons.download),
-                    label: const Text('Download'),
+                    icon: Icon(Icons.download),
+                    label: Text('Download'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: AppColors.primary),
@@ -184,12 +190,12 @@ class EKTAPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {},
-                    icon: const Icon(Icons.share),
-                    label: const Text('Share'),
+                    icon: Icon(Icons.share),
+                    label: Text('Share'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: AppColors.primary),
@@ -202,7 +208,7 @@ class EKTAPage extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
 
             Container(
               padding: const EdgeInsets.all(16),
@@ -210,7 +216,7 @@ class EKTAPage extends StatelessWidget {
                 color: AppColors.background,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 'Catatan:\nKartu ini adalah bukti keanggotaan resmi IKA SMANSARA. Tunjukkan kartu ini untuk mendapatkan benefit khusus di merchant rekanan.',
                 style: TextStyle(
                   fontSize: 12,

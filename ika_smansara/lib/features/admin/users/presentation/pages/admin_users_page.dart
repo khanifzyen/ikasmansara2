@@ -121,7 +121,7 @@ class _AdminUsersViewState extends State<_AdminUsersView> {
             children: [
               // Search Bar
               Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 padding: const EdgeInsets.all(16),
                 child: TextField(
                   controller: _searchController,
@@ -152,7 +152,7 @@ class _AdminUsersViewState extends State<_AdminUsersView> {
 
               // Filter Chips
               Container(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,

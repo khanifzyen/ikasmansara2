@@ -44,7 +44,7 @@ class AdminEventsRemoteDataSource {
 
     // Ensure created_by is set
     if (!body.containsKey('created_by') && _pb.authStore.isValid) {
-      body['created_by'] = _pb.authStore.model.id;
+      body['created_by'] = _pb.authStore.record?.id;
     }
 
     if (body.containsKey('banner') && body['banner'] is http.MultipartFile) {

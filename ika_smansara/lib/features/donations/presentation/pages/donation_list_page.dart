@@ -15,16 +15,15 @@ class DonationListPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<DonationListBloc>()..add(FetchDonations()),
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Program Donasi'),
-          backgroundColor: Colors.white,
+          title: Text('Program Donasi'),
+
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           actions: [
             IconButton(
               onPressed: () => context.pushNamed('my-donations'),
-              icon: const Icon(Icons.history),
+              icon: Icon(Icons.history),
               tooltip: 'Riwayat Donasi',
             ),
           ],
@@ -32,12 +31,12 @@ class DonationListPage extends StatelessWidget {
         body: BlocBuilder<DonationListBloc, DonationListState>(
           builder: (context, state) {
             if (state is DonationListLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
             } else if (state is DonationListError) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is DonationListLoaded) {
               if (state.donations.isEmpty) {
-                return const Center(child: Text('Belum ada program donasi.'));
+                return Center(child: Text('Belum ada program donasi.'));
               }
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
@@ -111,7 +110,7 @@ class _CampaignCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -138,7 +137,9 @@ class _CampaignCard extends StatelessWidget {
                       height: 180,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       clipBehavior: Clip.antiAlias,
@@ -146,25 +147,24 @@ class _CampaignCard extends StatelessWidget {
                           ? CachedNetworkImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => const Center(
+                              placeholder: (context, url) => Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                 ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const Center(
-                                    child: Icon(
-                                      Icons.volunteer_activism,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                              errorWidget: (context, url, error) => Center(
+                                child: Icon(
+                                  Icons.volunteer_activism,
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             )
                           : Image.asset(
                               imageUrl,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                                  const Center(
+                                  Center(
                                     child: Icon(
                                       Icons.volunteer_activism,
                                       size: 50,
@@ -186,10 +186,10 @@ class _CampaignCard extends StatelessWidget {
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
+                          child: Text(
                             'URGENT',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -198,47 +198,41 @@ class _CampaignCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textDark,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   description,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textGrey,
-                  ),
+                  style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Deadline
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.access_time_rounded,
                       size: 14,
                       color: AppColors.textGrey,
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textGrey,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
 
                 // Progress
                 Row(
@@ -246,41 +240,37 @@ class _CampaignCard extends StatelessWidget {
                   children: [
                     Text(
                       currencyFormat.format(currentAmount),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
                       ),
                     ),
                     Text(
                       'dari ${currencyFormat.format(targetAmount)}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textGrey,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColors.textGrey),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                   color: AppColors.primary,
                   minHeight: 6,
                   borderRadius: BorderRadius.circular(3),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     '$percentage% Terkumpul • $donorCount Donatur',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textGrey,
-                    ),
+                    style: TextStyle(fontSize: 10, color: AppColors.textGrey),
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -293,7 +283,7 @@ class _CampaignCard extends StatelessWidget {
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('Donasi Sekarang'),
+                    child: Text('Donasi Sekarang'),
                   ),
                 ),
               ],

@@ -119,7 +119,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Edit Profil'),
+              title: Text('Edit Profil'),
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
               elevation: 0,
@@ -129,13 +129,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: Column(
                 children: [
                   _buildAvatarSection(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   _buildTextField(
                     controller: _nameController,
                     label: 'Nama Lengkap',
                     icon: Icons.person_outline,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   _buildTextField(
                     controller: _phoneController,
                     label: 'Nomor WhatsApp',
@@ -143,12 +143,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     keyboardType: TextInputType.phone,
                   ),
                   if (widget.user.isAlumni) ...[
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     DropdownButtonFormField<JobStatus>(
                       initialValue: _selectedJobStatus,
                       decoration: InputDecoration(
                         labelText: 'Status Pekerjaan',
-                        prefixIcon: const Icon(Icons.work_outline),
+                        prefixIcon: Icon(Icons.work_outline),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -165,21 +165,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         });
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     _buildTextField(
                       controller: _companyController,
                       label: 'Instansi / Perusahaan',
                       icon: Icons.business_outlined,
                     ),
                   ],
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   _buildTextField(
                     controller: _domisiliController,
                     label: 'Domisili Saat Ini',
                     icon: Icons.location_on_outlined,
                     maxLines: 2,
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -207,15 +207,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                       ),
                       child: isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                               ),
                             )
-                          : const Text('Simpan Perubahan'),
+                          : Text('Simpan Perubahan'),
                     ),
                   ),
                 ],
@@ -248,11 +248,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           '${AppConstants.pocketBaseUrl}/api/files/users/${widget.user.id}/${widget.user.avatar}',
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
-                          const Center(child: CircularProgressIndicator()),
+                          Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) =>
-                          const Icon(Icons.person, size: 50),
+                          Icon(Icons.person, size: 50),
                     )
-                  : const Icon(Icons.person, size: 50, color: Colors.grey),
+                  : Icon(Icons.person, size: 50, color: Colors.grey),
             ),
           ),
           Positioned(
@@ -262,13 +262,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
               onTap: _pickImage,
               child: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.camera_alt,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   size: 20,
                 ),
               ),

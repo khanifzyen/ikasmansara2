@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -11,11 +12,13 @@ class PrinterService {
       if (Platform.isAndroid) {
         final deviceInfo = DeviceInfoPlugin();
         final androidInfo = await deviceInfo.androidInfo;
-        print('PrinterService: Android SDK: ${androidInfo.version.sdkInt}');
+        debugPrint(
+          'PrinterService: Android SDK: ${androidInfo.version.sdkInt}',
+        );
 
         if (androidInfo.version.sdkInt >= 31) {
           // Android 12+ (SDK 31+)
-          print('PrinterService: Requesting A12+ permissions');
+          debugPrint('PrinterService: Requesting A12+ permissions');
           Map<Permission, PermissionStatus> statuses = await [
             Permission.bluetoothScan,
             Permission.bluetoothConnect,
@@ -23,7 +26,7 @@ class PrinterService {
           ].request();
 
           statuses.forEach((key, value) {
-            print('PrinterService: $key = $value');
+            debugPrint('PrinterService: $key = $value');
           });
 
           // Check if Bluetooth permissions are granted.
@@ -33,14 +36,14 @@ class PrinterService {
           return (scan?.isGranted ?? false) && (connect?.isGranted ?? false);
         } else {
           // Android 11 and below
-          print('PrinterService: Requesting Legacy permissions');
+          debugPrint('PrinterService: Requesting Legacy permissions');
           Map<Permission, PermissionStatus> statuses = await [
             Permission.bluetooth,
             Permission.location,
           ].request();
 
           statuses.forEach((key, value) {
-            print('PrinterService: $key = $value');
+            debugPrint('PrinterService: $key = $value');
           });
 
           return statuses.values.every((status) => status.isGranted);
@@ -48,7 +51,7 @@ class PrinterService {
       }
       return true;
     } catch (e) {
-      print('PrinterService: Error checking permission: $e');
+      debugPrint('PrinterService: Error checking permission: $e');
       return false;
     }
   }
@@ -60,14 +63,14 @@ class PrinterService {
 
   Future<List<BluetoothInfo>> scanDevices() async {
     bool permissionGranted = await checkPermission();
-    print('PrinterService: Permission granted? $permissionGranted');
+    debugPrint('PrinterService: Permission granted? $permissionGranted');
     if (!permissionGranted) {
       throw Exception('Izin Bluetooth/Lokasi tidak diberikan');
     }
 
     final bool isBluetoothEnabled =
         await PrintBluetoothThermal.bluetoothEnabled;
-    print('PrinterService: Bluetooth enabled? $isBluetoothEnabled');
+    debugPrint('PrinterService: Bluetooth enabled? $isBluetoothEnabled');
     if (!isBluetoothEnabled) {
       throw Exception('Bluetooth belum aktif');
     }
@@ -77,14 +80,14 @@ class PrinterService {
       return await PrintBluetoothThermal.pairedBluetooths.timeout(
         const Duration(seconds: 4),
         onTimeout: () {
-          print('PrinterService: Scan timed out');
+          debugPrint('PrinterService: Scan timed out');
           throw Exception(
             'Gagal memindai (Timeout). Pastikan perangkat sudah di-pairing.',
           );
         },
       );
     } catch (e) {
-      print('PrinterService: Scan error: $e');
+      debugPrint('PrinterService: Scan error: $e');
       rethrow;
     }
   }
@@ -102,12 +105,12 @@ class PrinterService {
       return await PrintBluetoothThermal.connectionStatus.timeout(
         const Duration(seconds: 2),
         onTimeout: () {
-          print('PrinterService: Connection status check timed out');
+          debugPrint('PrinterService: Connection status check timed out');
           return false;
         },
       );
     } catch (e) {
-      print('PrinterService: Error checking connection status: $e');
+      debugPrint('PrinterService: Error checking connection status: $e');
       return false;
     }
   }

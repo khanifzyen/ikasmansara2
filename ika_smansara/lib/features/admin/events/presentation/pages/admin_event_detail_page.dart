@@ -178,7 +178,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
 
         // Custom Tab Pills
         Container(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: SingleChildScrollView(

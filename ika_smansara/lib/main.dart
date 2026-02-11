@@ -61,21 +61,12 @@ class IkaSmanSaraApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
-          ThemeMode themeMode = ThemeMode.light;
-          if (state is SettingsLoaded) {
-            if (state.settings.themeMode == 'dark') {
-              themeMode = ThemeMode.dark;
-            } else if (state.settings.themeMode == 'light') {
-              themeMode = ThemeMode.light;
-            }
-          }
-
+          // Lock to light theme only
           return MaterialApp.router(
             title: 'IKA SMANSARA',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
+            themeMode: ThemeMode.light,
             routerConfig: AppRouter.router,
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

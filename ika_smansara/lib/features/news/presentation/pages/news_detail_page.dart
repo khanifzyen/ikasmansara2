@@ -24,7 +24,7 @@ class NewsDetailPage extends StatelessWidget {
           );
         } else if (snapshot.hasError) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
+            appBar: AppBar(title: Text('Error')),
             body: Center(child: Text('Error: ${snapshot.error}')),
           );
         } else if (!snapshot.hasData) {
@@ -43,12 +43,12 @@ class NewsDetailPage extends StatelessWidget {
                 backgroundColor: Colors.white,
                 leading: Container(
                   margin: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    icon: Icon(Icons.arrow_back, color: Colors.black),
                     onPressed: () => context.pop(),
                   ),
                 ),
@@ -57,8 +57,11 @@ class NewsDetailPage extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: news.thumbnail!,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: Colors.grey[200]),
+                          placeholder: (context, url) => Container(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                          ),
                           errorWidget: (context, url, error) => Image.asset(
                             'assets/images/placeholder_news.png',
                             fit: BoxFit.cover,
@@ -85,20 +88,20 @@ class NewsDetailPage extends StatelessWidget {
                               'EEEE, d MMMM yyyy',
                               'id',
                             ).format(news.publishDate),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textGrey,
                               fontSize: 12,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          const Text(
+                          SizedBox(width: 8),
+                          Text(
                             '•',
                             style: TextStyle(color: AppColors.textGrey),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             news.category.toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -106,19 +109,19 @@ class NewsDetailPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
 
                       // Title
                       Text(
                         news.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textDark,
                           height: 1.3,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // Author
                       Row(
@@ -129,21 +132,21 @@ class NewsDetailPage extends StatelessWidget {
                                 ? CachedNetworkImageProvider(news.authorAvatar!)
                                 : null,
                             child: news.authorAvatar == null
-                                ? const Icon(Icons.person, size: 16)
+                                ? Icon(Icons.person, size: 16)
                                 : null,
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 news.authorName ?? 'Admin',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
-                              const Text(
+                              Text(
                                 'Penulis',
                                 style: TextStyle(
                                   fontSize: 11,
@@ -154,9 +157,9 @@ class NewsDetailPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24),
                       const Divider(),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // Content
                       Html(
@@ -178,7 +181,7 @@ class NewsDetailPage extends StatelessWidget {
                         },
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       // Share Button
                       Center(
@@ -186,8 +189,8 @@ class NewsDetailPage extends StatelessWidget {
                           onPressed: () {
                             // TODO: Implement share
                           },
-                          icon: const Icon(Icons.share, size: 18),
-                          label: const Text('Bagikan Berita'),
+                          icon: Icon(Icons.share, size: 18),
+                          label: Text('Bagikan Berita'),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.textDark,
                             side: const BorderSide(color: AppColors.border),
@@ -201,7 +204,7 @@ class NewsDetailPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: 40),
                     ],
                   ),
                 ),

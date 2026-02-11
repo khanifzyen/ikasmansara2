@@ -57,7 +57,7 @@ class _ForumViewState extends State<ForumView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      
       appBar: AppBar(
         title: const Text(
           'Forum Diskusi',
@@ -67,7 +67,7 @@ class _ForumViewState extends State<ForumView> {
             fontSize: 18,
           ),
         ),
-        backgroundColor: Colors.white,
+        
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
@@ -83,7 +83,7 @@ class _ForumViewState extends State<ForumView> {
           // Category Selector
           Container(
             height: 60,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               scrollDirection: Axis.horizontal,
@@ -157,7 +157,7 @@ class _ForumViewState extends State<ForumView> {
                           Icon(
                             Icons.forum_outlined,
                             size: 64,
-                            color: Colors.grey[300],
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           ),
                           const SizedBox(height: 16),
                           Text(

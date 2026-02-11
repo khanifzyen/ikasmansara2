@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
@@ -47,12 +48,17 @@ class AppTheme {
         onError: Colors.white,
       ),
       textTheme: textTheme,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textDark,
         elevation: 0,
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: AppColors.surface,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
@@ -173,35 +179,52 @@ class AppTheme {
       titleLarge: GoogleFonts.poppins(textStyle: baseTextTheme.titleLarge),
     );
 
+    // Semantic color scheme with proper tonal palette
+    final colorScheme = ColorScheme.dark(
+      // BRAND COLORS - Keep identity
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      error: AppColors.error,
+
+      // Semantic surfaces with proper contrast
+      surface: const Color(0xFF1A1A1A), // Dark surface
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onError: Colors.white,
+      onSurface: const Color(0xFFE3E3E3), // Light text for dark bg
+      // Additional Material 3 colors
+      surfaceContainerHighest: const Color(0xFF2C2C2C),
+      surfaceContainerHigh: const Color(0xFF262626),
+      surfaceContainerLow: const Color(0xFF1E1E1E),
+      outline: const Color(0xFF3E3E3E),
+      outlineVariant: const Color(0xFF2C2C2C),
+    );
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: const Color(0xFF111827), // Grey 900
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        surface: Color(0xFF1F2937), // Grey 800
-        error: AppColors.error,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
-        onSurface: Color(0xFFF9FAFB), // Grey 50
-        onError: Colors.white,
-      ),
+      scaffoldBackgroundColor: const Color(0xFF0D0D0D),
+      colorScheme: colorScheme,
       textTheme: textTheme,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF1F2937),
-        foregroundColor: Color(0xFFF9FAFB),
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: colorScheme.surface,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF1F2937),
+        color: colorScheme.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF374151)), // Grey 700
+          side: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -244,18 +267,18 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF374151), // Grey 700
+        fillColor: colorScheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF4B5563)), // Grey 600
+          borderSide: BorderSide(color: colorScheme.outline),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF4B5563)),
+          borderSide: BorderSide(color: colorScheme.outline),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -265,21 +288,24 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        hintStyle: GoogleFonts.inter(color: AppColors.textGrey, fontSize: 14),
+        hintStyle: GoogleFonts.inter(
+          color: colorScheme.onSurface.withValues(alpha: 0.5),
+          fontSize: 14,
+        ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Color(0xFF1F2937),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: colorScheme.surface,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textGrey,
+        unselectedItemColor: colorScheme.onSurface.withValues(alpha: 0.6),
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),
-      dividerTheme: const DividerThemeData(
-        color: Color(0xFF374151),
+      dividerTheme: DividerThemeData(
+        color: colorScheme.outlineVariant,
         thickness: 1,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: const Color(0xFF374151),
+        backgroundColor: colorScheme.surfaceContainerHighest,
         selectedColor: AppColors.primaryDark,
         labelStyle: GoogleFonts.inter(
           fontSize: 12,

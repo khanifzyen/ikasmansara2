@@ -56,7 +56,7 @@ class DonationDetailPage extends StatelessWidget {
           } else if (state is DonationDetailError) {
             return Scaffold(
               backgroundColor: Colors.white,
-              appBar: AppBar(title: const Text('Error')),
+              appBar: AppBar(title: Text('Error')),
               body: Center(child: Text(state.message)),
             );
           } else if (state is DonationDetailLoaded) {
@@ -81,13 +81,13 @@ class DonationDetailPage extends StatelessWidget {
                     leading: IconButton(
                       icon: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back,
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 20,
                         ),
                       ),
@@ -102,21 +102,31 @@ class DonationDetailPage extends StatelessWidget {
                                   imageUrl: imageUrl,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(
-                                    color: Colors.grey[200],
-                                    child: const Center(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                    child: Center(
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
                                       ),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
-                                      Container(color: Colors.grey[200]),
+                                      Container(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerHighest,
+                                      ),
                                 )
                               : Image.asset(
                                   imageUrl,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      Container(color: Colors.grey[200]),
+                                      Container(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerHighest,
+                                      ),
                                 ),
                           if (donation.isUrgent)
                             Positioned(
@@ -131,10 +141,12 @@ class DonationDetailPage extends StatelessWidget {
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'URGENT',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
                                   ),
@@ -153,54 +165,62 @@ class DonationDetailPage extends StatelessWidget {
                         children: [
                           Text(
                             'Berakhir pada ${DateFormat('d MMM yyyy').format(donation.deadline)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text(
                             donation.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                               height: 1.3,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           Row(
                             children: [
-                              const CircleAvatar(
+                              CircleAvatar(
                                 radius: 16,
-                                backgroundColor: AppColors.background,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
                                 child: Icon(
                                   Icons.person,
                                   size: 16,
-                                  color: AppColors.textGrey,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              SizedBox(width: 10),
                               Text(
                                 'Oleh: ${donation.organizer}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textDark.withValues(
-                                    alpha: 0.8,
-                                  ),
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.8),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: AppColors.background,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColors.border),
+                              border: Border.all(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.outline.withValues(alpha: 0.3),
+                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,45 +233,56 @@ class DonationDetailPage extends StatelessWidget {
                                       currencyFormat.format(
                                         donation.collectedAmount,
                                       ),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.primary,
                                       ),
                                     ),
                                     Text(
                                       'dari ${currencyFormat.format(donation.targetAmount)}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
-                                        color: AppColors.textGrey,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.6),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8),
                                 LinearProgressIndicator(
                                   value: donation.progress,
-                                  backgroundColor: Colors.grey[300],
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
                                   color: AppColors.primary,
                                   minHeight: 8,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       '${donation.percentage}% Terkumpul',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
-                                        color: AppColors.textGrey,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.6),
                                       ),
                                     ),
                                     Text(
                                       '${donation.donorCount} Donatur',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
-                                        color: AppColors.textGrey,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.6),
                                       ),
                                     ),
                                   ],
@@ -259,26 +290,26 @@ class DonationDetailPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
                           Text(
                             donation.description,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               height: 1.6,
-                              color: AppColors.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 32),
-                          const Text(
+                          SizedBox(height: 32),
+                          Text(
                             'Donatur Terbaru',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           if (state.recentTransactions.isEmpty)
-                            const Text(
+                            Text(
                               'Belum ada donatur. Jadilah yang pertama!',
                               style: TextStyle(
                                 color: Colors.grey,
@@ -302,7 +333,7 @@ class DonationDetailPage extends StatelessWidget {
                               color: Colors.blue,
                             ),
                           ),
-                          const SizedBox(height: 80),
+                          SizedBox(height: 80),
                         ],
                       ),
                     ),
@@ -313,7 +344,7 @@ class DonationDetailPage extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.05),
@@ -343,7 +374,7 @@ class DonationDetailPage extends StatelessWidget {
                       ),
                       elevation: 8,
                     ),
-                    child: const Text('Donasi Sekarang'),
+                    child: Text('Donasi Sekarang'),
                   ),
                 ),
               ),
@@ -375,8 +406,12 @@ class _DonorItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -386,26 +421,25 @@ class _DonorItem extends StatelessWidget {
             radius: 20,
             child: Text(
               initials,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                 ),
                 Text(
                   time,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
-                    color: AppColors.textGrey,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -413,7 +447,7 @@ class _DonorItem extends StatelessWidget {
           ),
           Text(
             amount,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
               fontSize: 13,

@@ -7,8 +7,8 @@ class AdminDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Drawer(
-      backgroundColor: Colors.white,
+    return Drawer(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: SafeArea(child: AdminSidebar(isPermanent: false)),
     );
   }
