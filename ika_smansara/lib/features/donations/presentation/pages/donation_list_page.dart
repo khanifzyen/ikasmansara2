@@ -143,114 +143,197 @@ class _CampaignCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Stack(
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(16),
-                          ),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: imageUrl.startsWith('http')
-                            ? CachedNetworkImage(
-                                imageUrl: imageUrl,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    const Center(
-                                      child: Icon(
-                                        Icons.volunteer_activism,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                              )
-                            : Image.asset(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Center(
-                                      child: Icon(
-                                        Icons.volunteer_activism,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                  Expanded(
+                    flex: 0,
+                    child: Stack(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 16 / 11,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                              borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(16),
                               ),
-                      ),
-                    ),
-                    if (isUrgent)
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'URGENT',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'URGENT',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.surface,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         title,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textDark,
                           height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         description,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 11,
+                          fontSize: 10,
                           color: AppColors.textGrey,
-                          height: 1.3,
+                          height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Row(
                         children: [
                           const Icon(
                             Icons.access_time_rounded,
-                            size: 14,
+                            size: 10,
                             color: AppColors.textGrey,
                           ),
+                          const SizedBox(width: 3),
+                          Expanded(
+                            child: Text(
+                              'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: AppColors.textGrey,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              currencyFormat.format(currentAmount),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'dari ${currencyFormat.format(targetAmount)}',
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: AppColors.textGrey,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              currencyFormat.format(currentAmount),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'dari ${currencyFormat.format(targetAmount)}',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.textGrey,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        color: AppColors.primary,
+                        minHeight: 4,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      const SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '$percentage% • $donorCount',
+                          style: const TextStyle(
+                            fontSize: 8,
+                            color: AppColors.textGrey,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 32,
+                        child: ElevatedButton(
+                          onPressed: onTap,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Donasi', style: TextStyle(fontSize: 12)),
+                        ),
+                      ),
                           const SizedBox(width: 4),
                           Text(
                             'Berakhir ${DateFormat('d MMM yyyy').format(deadline)}',
