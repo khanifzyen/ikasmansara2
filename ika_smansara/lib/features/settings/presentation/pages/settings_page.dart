@@ -9,6 +9,7 @@ import '../bloc/settings_bloc.dart';
 import 'printer_settings_page.dart';
 import 'change_password_page.dart';
 import 'about_page.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -139,9 +140,7 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.privacy_tip_outlined,
                   title: 'Kebijakan Privasi',
                   onTap: () async {
-                    final Uri url = Uri.parse(
-                      'https://ikasmansara.com/privacy-policy',
-                    ); // Dummy URL
+                    final Uri url = Uri.parse(AppConstants.privacyPolicyUrl);
                     if (!await launchUrl(url)) {
                       // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,9 +156,7 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.description_outlined,
                   title: 'Syarat & Ketentuan',
                   onTap: () async {
-                    final Uri url = Uri.parse(
-                      'https://ikasmansara.com/terms',
-                    ); // Dummy URL
+                    final Uri url = Uri.parse(AppConstants.termsConditionsUrl);
                     if (!await launchUrl(url)) {
                       // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(

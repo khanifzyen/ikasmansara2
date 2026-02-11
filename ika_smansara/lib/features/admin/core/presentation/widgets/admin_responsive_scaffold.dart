@@ -10,6 +10,7 @@ class AdminResponsiveScaffold extends StatefulWidget {
   final List<Widget>? actions;
   final Widget? leading;
   final Widget? floatingActionButton;
+  final bool hideBackButton;
 
   const AdminResponsiveScaffold({
     super.key,
@@ -18,6 +19,7 @@ class AdminResponsiveScaffold extends StatefulWidget {
     this.actions,
     this.leading,
     this.floatingActionButton,
+    this.hideBackButton = false,
   });
 
   @override
@@ -39,21 +41,33 @@ class _AdminResponsiveScaffoldState extends State<AdminResponsiveScaffold> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
+            leadingWidth:
+                (!widget.hideBackButton && Navigator.of(context).canPop())
+                ? 100
+                : null,
             leading:
                 widget.leading ??
-                Builder(
-                  builder: (context) => IconButton(
-                    icon: const Icon(Icons.menu, color: AppColors.textDark),
-                    onPressed: () {
-                      if (isDesktop) {
-                        setState(() {
-                          _isSidebarVisible = !_isSidebarVisible;
-                        });
-                      } else {
-                        Scaffold.of(context).openDrawer();
-                      }
-                    },
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (!widget.hideBackButton &&
+                        Navigator.of(context).canPop())
+                      const BackButton(color: AppColors.textDark),
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: const Icon(Icons.menu, color: AppColors.textDark),
+                        onPressed: () {
+                          if (isDesktop) {
+                            setState(() {
+                              _isSidebarVisible = !_isSidebarVisible;
+                            });
+                          } else {
+                            Scaffold.of(context).openDrawer();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
             title: Text(
               widget.title,

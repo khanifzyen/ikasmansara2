@@ -51,7 +51,7 @@ class RoleSelectionPage extends StatelessWidget {
                 icon: Icons.school,
                 iconColor: AppColors.primary,
                 iconBgColor: AppColors.primaryLight,
-                title: 'Alumni SMANSA',
+                title: 'Alumni SMANSARA',
                 description:
                     'Untuk alumni SMA Negeri 1 Jepara. Dapatkan E-KTA, akses direktori, dan fitur lengkap.',
                 onTap: () => context.push('/register/alumni'),

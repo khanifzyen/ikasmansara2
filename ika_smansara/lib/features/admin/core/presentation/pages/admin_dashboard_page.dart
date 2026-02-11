@@ -26,6 +26,7 @@ class _AdminDashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdminResponsiveScaffold(
+      hideBackButton: true,
       title: 'Admin Dashboard',
       actions: [
         IconButton(

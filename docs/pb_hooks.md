@@ -48,10 +48,13 @@ Hook yang berjalan saat **Record Booking Diupdate** (`onRecordAfterUpdateSuccess
 
 *   **Trigger:** Hanya berjalan jika `payment_status` berubah menjadi `paid`.
 *   **Idempotency:** Mengecek apakah tiket untuk booking tersebut sudah ada di `event_booking_tickets`. Jika ada, proses dihentikan (mencegah duplikasi).
-*   **Parsing Metadata:** Membaca field `metadata` yang berisi array item di keranjang belanja (tiket & opsi). Mendukung parsing dari format JSON string maupun byte array.
-*   **Generasi Tiket:**
-    *   **Manual Booking:** Jika booking dilakukan manual oleh admin (terdeteksi ada `manual_ticket_count`), tiket digenerate sesuai jumlah dan tipe yang ditentukan admin.
-    *   **Reguler:** Loop setiap item di metadata, generate tiket sesuai quantity (`qty`).
+*   **Robust Metadata Parsing:**
+    *   Mendukung parsing dari format JSON string, byte array (`[]uint8`), maupun object.
+    *   **Null-safety:** Memiliki pengecekan khusus untuk nilai `"null"` (string atau byte array) yang sering dikembalikan PocketBase untuk field JSON kosong.
+    *   Memastikan `items` selalu berupa array untuk mencegah *runtime crash*.
+*   **Logika Pembuatan Tiket (Dua Jalur):**
+    1.  **Manual Booking (Fallback):** Jika terdeteksi `manual_ticket_count > 0`, tiket digenerate berdasarkan jumlah dan tipe manual tersebut. Ini tetap diproses meskipun metadata kosong/null.
+    2.  **App/Regular Booking:** Loop setiap item di metadata (cart), generate tiket sesuai quantity (`qty`) dan menyertakan `selected_options` (opsi tiket seperti ukuran kaos).
 *   **Ticket ID Generation:** Format tiket diambil dari event (`ticket_id_format` atau default `TIX-{CODE}-{SEQ}`).
 *   **Update Counter:**
     *   Mengupdate `sold` count di collection `event_tickets`.

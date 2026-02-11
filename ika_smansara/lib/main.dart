@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -17,13 +17,9 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     debugPrint('Step 1: WidgetsBinding initialized');
 
-    // Load environment variables
-    await dotenv.load();
-    debugPrint('Step 2: DotEnv loaded');
-
     // Initialize dependencies
     await configureDependencies();
-    debugPrint('Step 3: Dependencies configured');
+    debugPrint('Step 2: Dependencies configured');
 
     // Initialize locale data for Indonesia
     await initializeDateFormatting('id', null);
@@ -82,7 +78,7 @@ class IkaSmanSaraApp extends StatelessWidget {
             builder: (context, child) {
               return UpgradeAlert(
                 upgrader: Upgrader(
-                  minAppVersion: '2.0.1',
+                  minAppVersion: '2.0.3',
                   debugLogging: true,
                   // debugDisplayAlways: true, // Uncomment untuk testing
                 ),
