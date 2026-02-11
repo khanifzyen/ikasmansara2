@@ -33,35 +33,28 @@ class NewsCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
-              child: news.thumbnail != null
-                  ? CachedNetworkImage(
-                      imageUrl: news
-                          .thumbnail!, // We need a full URL here, logic to be added in Utils or Model
-                      // For now assuming model prepends the host or we handle it here
-                      // But actually PB returns filename, so we need full URL.
-                      // Let's assume the entity has the full URL or we use a helper.
-                      // Update: The Model `toEntity` logic I wrote constructs: collectionId/recordId/filename
-                      // So we need to prepend the PB URL base.
-                      // Let's use a placeholder or handle it better.
-                      // For now, let's assume valid URL or fix it in logic.
-                      // Better approach: Use PBClient to get file url.
-                      // But widget shouldn't depend on PBClient directly ideally.
-                      // Let's just pass the full URL string in Entity if possible,
-                      // OR construct it here if we have the base URL global.
-                      // Let's rely on the URL being correct for now, or use a helper.
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                      errorWidget: (context, url, error) => Image.asset(
-                        'assets/images/placeholder_news.png',
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : Image.asset(
-                      'assets/images/placeholder_news.png',
-                      fit: BoxFit.cover,
-                    ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Hero(
+                  tag: 'news-thumbnail-${news.id}',
+                  child: news.thumbnail != null
+                      ? CachedNetworkImage(
+                          imageUrl: news.thumbnail!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/images/placeholder_news.png',
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/images/placeholder_news.png',
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
             ),
             const SizedBox(width: 12),
             // Content

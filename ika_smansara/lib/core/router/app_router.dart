@@ -11,11 +11,13 @@ import '../../features/auth/presentation/pages/role_selection_page.dart';
 import '../../features/auth/presentation/pages/register_alumni_page.dart';
 import '../../features/auth/presentation/pages/register_public_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
+import '../../features/auth/domain/entities/user_entity.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/main_shell.dart';
 
 import '../../features/loker/presentation/pages/loker_list_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/directory/presentation/pages/directory_page.dart';
 import '../../features/ekta/presentation/pages/ekta_page.dart';
 import '../../features/events/presentation/pages/event_detail_page.dart';
@@ -40,6 +42,10 @@ import '../../features/admin/users/presentation/pages/admin_users_page.dart';
 import '../../features/admin/users/presentation/pages/admin_user_detail_page.dart';
 import '../../features/admin/events/presentation/pages/admin_events_page.dart';
 import '../../features/admin/events/presentation/pages/admin_event_detail_page.dart';
+import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/settings/presentation/pages/printer_settings_page.dart';
+import '../../features/settings/presentation/pages/change_password_page.dart';
+import '../../features/settings/presentation/pages/about_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -170,6 +176,36 @@ class AppRouter {
         path: '/profile',
         name: 'profile',
         builder: (context, state) => ProfilePage(),
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        name: 'edit-profile',
+        builder: (context, state) {
+          final user = state.extra as UserEntity;
+          return EditProfilePage(user: user);
+        },
+      ),
+
+      // Settings
+      GoRoute(
+        path: '/settings',
+        name: 'settings',
+        builder: (context, state) => SettingsPage(),
+      ),
+      GoRoute(
+        path: '/settings/printer',
+        name: 'printer-settings',
+        builder: (context, state) => const PrinterSettingsPage(),
+      ),
+      GoRoute(
+        path: '/settings/change-password',
+        name: 'change-password',
+        builder: (context, state) => const ChangePasswordPage(),
+      ),
+      GoRoute(
+        path: '/settings/about',
+        name: 'about',
+        builder: (context, state) => const AboutPage(),
       ),
 
       // Directory (Phase 4)

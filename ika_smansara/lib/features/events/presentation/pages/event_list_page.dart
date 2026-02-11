@@ -74,50 +74,56 @@ class EventListPage extends StatelessWidget {
                                     borderRadius: const BorderRadius.vertical(
                                       top: Radius.circular(16),
                                     ),
-                                    child:
-                                        event.banner != null &&
-                                            event.banner!.startsWith('http')
-                                        ? CachedNetworkImage(
-                                            imageUrl: event.banner!,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) =>
-                                                Container(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surfaceContainerHighest,
-                                                  child: const Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                          strokeWidth: 2,
-                                                        ),
+                                    child: Hero(
+                                      tag: 'event-banner-${event.id}',
+                                      child:
+                                          event.banner != null &&
+                                              event.banner!.startsWith('http')
+                                          ? CachedNetworkImage(
+                                              imageUrl: event.banner!,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceContainerHighest,
+                                                    child: const Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                          ),
+                                                    ),
                                                   ),
-                                                ),
-                                            errorWidget:
-                                                (
-                                                  context,
-                                                  url,
-                                                  error,
-                                                ) => Container(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surfaceContainerHighest,
-                                                  child: const Icon(
-                                                    Icons.image,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                          )
-                                        : Image.asset(
-                                            event.banner ??
-                                                'assets/images/placeholder_event.png',
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    const Icon(
-                                                      Icons.event,
+                                              errorWidget:
+                                                  (
+                                                    context,
+                                                    url,
+                                                    error,
+                                                  ) => Container(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceContainerHighest,
+                                                    child: const Icon(
+                                                      Icons.image,
                                                       color: Colors.grey,
                                                     ),
-                                          ),
+                                                  ),
+                                            )
+                                          : Image.asset(
+                                              event.banner ??
+                                                  'assets/images/placeholder_event.png',
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => const Icon(
+                                                    Icons.event,
+                                                    color: Colors.grey,
+                                                  ),
+                                            ),
+                                    ),
                                   ),
                                 ),
                                 if (event.isRegistrationOpen)

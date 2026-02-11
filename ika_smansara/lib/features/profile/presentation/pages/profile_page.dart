@@ -9,8 +9,6 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/network/pb_client.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../bloc/profile_bloc.dart';
-import 'edit_profile_page.dart';
-import '../../../settings/presentation/pages/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -95,18 +93,15 @@ class ProfilePage extends StatelessWidget {
                               icon: Icons.person_outline,
                               label: 'Edit Profil',
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => EditProfilePage(user: user),
-                                  ),
-                                ).then((_) {
-                                  // Refresh profile after return
-                                  // ignore: use_build_context_synchronously
-                                  context.read<ProfileBloc>().add(
-                                    FetchProfile(),
-                                  );
-                                });
+                                context.push('/profile/edit', extra: user).then(
+                                  (_) {
+                                    // Refresh profile after return
+                                    // ignore: use_build_context_synchronously
+                                    context.read<ProfileBloc>().add(
+                                      FetchProfile(),
+                                    );
+                                  },
+                                );
                               },
                             ),
                             const Divider(height: 1),
@@ -128,12 +123,7 @@ class ProfilePage extends StatelessWidget {
                               icon: Icons.settings_outlined,
                               label: 'Pengaturan',
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const SettingsPage(),
-                                  ),
-                                );
+                                context.push('/settings');
                               },
                             ),
                             const Divider(height: 1),
@@ -221,33 +211,36 @@ class ProfilePage extends StatelessWidget {
         ),
         Positioned(
           bottom: -50,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              shape: BoxShape.circle,
-              border: Border.all(
+          child: Hero(
+            tag: 'profile-avatar-${user.id}',
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
-                width: 4,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.surface,
+                  width: 4,
+                ),
               ),
-            ),
-            child: ClipOval(
-              child: avatarUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: avatarUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Image.asset(
+              child: ClipOval(
+                child: avatarUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: avatarUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/images/logo-ika.png',
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.asset(
                         'assets/images/logo-ika.png',
                         fit: BoxFit.cover,
                       ),
-                    )
-                  : Image.asset(
-                      'assets/images/logo-ika.png',
-                      fit: BoxFit.cover,
-                    ),
+              ),
             ),
           ),
         ),

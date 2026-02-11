@@ -53,24 +53,27 @@ class NewsDetailPage extends StatelessWidget {
                   ),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
-                  background: news.thumbnail != null
-                      ? CachedNetworkImage(
-                          imageUrl: news.thumbnail!,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
+                  background: Hero(
+                    tag: 'news-thumbnail-${news.id}',
+                    child: news.thumbnail != null
+                        ? CachedNetworkImage(
+                            imageUrl: news.thumbnail!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
+                            ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/images/placeholder_news.png',
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Image.asset(
                             'assets/images/placeholder_news.png',
                             fit: BoxFit.cover,
                           ),
-                        )
-                      : Image.asset(
-                          'assets/images/placeholder_news.png',
-                          fit: BoxFit.cover,
-                        ),
+                  ),
                 ),
               ),
 

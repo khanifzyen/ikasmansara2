@@ -6,9 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
 import '../bloc/settings_bloc.dart';
-import 'printer_settings_page.dart';
-import 'change_password_page.dart';
-import 'about_page.dart';
 import '../../../../core/constants/app_constants.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -52,12 +49,7 @@ class SettingsPage extends StatelessWidget {
                   title: 'Konfigurasi Printer',
                   subtitle: 'Atur koneksi printer thermal',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const PrinterSettingsPage(),
-                      ),
-                    );
+                    context.push('/settings/printer');
                   },
                 ),
                 const SizedBox(height: 24),
@@ -67,10 +59,7 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.lock_outline,
                   title: 'Ubah Kata Sandi',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => ChangePasswordPage()),
-                    );
+                    context.push('/settings/change-password');
                   },
                 ),
                 _buildListTile(
@@ -172,10 +161,7 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.info_outline,
                   title: 'Tentang Aplikasi',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AboutPage()),
-                    );
+                    context.push('/settings/about');
                   },
                 ),
                 const SizedBox(height: 40),
