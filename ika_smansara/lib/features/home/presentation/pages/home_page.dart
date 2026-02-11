@@ -31,7 +31,6 @@ class HomePage extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: LayoutBuilder(
           builder: (context, constraints) {
             if (constraints.maxWidth >= 800) {
@@ -293,8 +292,8 @@ class _EktaCard extends StatelessWidget {
                 children: [
                   Text(
                     angkatanText,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.surface,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -302,7 +301,9 @@ class _EktaCard extends StatelessWidget {
                   ),
                   Icon(
                     Icons.school,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.8),
                     size: 20,
                   ),
                 ],
@@ -310,8 +311,8 @@ class _EktaCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 ektaDisplay,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.surface,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Courier',
@@ -583,7 +584,7 @@ class _MenuItem extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: AppColors.primary, size: 24),
@@ -591,10 +592,10 @@ class _MenuItem extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -617,10 +618,10 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.textDark,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         TextButton(
@@ -661,12 +662,14 @@ class _AgendaCard extends StatelessWidget {
     return Container(
       width: 260,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -681,7 +684,7 @@ class _AgendaCard extends StatelessWidget {
                 height: 140,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
@@ -695,13 +698,17 @@ class _AgendaCard extends StatelessWidget {
                           imageUrl: imageUrl!,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             child: const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[200],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             child: const Icon(Icons.image, color: Colors.grey),
                           ),
                         )
@@ -726,10 +733,10 @@ class _AgendaCard extends StatelessWidget {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
+                    child: Text(
                       'OPEN REGISTRATION',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -756,18 +763,20 @@ class _AgendaCard extends StatelessWidget {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '📍 $location',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: AppColors.textGrey,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -791,12 +800,14 @@ class _NewsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -808,7 +819,7 @@ class _NewsCard extends StatelessWidget {
             width: 80,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: imageUrl != null && imageUrl!.startsWith('http')
@@ -818,13 +829,17 @@ class _NewsCard extends StatelessWidget {
                       imageUrl: imageUrl!,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
-                        color: Colors.grey[200],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         child: const Center(
                           child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[200],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         child: const Icon(Icons.image, size: 20),
                       ),
                     ),
@@ -857,10 +872,10 @@ class _NewsCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -893,12 +908,14 @@ class _DonationCard extends StatelessWidget {
       width: 200,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -913,7 +930,7 @@ class _DonationCard extends StatelessWidget {
                 height: 100,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: (imageUrl != null && imageUrl!.startsWith('http'))
@@ -923,13 +940,17 @@ class _DonationCard extends StatelessWidget {
                           imageUrl: imageUrl!,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             child: const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[200],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             child: const Icon(Icons.image),
                           ),
                         ),
@@ -957,10 +978,10 @@ class _DonationCard extends StatelessWidget {
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
+                    child: Text(
                       'URGENT',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -974,16 +995,18 @@ class _DonationCard extends StatelessWidget {
             title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: percent,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
             color: AppColors.primary,
             minHeight: 4,
             borderRadius: BorderRadius.circular(2),
@@ -1002,7 +1025,12 @@ class _DonationCard extends StatelessWidget {
               ),
               Text(
                 '${(percent * 100).toInt()}%',
-                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
             ],
           ),
