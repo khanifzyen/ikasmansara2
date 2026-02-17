@@ -56,7 +56,7 @@ class DonationListPage extends StatelessWidget {
                       final donation = state.donations[index];
                       final imageUrl = donation.banner.isNotEmpty
                           ? donation.banner
-                          : 'assets/images/placeholder_donation.png';
+                          : 'assets/images/placeholder_event.png';
 
                       return _CampaignCard(
                         title: donation.title,
@@ -150,13 +150,47 @@ class _CampaignCard extends StatelessWidget {
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(16),
                           ),
                         ),
+                        clipBehavior: Clip.antiAlias,
+                        child: imageUrl.startsWith('http')
+                            ? Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                    child: const Icon(
+                                      Icons.image_not_supported,
+                                      size: 48,
+                                      color: AppColors.textGrey,
+                                    ),
+                                  );
+                                },
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const Center(
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  );
+                                },
+                              )
+                            : Image.asset(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      size: 48,
+                                      color: AppColors.textGrey,
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
                     ),
                     if (isUrgent)
