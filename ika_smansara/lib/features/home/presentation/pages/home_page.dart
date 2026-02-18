@@ -745,10 +745,10 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: AppColors.textDark,
           ),
         ),
         MouseRegion(
@@ -792,14 +792,12 @@ class _AgendaCard extends StatelessWidget {
     return Container(
       width: 260,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -814,7 +812,7 @@ class _AgendaCard extends StatelessWidget {
                 height: 140,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: Colors.grey[200],
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
@@ -863,10 +861,10 @@ class _AgendaCard extends StatelessWidget {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text(
+                    child: const Text(
                       'OPEN REGISTRATION',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -893,20 +891,18 @@ class _AgendaCard extends StatelessWidget {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: AppColors.textDark,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '📍 $location',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 11,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: AppColors.textGrey,
                   ),
                 ),
               ],
@@ -930,14 +926,12 @@ class _NewsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -949,7 +943,7 @@ class _NewsCard extends StatelessWidget {
             width: 80,
             height: 60,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
             child: imageUrl != null && imageUrl!.startsWith('http')
@@ -1002,10 +996,10 @@ class _NewsCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: AppColors.textDark,
                   ),
                 ),
               ],
@@ -1038,14 +1032,12 @@ class _DonationCard extends StatelessWidget {
       width: 200,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1060,7 +1052,7 @@ class _DonationCard extends StatelessWidget {
                 height: 100,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: (imageUrl != null && imageUrl!.startsWith('http'))
@@ -1108,10 +1100,10 @@ class _DonationCard extends StatelessWidget {
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text(
+                    child: const Text(
                       'URGENT',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1125,18 +1117,16 @@ class _DonationCard extends StatelessWidget {
             title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: AppColors.textDark,
             ),
           ),
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: percent,
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.surfaceContainerHighest,
+            backgroundColor: Colors.grey[200],
             color: AppColors.primary,
             minHeight: 4,
             borderRadius: BorderRadius.circular(2),
@@ -1155,12 +1145,7 @@ class _DonationCard extends StatelessWidget {
               ),
               Text(
                 '${(percent * 100).toInt()}%',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
+                style: const TextStyle(fontSize: 10, color: AppColors.textGrey),
               ),
             ],
           ),
