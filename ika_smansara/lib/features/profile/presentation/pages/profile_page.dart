@@ -281,7 +281,7 @@ class ProfilePage extends StatelessWidget {
             left: 8,
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.pop(),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
           Positioned(
