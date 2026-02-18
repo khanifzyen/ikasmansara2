@@ -231,28 +231,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Center(
       child: Stack(
         children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary, width: 2),
-            ),
-            child: ClipOval(
-              child: _imageFile != null
-                  ? Image.file(_imageFile!, fit: BoxFit.cover)
-                  : (widget.user.avatar != null &&
-                        widget.user.avatar!.isNotEmpty)
-                  ? CachedNetworkImage(
-                      imageUrl:
-                          '${AppConstants.pocketBaseUrl}/api/files/users/${widget.user.id}/${widget.user.avatar}',
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) =>
-                          Icon(Icons.person, size: 50),
-                    )
-                  : Icon(Icons.person, size: 50, color: Colors.grey),
+          Hero(
+            tag: 'profile-avatar-${widget.user.id}',
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary, width: 2),
+              ),
+              child: ClipOval(
+                child: _imageFile != null
+                    ? Image.file(_imageFile!, fit: BoxFit.cover)
+                    : (widget.user.avatar != null &&
+                          widget.user.avatar!.isNotEmpty)
+                    ? CachedNetworkImage(
+                        imageUrl:
+                            '${AppConstants.pocketBaseUrl}/api/files/users/${widget.user.id}/${widget.user.avatar}',
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.person, size: 50),
+                      )
+                    : Icon(Icons.person, size: 50, color: Colors.grey),
+              ),
             ),
           ),
           Positioned(

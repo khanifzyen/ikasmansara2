@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../../core/constants/app_colors.dart';
+import '../../../../../../core/utils/app_animation.dart';
 
 class WizardStepIndicator extends StatelessWidget {
   final int currentStep;
@@ -35,7 +36,8 @@ class WizardStepIndicator extends StatelessWidget {
               ),
               // Active Progress
               AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+                duration: AppAnimations.normal,
+                curve: AppAnimations.defaultCurve,
                 height: 4,
                 width:
                     MediaQuery.of(context).size.width *
@@ -57,7 +59,8 @@ class WizardStepIndicator extends StatelessWidget {
                     child: Column(
                       children: [
                         AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
+                          duration: AppAnimations.normal,
+                          curve: AppAnimations.defaultCurve,
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(

@@ -7,6 +7,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/buttons.dart';
 import '../../../../core/widgets/inputs.dart';
+import '../../../../core/widgets/adaptive/adaptive_container.dart';
+import '../../../../core/widgets/adaptive/adaptive_padding.dart';
+import '../../../../core/widgets/adaptive/adaptive_spacing.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
@@ -84,155 +87,163 @@ class _RegisterPublicPageState extends State<RegisterPublicPage> {
           ),
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  const Text(
-                    'Daftar Akun Umum',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Dapatkan akses berita sekolah dan informasi donasi.',
-                    style: TextStyle(fontSize: 14, color: AppColors.textGrey),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Form Fields
-                  AppTextField(
-                    label: 'Nama Lengkap',
-                    hint: 'Masukkan nama lengkap',
-                    controller: _nameController,
-                    prefixIcon: const Icon(Icons.person_outline),
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Nama wajib diisi';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'Email',
-                    hint: 'contoh@email.com',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Email wajib diisi';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Email tidak valid';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppTextField(
-                    label: 'No WhatsApp',
-                    hint: '08123456789',
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    prefixIcon: const Icon(Icons.phone_outlined),
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'No WhatsApp wajib diisi';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppPasswordField(
-                    label: 'Password',
-                    hint: 'Minimal 8 karakter',
-                    controller: _passwordController,
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Password wajib diisi';
-                      }
-                      if (value.length < 8) {
-                        return 'Password minimal 8 karakter';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AppPasswordField(
-                    label: 'Konfirmasi Password',
-                    hint: 'Ulangi password',
-                    controller: _confirmPasswordController,
-                    textInputAction: TextInputAction.done,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Konfirmasi password wajib diisi';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Password tidak cocok';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Submit Button
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      return PrimaryButton(
-                        text: 'Buat Akun',
-                        isLoading: state is AuthLoading,
-                        onPressed: _submit,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Login link
-                  Center(
-                    child: TextButton(
-                      onPressed: () => context.go('/login'),
-                      child: const Text.rich(
-                        TextSpan(
-                          text: 'Sudah punya akun? ',
-                          style: TextStyle(color: AppColors.textGrey),
-                          children: [
-                            TextSpan(
-                              text: 'Masuk',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+          child: AdaptiveContainer(
+            widthType: AdaptiveWidthType.form,
+            child: AdaptivePaddingAll(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      const Text(
+                        'Daftar Akun Umum',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
                         ),
                       ),
-                    ),
+                      const AdaptiveSpacingV(multiplier: 1.5),
+                      const Text(
+                        'Dapatkan akses berita sekolah dan informasi donasi.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textGrey,
+                        ),
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 6.0),
+
+                      // Form Fields
+                      AppTextField(
+                        label: 'Nama Lengkap',
+                        hint: 'Masukkan nama lengkap',
+                        controller: _nameController,
+                        prefixIcon: const Icon(Icons.person_outline),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Nama wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'Email',
+                        hint: 'contoh@email.com',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email wajib diisi';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Email tidak valid';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppTextField(
+                        label: 'No WhatsApp',
+                        hint: '08123456789',
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        prefixIcon: const Icon(Icons.phone_outlined),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'No WhatsApp wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppPasswordField(
+                        label: 'Password',
+                        hint: 'Minimal 8 karakter',
+                        controller: _passwordController,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Password wajib diisi';
+                          }
+                          if (value.length < 8) {
+                            return 'Password minimal 8 karakter';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      AppPasswordField(
+                        label: 'Konfirmasi Password',
+                        hint: 'Ulangi password',
+                        controller: _confirmPasswordController,
+                        textInputAction: TextInputAction.done,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Konfirmasi password wajib diisi';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Password tidak cocok';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 6.0),
+
+                      // Submit Button
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          return PrimaryButton(
+                            text: 'Buat Akun',
+                            isLoading: state is AuthLoading,
+                            onPressed: _submit,
+                          );
+                        },
+                      ),
+
+                      const AdaptiveSpacingV(multiplier: 3.0),
+
+                      // Login link
+                      Center(
+                        child: TextButton(
+                          onPressed: () => context.go('/login'),
+                          child: const Text.rich(
+                            TextSpan(
+                              text: 'Sudah punya akun? ',
+                              style: TextStyle(color: AppColors.textGrey),
+                              children: [
+                                TextSpan(
+                                  text: 'Masuk',
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

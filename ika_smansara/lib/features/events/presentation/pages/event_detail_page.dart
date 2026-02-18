@@ -188,30 +188,33 @@ class _EventDetailPageState extends State<EventDetailPage>
                       onPressed: () => Navigator.pop(context),
                     ),
                     flexibleSpace: FlexibleSpaceBar(
-                      background:
-                          event.banner != null && event.banner!.isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: event.banner!,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainerHighest,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                      background: Hero(
+                        tag: 'event-banner-${event.id}',
+                        child: event.banner != null && event.banner!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: event.banner!,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                      'assets/images/placeholder_event.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                              )
+                            : Image.asset(
                                 'assets/images/placeholder_event.png',
                                 fit: BoxFit.cover,
                               ),
-                            )
-                          : Image.asset(
-                              'assets/images/placeholder_event.png',
-                              fit: BoxFit.cover,
-                            ),
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(
