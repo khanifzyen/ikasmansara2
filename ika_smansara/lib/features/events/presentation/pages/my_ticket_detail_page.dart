@@ -2,18 +2,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/network/pb_client.dart';
 import '../../../../core/services/printer_service.dart';
 import '../../../settings/domain/usecases/get_printer_settings.dart';
+import 'package:intl/intl.dart';
 import '../../domain/entities/event_booking.dart';
 import '../../domain/entities/event_booking_ticket.dart';
 import '../../domain/entities/event.dart';
+import '../widgets/event_ticket_card.dart';
 import '../../presentation/bloc/my_tickets_bloc.dart';
-import 'package:intl/intl.dart';
 
 class MyTicketDetailPage extends StatefulWidget {
   final String bookingId;
@@ -136,135 +136,16 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        children: [
-          Screenshot(
-            controller: screenshotController,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Ticket Header
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF006D4E),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ticket.ticketName,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.surface,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          ticket.ticketCode,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Ticket Body / QR
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        QrImageView(
-                          data:
-                              '${ticket.id}:${ticket.ticketCode}', // Combined for security
-                          version: QrVersions.auto,
-                          size: 200.0,
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          ticket.ticketCode,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            fontFamily: 'monospace',
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          ticket.userName,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          ticket.userEmail,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 16),
-
-          // Action Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () =>
-                    _shareTicket(context, ticket, screenshotController),
-                icon: Icon(Icons.share, size: 18),
-                label: Text('Bagikan'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[600],
-                  foregroundColor: Colors.white,
-                ),
-              ),
-              SizedBox(width: 16),
-              ElevatedButton.icon(
-                onPressed: () => _printTicket(context, ticket),
-                icon: Icon(Icons.print, size: 18),
-                label: Text('Cetak'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[800],
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      child: widget.booking != null
+          ? EventTicketCard(
+              booking: widget.booking!,
+              ticket: ticket,
+              screenshotController: screenshotController,
+              onShare: () =>
+                  _shareTicket(context, ticket, screenshotController),
+              onPrint: () => _printTicket(context, ticket),
+            )
+          : const SizedBox.shrink(),
     );
   }
 

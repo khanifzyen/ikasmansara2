@@ -14,6 +14,7 @@ import '../../../../../core/services/printer_service.dart';
 import '../../../../events/domain/entities/event_booking.dart';
 import '../../../../events/domain/entities/event_booking_ticket.dart';
 import '../../../../settings/domain/usecases/get_printer_settings.dart';
+import '../../../../events/presentation/widgets/event_ticket_card.dart';
 import '../bloc/admin_participants_bloc.dart';
 
 class ParticipantsTab extends StatefulWidget {
@@ -1036,143 +1037,12 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
   Widget _buildTicketItem(BuildContext context, EventBookingTicket ticket) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        children: [
-          Screenshot(
-            controller: _screenshotControllers[ticket.id]!,
-            child: Container(
-              width: 300,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'IKA SMANSARA',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Divider(thickness: 1, color: Colors.black),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.booking.event?.title ?? 'Event',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${DateFormat('EEEE, d MMM yyyy', 'id').format(widget.booking.event?.date.toLocal() ?? DateTime.now())} - ${widget.booking.event?.time ?? '-'}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.booking.event?.location ?? '-',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  const Divider(height: 24),
-                  _buildTicketRow('TIKET', ticket.ticketName),
-                  _buildTicketRow(
-                    'NAMA',
-                    (widget.booking.registrationChannel == 'app' ||
-                            widget.booking.userId.isNotEmpty)
-                        ? (ticket.userName.isNotEmpty
-                              ? ticket.userName
-                              : 'Peserta')
-                        : '(Koord) ${widget.booking.coordinatorName ?? '-'}',
-                  ),
-                  () {
-                    final displayOptions =
-                        (widget.booking.registrationChannel == 'app' ||
-                            widget.booking.userId.isNotEmpty)
-                        ? ticket.options.values.join(', ')
-                        : (widget.booking.notes ?? '-');
-                    if (displayOptions.isNotEmpty && displayOptions != '-') {
-                      return _buildTicketRow('OPSI', displayOptions);
-                    }
-                    return const SizedBox.shrink();
-                  }(),
-                  const Divider(height: 24),
-                  QrImageView(
-                    data: '${ticket.id}:${ticket.ticketCode}',
-                    version: QrVersions.auto,
-                    size: 150.0,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    ticket.ticketCode,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'monospace',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Simpan sebagai bukti masuk.',
-                    style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton.icon(
-                onPressed: () => _shareTicket(context, ticket),
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('Share'),
-              ),
-              const SizedBox(width: 16),
-              TextButton.icon(
-                onPressed: () => _printTicket(context, ticket),
-                icon: const Icon(Icons.print, size: 18),
-                label: const Text('Print'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTicketRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 60,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
+      child: EventTicketCard(
+        booking: widget.booking,
+        ticket: ticket,
+        screenshotController: _screenshotControllers[ticket.id]!,
+        onShare: () => _shareTicket(context, ticket),
+        onPrint: () => _printTicket(context, ticket),
       ),
     );
   }
