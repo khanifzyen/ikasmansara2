@@ -143,6 +143,69 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
   }
 
   Widget _buildFilterBar(BuildContext context, AdminParticipantsLoaded state) {
+    final isDesktop = MediaQuery.of(context).size.width >= 768;
+
+    final dropdown = DropdownButtonFormField<String>(
+      value: _selectedSearchField,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+        border: OutlineInputBorder(),
+      ),
+      items: const [
+        DropdownMenuItem(
+          value: 'name',
+          child: Text('Nama Peserta', overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: 'booking_code',
+          child: Text('Kode Booking', overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: 'ticket_code',
+          child: Text('Kode Tiket', overflow: TextOverflow.ellipsis),
+        ),
+      ],
+      onChanged: (v) {
+        if (v != null) {
+          setState(() => _selectedSearchField = v);
+        }
+      },
+    );
+
+    final searchField = TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Cari ${_selectedSearchField.replaceAll('_', ' ')}...',
+        prefixIcon: const Icon(Icons.search),
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+      ),
+      onSubmitted: (value) {
+        context.read<AdminParticipantsBloc>().add(
+          SearchParticipants(
+            eventId: widget.eventId,
+            searchField: _selectedSearchField,
+            searchQuery: value,
+          ),
+        );
+      },
+    );
+
+    final searchButton = PrimaryButton(
+      text: 'Cari',
+      isExpanded: !isDesktop,
+      onPressed: () {
+        context.read<AdminParticipantsBloc>().add(
+          SearchParticipants(
+            eventId: widget.eventId,
+            searchField: _selectedSearchField,
+            searchQuery: _searchController.text,
+          ),
+        );
+      },
+    );
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -150,73 +213,26 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: DropdownButtonFormField<String>(
-              value: _selectedSearchField,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                border: OutlineInputBorder(),
-              ),
-              items: const [
-                DropdownMenuItem(value: 'name', child: Text('Nama Peserta')),
-                DropdownMenuItem(
-                  value: 'booking_code',
-                  child: Text('Kode Booking'),
-                ),
-                DropdownMenuItem(
-                  value: 'ticket_code',
-                  child: Text('Kode Tiket'),
-                ),
+      child: isDesktop
+          ? Row(
+              children: [
+                Expanded(flex: 2, child: dropdown),
+                const SizedBox(width: 12),
+                Expanded(flex: 4, child: searchField),
+                const SizedBox(width: 12),
+                searchButton,
               ],
-              onChanged: (v) {
-                if (v != null) {
-                  setState(() => _selectedSearchField = v);
-                }
-              },
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                dropdown,
+                const SizedBox(height: 12),
+                searchField,
+                const SizedBox(height: 12),
+                searchButton,
+              ],
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 4,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText:
-                    'Cari ${_selectedSearchField.replaceAll('_', ' ')}...',
-                prefixIcon: const Icon(Icons.search),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-              onSubmitted: (value) {
-                context.read<AdminParticipantsBloc>().add(
-                  SearchParticipants(
-                    eventId: widget.eventId,
-                    searchField: _selectedSearchField,
-                    searchQuery: value,
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-          PrimaryButton(
-            text: 'Cari',
-            isExpanded: false,
-            onPressed: () {
-              context.read<AdminParticipantsBloc>().add(
-                SearchParticipants(
-                  eventId: widget.eventId,
-                  searchField: _selectedSearchField,
-                  searchQuery: _searchController.text,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 
