@@ -387,20 +387,17 @@ class _TicketTabState extends State<TicketTab> {
                   ),
                 ),
                 const Divider(height: 1),
-                // RadioListTile<String>(
-                //   value: 'bni_va',
-                //   title: Row(
-                //     children: [
-                //       // You might want to use an asset image for BNI logo if available,
-                //       // otherwise use a generic bank icon or text.
-                //       // Assuming no assets, using Icon and Text.
-                //       const Icon(Icons.account_balance, color: Colors.black),
-                //       const SizedBox(width: 12),
-                //       const Text('BNI Virtual Account'),
-                //       const Spacer(),
-                //     ],
-                //   ),
-                // ),
+                RadioListTile<String>(
+                  value: 'virtual_account',
+                  title: Row(
+                    children: [
+                      const Icon(Icons.account_balance, color: Colors.black),
+                      const SizedBox(width: 12),
+                      const Text('Virtual Account (Semua Bank)'),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -600,7 +597,10 @@ class _TicketTabState extends State<TicketTab> {
   }
 
   int _calculateServiceFee() {
-    // 1.5% service fee
+    if (_selectedPaymentMethod == 'virtual_account') {
+      return 5500; // Flat service fee for VA
+    }
+    // 1.5% service fee for QRIS and other methods
     return (_calculateTicketTotal() * 0.015).ceil();
   }
 

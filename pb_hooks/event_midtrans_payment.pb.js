@@ -80,7 +80,14 @@ onRecordCreateRequest((e) => {
                 const authString = Buffer.from(serverKey + ":").toString("base64");
 
                 const paymentMethod = e.record.getString("payment_method");
-                const enabledPayments = paymentMethod ? [paymentMethod] : ["other_qris", "qris", "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"];
+                let enabledPayments;
+                if (paymentMethod === "virtual_account") {
+                    enabledPayments = ["bank_transfer", "echannel", "bca_va", "bni_va", "bri_va", "permata_va", "cimb_va", "other_va"];
+                } else if (paymentMethod) {
+                    enabledPayments = [paymentMethod];
+                } else {
+                    enabledPayments = ["other_qris", "qris", "gopay", "shopeepay", "permata_va", "bca_va", "bni_va", "bri_va", "echannel", "other_va", "indomaret", "alfamart"];
+                }
 
                 const payload = {
                     transaction_details: {
