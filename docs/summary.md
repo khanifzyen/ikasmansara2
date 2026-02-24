@@ -62,11 +62,6 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
 15. **Penyelarasan Brand (SMANSARA)**
     - Memperbarui penyebutan nama organisasi dari "SMANSA" menjadi "SMANSARA" pada halaman pemilihan role dan registrasi alumni untuk konsistensi brand.
 
-## Operasi Git
-- Melakukan pendataan seluruh perubahan file (`git add .`).
-- Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
-- Melakukan push ke repository.
-
 16. **Responsive Alumni Dashboard**
     - Mengimplementasikan layout responsif pada `MainShell` dan `HomePage`.
     - **Desktop (Width ≥ 800px)**: Menggunakan `NavigationRail` (sidebar) di sebelah kiri dan layout multikolom untuk konten dashboard.
@@ -88,3 +83,8 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - **Biaya Layanan Flat**: Menambahkan opsi pembayaran "Virtual Account (Semua Bank)" dengan biaya layanan (*service fee*) tetap sebesar Rp 5.500 pada antarmuka pemesanan tiket.
     - **Filter Midtrans Snap**: Memodifikasi *webhook* PocketBase (`event_midtrans_payment.pb.js`) untuk hanya melampirkan parameter `enabled_payments` khusus VA, sehingga Midtrans Snap WebView bersih dari opsi E-Wallet/QRIS jika VA dipilih.
     - **Resume Pembayaran**: Mengonfirmasi bahwa pembayaran VA berstatus *Pending* dapat di-*resume* melalui halaman tab "Tiketku" (memuat URL Snap yang telah disematkan sebelumnya).
+    
+## Operasi Git
+- Melakukan pendataan seluruh perubahan file (`git add .`).
+- Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
+- Melakukan push ke repository.

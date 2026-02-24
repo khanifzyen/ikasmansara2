@@ -393,7 +393,7 @@ class _TicketTabState extends State<TicketTab> {
                     children: [
                       const Icon(Icons.account_balance, color: Colors.black),
                       const SizedBox(width: 12),
-                      const Text('Virtual Account (Semua Bank)'),
+                      const Text('Virtual Account'),
                       const Spacer(),
                     ],
                   ),
