@@ -1092,7 +1092,7 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
                         ? (ticket.userName.isNotEmpty
                               ? ticket.userName
                               : 'Peserta')
-                        : '(Koordinator) ${widget.booking.coordinatorName ?? '-'}',
+                        : '(Koord) ${widget.booking.coordinatorName ?? '-'}',
                   ),
                   () {
                     final displayOptions =
@@ -1254,7 +1254,7 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
           (widget.booking.registrationChannel == 'app' ||
               widget.booking.userId.isNotEmpty)
           ? (ticket.userName.isNotEmpty ? ticket.userName : 'Peserta')
-          : '(Koordinator) ${widget.booking.coordinatorName ?? '-'}';
+          : '(Koord) ${widget.booking.coordinatorName ?? '-'}';
 
       final printOptions =
           (widget.booking.registrationChannel == 'app' ||
