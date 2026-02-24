@@ -83,7 +83,7 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - **Biaya Layanan Flat**: Menambahkan opsi pembayaran "Virtual Account (Semua Bank)" dengan biaya layanan (*service fee*) tetap sebesar Rp 5.500 pada antarmuka pemesanan tiket.
     - **Filter Midtrans Snap**: Memodifikasi *webhook* PocketBase (`event_midtrans_payment.pb.js`) untuk hanya melampirkan parameter `enabled_payments` khusus VA, sehingga Midtrans Snap WebView bersih dari opsi E-Wallet/QRIS jika VA dipilih.
     - **Resume Pembayaran**: Mengonfirmasi bahwa pembayaran VA berstatus *Pending* dapat di-*resume* melalui halaman tab "Tiketku" (memuat URL Snap yang telah disematkan sebelumnya).
-    
+
 ## Operasi Git
 - Melakukan pendataan seluruh perubahan file (`git add .`).
 - Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
