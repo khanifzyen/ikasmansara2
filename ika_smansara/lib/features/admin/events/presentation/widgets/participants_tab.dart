@@ -33,16 +33,6 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      context.read<AdminParticipantsBloc>().add(
-        LoadMoreParticipants(widget.eventId),
-      );
-    }
   }
 
   @override
@@ -99,45 +89,57 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
   Widget _buildContent(BuildContext context, AdminParticipantsLoaded state) {
     final isDesktop = MediaQuery.of(context).size.width >= 768;
 
-    return SingleChildScrollView(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Daftar Peserta (${state.bookings.length})',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (!state.hasReachedMax &&
+            scrollInfo.metrics.pixels >=
+                scrollInfo.metrics.maxScrollExtent - 200) {
+          context.read<AdminParticipantsBloc>().add(
+            LoadMoreParticipants(widget.eventId),
+          );
+        }
+        return false;
+      },
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Daftar Peserta (${state.bookings.length})',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textDark,
+                  ),
                 ),
-              ),
-              PrimaryButton(
-                text: isDesktop ? '+ Tambah Manual' : '+ Manual',
-                isExpanded: false,
-                onPressed: () => _showAddManualModal(context),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildFilterBar(context, state),
-          const SizedBox(height: 16),
-          if (state.bookings.isEmpty)
-            _buildEmptyState()
-          else if (isDesktop)
-            _buildTable(context, state.bookings)
-          else
-            _buildMobileList(context, state.bookings),
-          if (!state.hasReachedMax && state.bookings.isNotEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Center(child: CircularProgressIndicator()),
+                PrimaryButton(
+                  text: isDesktop ? '+ Tambah Manual' : '+ Manual',
+                  isExpanded: false,
+                  onPressed: () => _showAddManualModal(context),
+                ),
+              ],
             ),
-        ],
+            const SizedBox(height: 16),
+            _buildFilterBar(context, state),
+            const SizedBox(height: 16),
+            if (state.bookings.isEmpty)
+              _buildEmptyState()
+            else if (isDesktop)
+              _buildTable(context, state.bookings)
+            else
+              _buildMobileList(context, state.bookings),
+            if (!state.hasReachedMax && state.bookings.isNotEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
       ),
     );
   }

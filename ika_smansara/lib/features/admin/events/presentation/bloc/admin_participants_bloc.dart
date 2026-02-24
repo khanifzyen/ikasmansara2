@@ -163,6 +163,7 @@ class AdminParticipantsActionSuccess extends AdminParticipantsState {
 class AdminParticipantsBloc
     extends Bloc<AdminParticipantsEvent, AdminParticipantsState> {
   final AdminEventsRepository _repository;
+  bool _isFetchingMore = false;
 
   AdminParticipantsBloc()
     : _repository = AdminEventsRepositoryImpl(AdminEventsRemoteDataSource()),
@@ -236,7 +237,9 @@ class AdminParticipantsBloc
     final currentState = state;
     if (currentState is! AdminParticipantsLoaded) return;
     if (currentState.hasReachedMax) return;
+    if (_isFetchingMore) return;
 
+    _isFetchingMore = true;
     try {
       final nextPage = currentState.currentPage + 1;
       final newBookings = await _repository.getEventBookings(
@@ -246,6 +249,8 @@ class AdminParticipantsBloc
         searchField: currentState.searchField,
         searchQuery: currentState.searchQuery,
       );
+
+      _isFetchingMore = false;
 
       if (newBookings.isEmpty) {
         emit(currentState.copyWith(hasReachedMax: true));
@@ -259,6 +264,7 @@ class AdminParticipantsBloc
         );
       }
     } catch (e) {
+      _isFetchingMore = false;
       emit(AdminParticipantsError(e.toString()));
     }
   }
