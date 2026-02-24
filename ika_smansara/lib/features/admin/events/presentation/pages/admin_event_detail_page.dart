@@ -113,66 +113,82 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
 
     return Column(
       children: [
-        // Stats Cards
-        Container(
-          color: AppColors.background,
-          padding: EdgeInsets.fromLTRB(
-            isDesktop ? 24 : 16,
-            isDesktop ? 16 : 12,
-            isDesktop ? 24 : 16,
-            0,
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final crossAxisCount = isDesktop ? 4 : 2;
-              final spacing = isDesktop ? 16.0 : 12.0;
-              final totalSpacing = spacing * (crossAxisCount - 1);
-              final cardWidth =
-                  (constraints.maxWidth - totalSpacing) / crossAxisCount;
+        // Stats Cards (Wrapped in Accordion)
+        Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            initiallyExpanded: false,
+            title: Text(
+              'Statistik Event',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
+              ),
+            ),
+            children: [
+              Container(
+                color: AppColors.background,
+                padding: EdgeInsets.fromLTRB(
+                  isDesktop ? 24 : 16,
+                  isDesktop ? 16 : 12,
+                  isDesktop ? 24 : 16,
+                  16,
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final crossAxisCount = isDesktop ? 4 : 2;
+                    final spacing = isDesktop ? 16.0 : 12.0;
+                    final totalSpacing = spacing * (crossAxisCount - 1);
+                    final cardWidth =
+                        (constraints.maxWidth - totalSpacing) / crossAxisCount;
 
-              return Wrap(
-                spacing: spacing,
-                runSpacing: spacing,
-                children: [
-                  SizedBox(
-                    width: cardWidth,
-                    child: AdminStatCard(
-                      icon: '👥',
-                      value: totalParticipants,
-                      label: 'Pendaftar',
-                      backgroundColor: const Color(0xFFE0F2FE),
-                    ),
-                  ),
-                  SizedBox(
-                    width: cardWidth,
-                    child: AdminStatCard(
-                      icon: '💰',
-                      value: formatter.format(totalIncome),
-                      label: 'Pemasukan',
-                      backgroundColor: const Color(0xFFD1FAE5),
-                    ),
-                  ),
-                  SizedBox(
-                    width: cardWidth,
-                    child: AdminStatCard(
-                      icon: '💸',
-                      value: 'Rp 0',
-                      label: 'Pengeluaran',
-                      backgroundColor: const Color(0xFFFEE2E2),
-                    ),
-                  ),
-                  SizedBox(
-                    width: cardWidth,
-                    child: AdminStatCard(
-                      icon: '⚖️',
-                      value: formatter.format(totalIncome),
-                      label: 'Saldo',
-                      backgroundColor: const Color(0xFFFEF3C7),
-                    ),
-                  ),
-                ],
-              );
-            },
+                    return Wrap(
+                      spacing: spacing,
+                      runSpacing: spacing,
+                      children: [
+                        SizedBox(
+                          width: cardWidth,
+                          child: AdminStatCard(
+                            icon: '👥',
+                            value: totalParticipants,
+                            label: 'Pendaftar',
+                            backgroundColor: const Color(0xFFE0F2FE),
+                          ),
+                        ),
+                        SizedBox(
+                          width: cardWidth,
+                          child: AdminStatCard(
+                            icon: '💰',
+                            value: formatter.format(totalIncome),
+                            label: 'Pemasukan',
+                            backgroundColor: const Color(0xFFD1FAE5),
+                          ),
+                        ),
+                        SizedBox(
+                          width: cardWidth,
+                          child: AdminStatCard(
+                            icon: '💸',
+                            value: 'Rp 0',
+                            label: 'Pengeluaran',
+                            backgroundColor: const Color(0xFFFEE2E2),
+                          ),
+                        ),
+                        SizedBox(
+                          width: cardWidth,
+                          child: AdminStatCard(
+                            icon: '⚖️',
+                            value: formatter.format(totalIncome),
+                            label: 'Saldo',
+                            backgroundColor: const Color(0xFFFEF3C7),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
 

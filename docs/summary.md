@@ -72,3 +72,9 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - **Desktop (Width ≥ 800px)**: Menggunakan `NavigationRail` (sidebar) di sebelah kiri dan layout multikolom untuk konten dashboard.
     - **Mobile**: Mempertahankan `BottomNavigationBar` dan layout single-column yang familiar.
     - Menyesuaikan `GridView` pada menu akses cepat agar tampilan desktop lebih proporsional (`childAspectRatio: 1.5`).
+
+17. **Penyempurnaan Halaman Detail Event Admin**
+    - **Statistik Accordion**: Membungkus deretan kartu statisik (Pendaftar, Pemasukan, dll.) ke dalam `ExpansionTile` sehingga menghemat ruang vertikal layar.
+    - **Filter Pencarian Peserta**: Menambahkan antarmuka *dropdown* dan teks pencarian (Berdasarkan: Nama, Kode Booking, Kode Tiket) pada tab Peserta.
+    - **Paginasi & Infinite Scroll**: Memperbarui Backend Data (`AdminEventsRepository`) dan antarmuka untuk mendukung pemuatan batch per 25 data peserta secara *infinite scroll*, sehingga meminimalisir beban request.
+    - **Nomor Urut Mobile**: Menambahkan *sequence number* (#) pada antarmuka *card* daftar peserta dalam mode responsif Mobile.

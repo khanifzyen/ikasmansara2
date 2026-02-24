@@ -26,6 +26,32 @@ class ParticipantsTab extends StatefulWidget {
 }
 
 class _ParticipantsTabState extends State<ParticipantsTab> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedSearchField = 'name';
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<AdminParticipantsBloc>().add(
+        LoadMoreParticipants(widget.eventId),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -74,6 +100,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
     final isDesktop = MediaQuery.of(context).size.width >= 768;
 
     return SingleChildScrollView(
+      controller: _scrollController,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,13 +123,98 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+          _buildFilterBar(context, state),
+          const SizedBox(height: 16),
           if (state.bookings.isEmpty)
             _buildEmptyState()
           else if (isDesktop)
             _buildTable(context, state.bookings)
           else
             _buildMobileList(context, state.bookings),
+          if (!state.hasReachedMax && state.bookings.isNotEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterBar(BuildContext context, AdminParticipantsLoaded state) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: DropdownButtonFormField<String>(
+              value: _selectedSearchField,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'name', child: Text('Nama Peserta')),
+                DropdownMenuItem(
+                  value: 'booking_code',
+                  child: Text('Kode Booking'),
+                ),
+                DropdownMenuItem(
+                  value: 'ticket_code',
+                  child: Text('Kode Tiket'),
+                ),
+              ],
+              onChanged: (v) {
+                if (v != null) {
+                  setState(() => _selectedSearchField = v);
+                }
+              },
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 4,
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText:
+                    'Cari ${_selectedSearchField.replaceAll('_', ' ')}...',
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              onSubmitted: (value) {
+                context.read<AdminParticipantsBloc>().add(
+                  SearchParticipants(
+                    eventId: widget.eventId,
+                    searchField: _selectedSearchField,
+                    searchQuery: value,
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: 12),
+          PrimaryButton(
+            text: 'Cari',
+            isExpanded: false,
+            onPressed: () {
+              context.read<AdminParticipantsBloc>().add(
+                SearchParticipants(
+                  eventId: widget.eventId,
+                  searchField: _selectedSearchField,
+                  searchQuery: _searchController.text,
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -253,11 +365,15 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
       itemCount: bookings.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) =>
-          _buildMobileCard(context, bookings[index]),
+          _buildMobileCard(context, bookings[index], index + 1),
     );
   }
 
-  Widget _buildMobileCard(BuildContext context, EventBooking booking) {
+  Widget _buildMobileCard(
+    BuildContext context,
+    EventBooking booking,
+    int sequenceNumber,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -272,8 +388,11 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                booking.bookingId,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                '#$sequenceNumber - ${booking.bookingId}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               ),
               _buildStatusBadge(booking),
             ],
@@ -1115,12 +1234,27 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
       final printerSettings = await getPrinterSettings();
       final printerService = GetIt.I<PrinterService>();
 
+      final printUserName =
+          (widget.booking.registrationChannel == 'app' ||
+              widget.booking.userId.isNotEmpty)
+          ? (ticket.userName.isNotEmpty ? ticket.userName : 'Peserta')
+          : '(Koordinator) ${widget.booking.coordinatorName ?? '-'}';
+
+      final printOptions =
+          (widget.booking.registrationChannel == 'app' ||
+              widget.booking.userId.isNotEmpty)
+          ? ticket.options
+          : (widget.booking.notes?.isNotEmpty == true &&
+                widget.booking.notes != '-')
+          ? {'Catatan': widget.booking.notes}
+          : <String, dynamic>{};
+
       await printerService.printEventTicket(
         ticketId: ticket.id,
         ticketCode: ticket.ticketCode,
         ticketName: ticket.ticketName,
-        userName: ticket.userName,
-        options: ticket.options,
+        userName: printUserName,
+        options: printOptions,
         eventTitle: event.title,
         eventDate: event.date,
         eventTime: event.time,

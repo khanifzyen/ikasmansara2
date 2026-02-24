@@ -30,8 +30,14 @@ abstract class AdminEventsRepository {
   /// Update event status
   Future<void> updateEventStatus(String eventId, String status);
 
-  /// Get event bookings (participants)
-  Future<List<EventBooking>> getEventBookings(String eventId);
+  /// Get event bookings (participants) with optional filters and pagination
+  Future<List<EventBooking>> getEventBookings(
+    String eventId, {
+    int page = 1,
+    int perPage = 25,
+    String? searchField,
+    String? searchQuery,
+  });
 
   /// Get specific booking tickets
   Future<List<EventBookingTicket>> getEventBookingTickets(String bookingId);

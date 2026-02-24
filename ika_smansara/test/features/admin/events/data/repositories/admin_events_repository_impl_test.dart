@@ -11,9 +11,7 @@ import 'package:ika_smansara/features/events/domain/entities/event_booking.dart'
 import 'package:ika_smansara/features/events/domain/entities/event_booking_ticket.dart';
 import 'package:ika_smansara/features/events/domain/entities/event_ticket.dart';
 
-@GenerateNiceMocks([
-  MockSpec<AdminEventsRemoteDataSource>(),
-])
+@GenerateNiceMocks([MockSpec<AdminEventsRemoteDataSource>()])
 import 'admin_events_repository_impl_test.mocks.dart';
 
 void main() {
@@ -48,11 +46,13 @@ void main() {
 
     test('should get events from data source', () async {
       // Arrange
-      when(mockDataSource.getEvents(
-        filter: anyNamed('filter'),
-        page: anyNamed('page'),
-        perPage: anyNamed('perPage'),
-      )).thenAnswer((_) async => tEvents as List<Event>);
+      when(
+        mockDataSource.getEvents(
+          filter: anyNamed('filter'),
+          page: anyNamed('page'),
+          perPage: anyNamed('perPage'),
+        ),
+      ).thenAnswer((_) async => tEvents as List<Event>);
 
       // Act
       final result = await repository.getEvents(
@@ -63,45 +63,46 @@ void main() {
 
       // Assert
       expect(result, tEvents);
-      verify(mockDataSource.getEvents(
-        filter: 'status="published"',
-        page: 1,
-        perPage: 20,
-      )).called(1);
+      verify(
+        mockDataSource.getEvents(
+          filter: 'status="published"',
+          page: 1,
+          perPage: 20,
+        ),
+      ).called(1);
     });
 
     test('should get events with default parameters', () async {
       // Arrange
-      when(mockDataSource.getEvents(
-        filter: anyNamed('filter'),
-        page: anyNamed('page'),
-        perPage: anyNamed('perPage'),
-      )).thenAnswer((_) async => tEvents as List<Event>);
+      when(
+        mockDataSource.getEvents(
+          filter: anyNamed('filter'),
+          page: anyNamed('page'),
+          perPage: anyNamed('perPage'),
+        ),
+      ).thenAnswer((_) async => tEvents as List<Event>);
 
       // Act
       await repository.getEvents();
 
       // Assert
-      verify(mockDataSource.getEvents(
-        filter: null,
-        page: 1,
-        perPage: 20,
-      )).called(1);
+      verify(
+        mockDataSource.getEvents(filter: null, page: 1, perPage: 20),
+      ).called(1);
     });
 
     test('should propagate getEvents exception', () async {
       // Arrange
-      when(mockDataSource.getEvents(
-        filter: anyNamed('filter'),
-        page: anyNamed('page'),
-        perPage: anyNamed('perPage'),
-      )).thenThrow(Exception('Failed to get events'));
+      when(
+        mockDataSource.getEvents(
+          filter: anyNamed('filter'),
+          page: anyNamed('page'),
+          perPage: anyNamed('perPage'),
+        ),
+      ).thenThrow(Exception('Failed to get events'));
 
       // Act & Assert
-      expect(
-        () => repository.getEvents(),
-        throwsException,
-      );
+      expect(() => repository.getEvents(), throwsException);
     });
   });
 
@@ -126,8 +127,7 @@ void main() {
 
     test('should get event by id from data source', () async {
       // Arrange
-      when(mockDataSource.getEventById('1'))
-          .thenAnswer((_) async => tEvent);
+      when(mockDataSource.getEventById('1')).thenAnswer((_) async => tEvent);
 
       // Act
       final result = await repository.getEventById('1');
@@ -139,14 +139,12 @@ void main() {
 
     test('should propagate getEventById exception', () async {
       // Arrange
-      when(mockDataSource.getEventById('invalid'))
-          .thenThrow(Exception('Event not found'));
+      when(
+        mockDataSource.getEventById('invalid'),
+      ).thenThrow(Exception('Event not found'));
 
       // Act & Assert
-      expect(
-        () => repository.getEventById('invalid'),
-        throwsException,
-      );
+      expect(() => repository.getEventById('invalid'), throwsException);
     });
   });
 
@@ -176,8 +174,9 @@ void main() {
 
     test('should create event through data source', () async {
       // Arrange
-      when(mockDataSource.createEvent(tEventData))
-          .thenAnswer((_) async => tEvent);
+      when(
+        mockDataSource.createEvent(tEventData),
+      ).thenAnswer((_) async => tEvent);
 
       // Act
       final result = await repository.createEvent(tEventData);
@@ -189,14 +188,12 @@ void main() {
 
     test('should propagate createEvent exception', () async {
       // Arrange
-      when(mockDataSource.createEvent(any))
-          .thenThrow(Exception('Failed to create event'));
+      when(
+        mockDataSource.createEvent(any),
+      ).thenThrow(Exception('Failed to create event'));
 
       // Act & Assert
-      expect(
-        () => repository.createEvent({}),
-        throwsException,
-      );
+      expect(() => repository.createEvent({}), throwsException);
     });
   });
 
@@ -209,8 +206,9 @@ void main() {
 
     test('should create event ticket through data source', () async {
       // Arrange
-      when(mockDataSource.createEventTicket(tTicketData))
-          .thenAnswer((_) async => {});
+      when(
+        mockDataSource.createEventTicket(tTicketData),
+      ).thenAnswer((_) async => {});
 
       // Act
       await repository.createEventTicket(tTicketData);
@@ -221,14 +219,12 @@ void main() {
 
     test('should propagate createEventTicket exception', () async {
       // Arrange
-      when(mockDataSource.createEventTicket(any))
-          .thenThrow(Exception('Failed to create ticket'));
+      when(
+        mockDataSource.createEventTicket(any),
+      ).thenThrow(Exception('Failed to create ticket'));
 
       // Act & Assert
-      expect(
-        () => repository.createEventTicket({}),
-        throwsException,
-      );
+      expect(() => repository.createEventTicket({}), throwsException);
     });
   });
 
@@ -240,8 +236,9 @@ void main() {
 
     test('should update event through data source', () async {
       // Arrange
-      when(mockDataSource.updateEvent('event123', tUpdateData))
-          .thenAnswer((_) async => {});
+      when(
+        mockDataSource.updateEvent('event123', tUpdateData),
+      ).thenAnswer((_) async => {});
 
       // Act
       await repository.updateEvent('event123', tUpdateData);
@@ -252,22 +249,19 @@ void main() {
 
     test('should propagate updateEvent exception', () async {
       // Arrange
-      when(mockDataSource.updateEvent(any, any))
-          .thenThrow(Exception('Failed to update event'));
+      when(
+        mockDataSource.updateEvent(any, any),
+      ).thenThrow(Exception('Failed to update event'));
 
       // Act & Assert
-      expect(
-        () => repository.updateEvent('event123', {}),
-        throwsException,
-      );
+      expect(() => repository.updateEvent('event123', {}), throwsException);
     });
   });
 
   group('AdminEventsRepositoryImpl - deleteEvent', () {
     test('should delete event through data source', () async {
       // Arrange
-      when(mockDataSource.deleteEvent('event123'))
-          .thenAnswer((_) async => {});
+      when(mockDataSource.deleteEvent('event123')).thenAnswer((_) async => {});
 
       // Act
       await repository.deleteEvent('event123');
@@ -278,35 +272,36 @@ void main() {
 
     test('should propagate deleteEvent exception', () async {
       // Arrange
-      when(mockDataSource.deleteEvent(any))
-          .thenThrow(Exception('Failed to delete event'));
+      when(
+        mockDataSource.deleteEvent(any),
+      ).thenThrow(Exception('Failed to delete event'));
 
       // Act & Assert
-      expect(
-        () => repository.deleteEvent('event123'),
-        throwsException,
-      );
+      expect(() => repository.deleteEvent('event123'), throwsException);
     });
   });
 
   group('AdminEventsRepositoryImpl - updateEventStatus', () {
     test('should update event status through data source', () async {
       // Arrange
-      when(mockDataSource.updateEventStatus('event123', 'published'))
-          .thenAnswer((_) async => {});
+      when(
+        mockDataSource.updateEventStatus('event123', 'published'),
+      ).thenAnswer((_) async => {});
 
       // Act
       await repository.updateEventStatus('event123', 'published');
 
       // Assert
-      verify(mockDataSource.updateEventStatus('event123', 'published'))
-          .called(1);
+      verify(
+        mockDataSource.updateEventStatus('event123', 'published'),
+      ).called(1);
     });
 
     test('should propagate updateEventStatus exception', () async {
       // Arrange
-      when(mockDataSource.updateEventStatus(any, any))
-          .thenThrow(Exception('Failed to update status'));
+      when(
+        mockDataSource.updateEventStatus(any, any),
+      ).thenThrow(Exception('Failed to update status'));
 
       // Act & Assert
       expect(
@@ -336,27 +331,46 @@ void main() {
 
     test('should get event bookings from data source', () async {
       // Arrange
-      when(mockDataSource.getEventBookings('event123'))
-          .thenAnswer((_) async => tBookings as List<EventBooking>);
+      when(
+        mockDataSource.getEventBookings(
+          'event123',
+          page: anyNamed('page'),
+          perPage: anyNamed('perPage'),
+          searchField: anyNamed('searchField'),
+          searchQuery: anyNamed('searchQuery'),
+        ),
+      ).thenAnswer((_) async => tBookings as List<EventBooking>);
 
       // Act
       final result = await repository.getEventBookings('event123');
 
       // Assert
       expect(result, tBookings);
-      verify(mockDataSource.getEventBookings('event123')).called(1);
+      verify(
+        mockDataSource.getEventBookings(
+          'event123',
+          page: 1,
+          perPage: 25,
+          searchField: null,
+          searchQuery: null,
+        ),
+      ).called(1);
     });
 
     test('should propagate getEventBookings exception', () async {
       // Arrange
-      when(mockDataSource.getEventBookings(any))
-          .thenThrow(Exception('Failed to get bookings'));
+      when(
+        mockDataSource.getEventBookings(
+          any,
+          page: anyNamed('page'),
+          perPage: anyNamed('perPage'),
+          searchField: anyNamed('searchField'),
+          searchQuery: anyNamed('searchQuery'),
+        ),
+      ).thenThrow(Exception('Failed to get bookings'));
 
       // Act & Assert
-      expect(
-        () => repository.getEventBookings('event123'),
-        throwsException,
-      );
+      expect(() => repository.getEventBookings('event123'), throwsException);
     });
   });
 
@@ -376,8 +390,9 @@ void main() {
 
     test('should get booking tickets from data source', () async {
       // Arrange
-      when(mockDataSource.getEventBookingTickets('booking123'))
-          .thenAnswer((_) async => tTickets as List<EventBookingTicket>);
+      when(
+        mockDataSource.getEventBookingTickets('booking123'),
+      ).thenAnswer((_) async => tTickets as List<EventBookingTicket>);
 
       // Act
       final result = await repository.getEventBookingTickets('booking123');
@@ -389,8 +404,9 @@ void main() {
 
     test('should propagate getEventBookingTickets exception', () async {
       // Arrange
-      when(mockDataSource.getEventBookingTickets(any))
-          .thenThrow(Exception('Failed to get tickets'));
+      when(
+        mockDataSource.getEventBookingTickets(any),
+      ).thenThrow(Exception('Failed to get tickets'));
 
       // Act & Assert
       expect(
@@ -403,21 +419,24 @@ void main() {
   group('AdminEventsRepositoryImpl - updateBookingStatus', () {
     test('should update booking status through data source', () async {
       // Arrange
-      when(mockDataSource.updateBookingStatus('booking123', 'paid'))
-          .thenAnswer((_) async => {});
+      when(
+        mockDataSource.updateBookingStatus('booking123', 'paid'),
+      ).thenAnswer((_) async => {});
 
       // Act
       await repository.updateBookingStatus('booking123', 'paid');
 
       // Assert
-      verify(mockDataSource.updateBookingStatus('booking123', 'paid'))
-          .called(1);
+      verify(
+        mockDataSource.updateBookingStatus('booking123', 'paid'),
+      ).called(1);
     });
 
     test('should propagate updateBookingStatus exception', () async {
       // Arrange
-      when(mockDataSource.updateBookingStatus(any, any))
-          .thenThrow(Exception('Failed to update booking'));
+      when(
+        mockDataSource.updateBookingStatus(any, any),
+      ).thenThrow(Exception('Failed to update booking'));
 
       // Act & Assert
       expect(
@@ -436,8 +455,9 @@ void main() {
 
     test('should create manual booking through data source', () async {
       // Arrange
-      when(mockDataSource.createManualBooking(tBookingData))
-          .thenAnswer((_) async => {});
+      when(
+        mockDataSource.createManualBooking(tBookingData),
+      ).thenAnswer((_) async => {});
 
       // Act
       await repository.createManualBooking(tBookingData);
@@ -448,14 +468,12 @@ void main() {
 
     test('should propagate createManualBooking exception', () async {
       // Arrange
-      when(mockDataSource.createManualBooking(any))
-          .thenThrow(Exception('Failed to create booking'));
+      when(
+        mockDataSource.createManualBooking(any),
+      ).thenThrow(Exception('Failed to create booking'));
 
       // Act & Assert
-      expect(
-        () => repository.createManualBooking({}),
-        throwsException,
-      );
+      expect(() => repository.createManualBooking({}), throwsException);
     });
   });
 
@@ -474,8 +492,9 @@ void main() {
 
     test('should get event tickets from data source', () async {
       // Arrange
-      when(mockDataSource.getEventTickets('event123'))
-          .thenAnswer((_) async => tTickets as List<EventTicket>);
+      when(
+        mockDataSource.getEventTickets('event123'),
+      ).thenAnswer((_) async => tTickets as List<EventTicket>);
 
       // Act
       final result = await repository.getEventTickets('event123');
@@ -487,27 +506,23 @@ void main() {
 
     test('should propagate getEventTickets exception', () async {
       // Arrange
-      when(mockDataSource.getEventTickets(any))
-          .thenThrow(Exception('Failed to get tickets'));
+      when(
+        mockDataSource.getEventTickets(any),
+      ).thenThrow(Exception('Failed to get tickets'));
 
       // Act & Assert
-      expect(
-        () => repository.getEventTickets('event123'),
-        throwsException,
-      );
+      expect(() => repository.getEventTickets('event123'), throwsException);
     });
   });
 
   group('AdminEventsRepositoryImpl - getEventStats', () {
-    final tStats = {
-      'totalParticipants': 10,
-      'totalIncome': 500000,
-    };
+    final tStats = {'totalParticipants': 10, 'totalIncome': 500000};
 
     test('should get event stats from data source', () async {
       // Arrange
-      when(mockDataSource.getEventStats('event123'))
-          .thenAnswer((_) async => tStats);
+      when(
+        mockDataSource.getEventStats('event123'),
+      ).thenAnswer((_) async => tStats);
 
       // Act
       final result = await repository.getEventStats('event123');
@@ -519,14 +534,12 @@ void main() {
 
     test('should propagate getEventStats exception', () async {
       // Arrange
-      when(mockDataSource.getEventStats(any))
-          .thenThrow(Exception('Failed to get stats'));
+      when(
+        mockDataSource.getEventStats(any),
+      ).thenThrow(Exception('Failed to get stats'));
 
       // Act & Assert
-      expect(
-        () => repository.getEventStats('event123'),
-        throwsException,
-      );
+      expect(() => repository.getEventStats('event123'), throwsException);
     });
   });
 }

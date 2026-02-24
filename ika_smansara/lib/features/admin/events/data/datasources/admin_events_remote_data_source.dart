@@ -112,14 +112,60 @@ class AdminEventsRemoteDataSource {
   }
 
   /// Get event bookings (participants)
-  Future<List<EventBooking>> getEventBookings(String eventId) async {
+  Future<List<EventBooking>> getEventBookings(
+    String eventId, {
+    int page = 1,
+    int perPage = 25,
+    String? searchField,
+    String? searchQuery,
+  }) async {
+    // Determine the base filter
+    String finalFilter =
+        'event = "$eventId" && payment_status != "expired" && payment_status != "cancelled" && (is_deleted = 0 || is_deleted = null)';
+
+    // Build the search query map
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      if (searchField == 'ticket_code') {
+        // Find tickets with this code first, returning their associated booking ID back-relation
+        final ticketsQuery = await _pb
+            .collection('event_booking_tickets')
+            .getList(
+              page: 1,
+              perPage: 100,
+              filter:
+                  'ticket_id ~ "$searchQuery" && booking.event = "$eventId"',
+            );
+
+        if (ticketsQuery.items.isNotEmpty) {
+          final bookingIds = ticketsQuery.items
+              .map((e) => e.data['booking'] as String)
+              .toSet()
+              .toList();
+
+          if (bookingIds.isNotEmpty) {
+            String inCondition = bookingIds
+                .map((id) => 'id = "$id"')
+                .join(' || ');
+            finalFilter = '$finalFilter && ($inCondition)';
+          }
+        } else {
+          return []; // No matching tickets found
+        }
+      } else if (searchField == 'booking_code') {
+        finalFilter = '$finalFilter && booking_id ~ "$searchQuery"';
+      } else if (searchField == 'name') {
+        // Because name can be either user.name (app) or coordinator_name (manual), query both
+        finalFilter =
+            '$finalFilter && (user.name ~ "$searchQuery" || coordinator_name ~ "$searchQuery")';
+      }
+    }
+
     final result = await _pb
         .collection('event_bookings')
         .getList(
-          page: 1,
-          perPage: 500, // For now, simple list
-          filter:
-              'event = "$eventId" && payment_status != "expired" && payment_status != "cancelled" && (is_deleted = 0 || is_deleted = null)',
+          page: page,
+          perPage: perPage,
+          filter: finalFilter,
           sort: '-created',
           expand: 'user,event',
         );

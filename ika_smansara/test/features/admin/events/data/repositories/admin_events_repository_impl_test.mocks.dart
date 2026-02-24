@@ -145,9 +145,24 @@ class MockAdminEventsRemoteDataSource extends _i1.Mock
           as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<List<_i5.EventBooking>> getEventBookings(String? eventId) =>
+  _i4.Future<List<_i5.EventBooking>> getEventBookings(
+    String? eventId, {
+    int? page = 1,
+    int? perPage = 25,
+    String? searchField,
+    String? searchQuery,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#getEventBookings, [eventId]),
+            Invocation.method(
+              #getEventBookings,
+              [eventId],
+              {
+                #page: page,
+                #perPage: perPage,
+                #searchField: searchField,
+                #searchQuery: searchQuery,
+              },
+            ),
             returnValue: _i4.Future<List<_i5.EventBooking>>.value(
               <_i5.EventBooking>[],
             ),
