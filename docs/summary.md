@@ -78,3 +78,13 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
     - **Filter Pencarian Peserta**: Menambahkan antarmuka *dropdown* dan teks pencarian (Berdasarkan: Nama, Kode Booking, Kode Tiket) pada tab Peserta.
     - **Paginasi & Infinite Scroll**: Memperbarui Backend Data (`AdminEventsRepository`) dan antarmuka untuk mendukung pemuatan batch per 25 data peserta secara *infinite scroll*, sehingga meminimalisir beban request.
     - **Nomor Urut Mobile**: Menambahkan *sequence number* (#) pada antarmuka *card* daftar peserta dalam mode responsif Mobile.
+
+18. **Penyelarasan Tampilan Tiket & Pembaruan Aplikasi**
+    - **Ekstraksi Komponen UI**: Memisahkan antarmuka tiket dari file admin menjadi widget independen `EventTicketCard`.
+    - **Integrasi ke Halaman Alumni**: Menerapkan `EventTicketCard` pada detail tiket alumni sehingga tampilan visual tiket (termasuk hasil cetak dan tangkapan layar) konsisten antara alumni dan admin.
+    - **Native Android In-App Updates**: Menghapus package `upgrader` dan menggantinya dengan implementasi *Native Android In-App Update* menggunakan `MethodChannel` via Kotlin API.
+
+19. **Implementasi Checkout Virtual Account (VA)**
+    - **Biaya Layanan Flat**: Menambahkan opsi pembayaran "Virtual Account (Semua Bank)" dengan biaya layanan (*service fee*) tetap sebesar Rp 5.500 pada antarmuka pemesanan tiket.
+    - **Filter Midtrans Snap**: Memodifikasi *webhook* PocketBase (`event_midtrans_payment.pb.js`) untuk hanya melampirkan parameter `enabled_payments` khusus VA, sehingga Midtrans Snap WebView bersih dari opsi E-Wallet/QRIS jika VA dipilih.
+    - **Resume Pembayaran**: Mengonfirmasi bahwa pembayaran VA berstatus *Pending* dapat di-*resume* melalui halaman tab "Tiketku" (memuat URL Snap yang telah disematkan sebelumnya).
