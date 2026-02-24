@@ -13,19 +13,20 @@ class PrinterSettingsPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<PrinterBloc>()..add(LoadPrinterSettings()),
       child: Scaffold(
-        backgroundColor: AppColors.background,
         appBar: AppBar(
           title: Text(
             'Konfigurasi Printer',
             style: GoogleFonts.inter(
               fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -60,7 +61,7 @@ class PrinterSettingsPage extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildSectionHeader('Preferensi Cetak'),
+                _buildSectionHeader(context, 'Preferensi Cetak'),
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -77,7 +78,9 @@ class PrinterSettingsPage extends StatelessWidget {
                           'Langsung cetak struk setelah transaksi',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: AppColors.textGrey,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                         value: settings.autoPrintEnabled,
@@ -120,7 +123,7 @@ class PrinterSettingsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader('Perangkat Terhubung'),
+                _buildSectionHeader(context, 'Perangkat Terhubung'),
                 if (settings.macAddress != null)
                   Card(
                     color: isConnected ? Colors.green.shade50 : Colors.white,
@@ -161,7 +164,11 @@ class PrinterSettingsPage extends StatelessWidget {
                     child: Center(
                       child: Text(
                         'Belum ada printer terhubung',
-                        style: GoogleFonts.inter(color: AppColors.textGrey),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
                       ),
                     ),
                   ),
@@ -191,7 +198,7 @@ class PrinterSettingsPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildSectionHeader('Perangkat Tersedia'),
+                    _buildSectionHeader(context, 'Perangkat Tersedia'),
                     if (state is! PrinterScanning)
                       TextButton.icon(
                         onPressed: () {
@@ -244,14 +251,14 @@ class PrinterSettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12, left: 4),
       child: Text(
         title,
         style: GoogleFonts.inter(
           fontWeight: FontWeight.w600,
-          color: AppColors.textGrey,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           fontSize: 14,
         ),
       ),

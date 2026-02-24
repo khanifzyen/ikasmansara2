@@ -50,8 +50,20 @@ class AdminEventsRepositoryImpl implements AdminEventsRepository {
   }
 
   @override
-  Future<List<EventBooking>> getEventBookings(String eventId) {
-    return _dataSource.getEventBookings(eventId);
+  Future<List<EventBooking>> getEventBookings(
+    String eventId, {
+    int page = 1,
+    int perPage = 25,
+    String? searchField,
+    String? searchQuery,
+  }) {
+    return _dataSource.getEventBookings(
+      eventId,
+      page: page,
+      perPage: perPage,
+      searchField: searchField,
+      searchQuery: searchQuery,
+    );
   }
 
   @override

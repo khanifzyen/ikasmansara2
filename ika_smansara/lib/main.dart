@@ -10,7 +10,7 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
-import 'package:upgrader/upgrader.dart';
+import 'core/services/in_app_update_service.dart';
 
 void main() async {
   try {
@@ -24,6 +24,10 @@ void main() async {
     // Initialize locale data for Indonesia
     await initializeDateFormatting('id', null);
     debugPrint('Step 4: Locale initialized');
+
+    // Check for Android in-app updates natively
+    InAppUpdateService.checkForUpdate();
+    debugPrint('Step 5: In-app update check executed');
 
     runApp(const IkaSmanSaraApp());
   } catch (e, stackTrace) {
@@ -61,21 +65,12 @@ class IkaSmanSaraApp extends StatelessWidget {
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
-          ThemeMode themeMode = ThemeMode.light;
-          if (state is SettingsLoaded) {
-            if (state.settings.themeMode == 'dark') {
-              themeMode = ThemeMode.dark;
-            } else if (state.settings.themeMode == 'light') {
-              themeMode = ThemeMode.light;
-            }
-          }
-
+          // Lock to light theme only
           return MaterialApp.router(
             title: 'IKA SMANSARA',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
+            themeMode: ThemeMode.light,
             routerConfig: AppRouter.router,
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
@@ -85,17 +80,7 @@ class IkaSmanSaraApp extends StatelessWidget {
             ],
             supportedLocales: const [Locale('id'), Locale('en')],
             builder: (context, child) {
-              return UpgradeAlert(
-                upgrader: Upgrader(
-                  minAppVersion: '2.0.3',
-                  debugLogging: true,
-                  // debugDisplayAlways: true, // Uncomment untuk testing
-                ),
-                showIgnore: false,
-                showLater: false,
-                dialogStyle: UpgradeDialogStyle.cupertino,
-                child: child ?? const SizedBox.shrink(),
-              );
+              return child ?? const SizedBox.shrink();
             },
           );
         },

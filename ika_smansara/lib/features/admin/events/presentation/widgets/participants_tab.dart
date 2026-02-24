@@ -14,6 +14,7 @@ import '../../../../../core/services/printer_service.dart';
 import '../../../../events/domain/entities/event_booking.dart';
 import '../../../../events/domain/entities/event_booking_ticket.dart';
 import '../../../../settings/domain/usecases/get_printer_settings.dart';
+import '../../../../events/presentation/widgets/event_ticket_card.dart';
 import '../bloc/admin_participants_bloc.dart';
 
 class ParticipantsTab extends StatefulWidget {
@@ -26,6 +27,22 @@ class ParticipantsTab extends StatefulWidget {
 }
 
 class _ParticipantsTabState extends State<ParticipantsTab> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedSearchField = 'name';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -73,38 +90,152 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
   Widget _buildContent(BuildContext context, AdminParticipantsLoaded state) {
     final isDesktop = MediaQuery.of(context).size.width >= 768;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Daftar Peserta (${state.bookings.length})',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (!state.hasReachedMax &&
+            scrollInfo.metrics.pixels >=
+                scrollInfo.metrics.maxScrollExtent - 200) {
+          context.read<AdminParticipantsBloc>().add(
+            LoadMoreParticipants(widget.eventId),
+          );
+        }
+        return false;
+      },
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Daftar Peserta (${state.bookings.length})',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textDark,
+                  ),
                 ),
+                PrimaryButton(
+                  text: isDesktop ? '+ Tambah Manual' : '+ Manual',
+                  isExpanded: false,
+                  onPressed: () => _showAddManualModal(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildFilterBar(context, state),
+            const SizedBox(height: 16),
+            if (state.bookings.isEmpty)
+              _buildEmptyState()
+            else if (isDesktop)
+              _buildTable(context, state.bookings)
+            else
+              _buildMobileList(context, state.bookings),
+            if (!state.hasReachedMax && state.bookings.isNotEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator()),
               ),
-              PrimaryButton(
-                text: isDesktop ? '+ Tambah Manual' : '+ Manual',
-                isExpanded: false,
-                onPressed: () => _showAddManualModal(context),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          if (state.bookings.isEmpty)
-            _buildEmptyState()
-          else if (isDesktop)
-            _buildTable(context, state.bookings)
-          else
-            _buildMobileList(context, state.bookings),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildFilterBar(BuildContext context, AdminParticipantsLoaded state) {
+    final isDesktop = MediaQuery.of(context).size.width >= 768;
+
+    final dropdown = DropdownButtonFormField<String>(
+      value: _selectedSearchField,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+        border: OutlineInputBorder(),
+      ),
+      items: const [
+        DropdownMenuItem(
+          value: 'name',
+          child: Text('Nama Peserta', overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: 'booking_code',
+          child: Text('Kode Booking', overflow: TextOverflow.ellipsis),
+        ),
+        DropdownMenuItem(
+          value: 'ticket_code',
+          child: Text('Kode Tiket', overflow: TextOverflow.ellipsis),
+        ),
+      ],
+      onChanged: (v) {
+        if (v != null) {
+          setState(() => _selectedSearchField = v);
+        }
+      },
+    );
+
+    final searchField = TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Cari ${_selectedSearchField.replaceAll('_', ' ')}...',
+        prefixIcon: const Icon(Icons.search),
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+      ),
+      onSubmitted: (value) {
+        context.read<AdminParticipantsBloc>().add(
+          SearchParticipants(
+            eventId: widget.eventId,
+            searchField: _selectedSearchField,
+            searchQuery: value,
+          ),
+        );
+      },
+    );
+
+    final searchButton = PrimaryButton(
+      text: 'Cari',
+      isExpanded: !isDesktop,
+      onPressed: () {
+        context.read<AdminParticipantsBloc>().add(
+          SearchParticipants(
+            eventId: widget.eventId,
+            searchField: _selectedSearchField,
+            searchQuery: _searchController.text,
+          ),
+        );
+      },
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: isDesktop
+          ? Row(
+              children: [
+                Expanded(flex: 2, child: dropdown),
+                const SizedBox(width: 12),
+                Expanded(flex: 4, child: searchField),
+                const SizedBox(width: 12),
+                searchButton,
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                dropdown,
+                const SizedBox(height: 12),
+                searchField,
+                const SizedBox(height: 12),
+                searchButton,
+              ],
+            ),
     );
   }
 
@@ -253,11 +384,15 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
       itemCount: bookings.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) =>
-          _buildMobileCard(context, bookings[index]),
+          _buildMobileCard(context, bookings[index], index + 1),
     );
   }
 
-  Widget _buildMobileCard(BuildContext context, EventBooking booking) {
+  Widget _buildMobileCard(
+    BuildContext context,
+    EventBooking booking,
+    int sequenceNumber,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -272,8 +407,11 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                booking.bookingId,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                '#$sequenceNumber - ${booking.bookingId}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               ),
               _buildStatusBadge(booking),
             ],
@@ -899,143 +1037,12 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
   Widget _buildTicketItem(BuildContext context, EventBookingTicket ticket) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        children: [
-          Screenshot(
-            controller: _screenshotControllers[ticket.id]!,
-            child: Container(
-              width: 300,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'IKA SMANSARA',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Divider(thickness: 1, color: Colors.black),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.booking.event?.title ?? 'Event',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${DateFormat('EEEE, d MMM yyyy', 'id').format(widget.booking.event?.date.toLocal() ?? DateTime.now())} - ${widget.booking.event?.time ?? '-'}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.booking.event?.location ?? '-',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  const Divider(height: 24),
-                  _buildTicketRow('TIKET', ticket.ticketName),
-                  _buildTicketRow(
-                    'NAMA',
-                    (widget.booking.registrationChannel == 'app' ||
-                            widget.booking.userId.isNotEmpty)
-                        ? (ticket.userName.isNotEmpty
-                              ? ticket.userName
-                              : 'Peserta')
-                        : '(Koordinator) ${widget.booking.coordinatorName ?? '-'}',
-                  ),
-                  () {
-                    final displayOptions =
-                        (widget.booking.registrationChannel == 'app' ||
-                            widget.booking.userId.isNotEmpty)
-                        ? ticket.options.values.join(', ')
-                        : (widget.booking.notes ?? '-');
-                    if (displayOptions.isNotEmpty && displayOptions != '-') {
-                      return _buildTicketRow('OPSI', displayOptions);
-                    }
-                    return const SizedBox.shrink();
-                  }(),
-                  const Divider(height: 24),
-                  QrImageView(
-                    data: '${ticket.id}:${ticket.ticketCode}',
-                    version: QrVersions.auto,
-                    size: 150.0,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    ticket.ticketCode,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'monospace',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Simpan sebagai bukti masuk.',
-                    style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton.icon(
-                onPressed: () => _shareTicket(context, ticket),
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('Share'),
-              ),
-              const SizedBox(width: 16),
-              TextButton.icon(
-                onPressed: () => _printTicket(context, ticket),
-                icon: const Icon(Icons.print, size: 18),
-                label: const Text('Print'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTicketRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 60,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
+      child: EventTicketCard(
+        booking: widget.booking,
+        ticket: ticket,
+        screenshotController: _screenshotControllers[ticket.id]!,
+        onShare: () => _shareTicket(context, ticket),
+        onPrint: () => _printTicket(context, ticket),
       ),
     );
   }
@@ -1115,12 +1122,27 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
       final printerSettings = await getPrinterSettings();
       final printerService = GetIt.I<PrinterService>();
 
+      final printUserName =
+          (widget.booking.registrationChannel == 'app' ||
+              widget.booking.userId.isNotEmpty)
+          ? (ticket.userName.isNotEmpty ? ticket.userName : 'Peserta')
+          : '(Koord) ${widget.booking.coordinatorName ?? '-'}';
+
+      final printOptions =
+          (widget.booking.registrationChannel == 'app' ||
+              widget.booking.userId.isNotEmpty)
+          ? ticket.options
+          : (widget.booking.notes?.isNotEmpty == true &&
+                widget.booking.notes != '-')
+          ? {'Catatan': widget.booking.notes}
+          : <String, dynamic>{};
+
       await printerService.printEventTicket(
         ticketId: ticket.id,
         ticketCode: ticket.ticketCode,
         ticketName: ticket.ticketName,
-        userName: ticket.userName,
-        options: ticket.options,
+        userName: printUserName,
+        options: printOptions,
         eventTitle: event.title,
         eventDate: event.date,
         eventTime: event.time,

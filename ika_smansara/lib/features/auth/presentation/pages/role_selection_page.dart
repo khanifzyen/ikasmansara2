@@ -11,7 +11,6 @@ class RoleSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -32,16 +31,17 @@ class RoleSelectionPage extends StatelessWidget {
               // Header
               const Text(
                 'Selamat Datang!',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Pilih jenis akun yang sesuai dengan Anda',
-                style: TextStyle(fontSize: 16, color: AppColors.textGrey),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
 
               const SizedBox(height: 48),
@@ -76,10 +76,14 @@ class RoleSelectionPage extends StatelessWidget {
               Center(
                 child: TextButton(
                   onPressed: () => context.go('/login'),
-                  child: const Text.rich(
+                  child: Text.rich(
                     TextSpan(
                       text: 'Sudah punya akun? ',
-                      style: TextStyle(color: AppColors.textGrey),
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
                       children: [
                         TextSpan(
                           text: 'Masuk',
@@ -126,9 +130,11 @@ class _RoleCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           children: [

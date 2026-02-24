@@ -98,8 +98,8 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -115,7 +115,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -129,19 +129,19 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                   children: [
                     Text(
                       'Donasi untuk ${widget.donation.title}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // Amount Input
-                    const Text(
+                    Text(
                       'Nominal Donasi',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     TextField(
                       controller: _amountController,
                       keyboardType: TextInputType.number,
@@ -154,7 +154,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                         hintText: '0',
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
 
                     // Presets
                     Wrap(
@@ -178,7 +178,9 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                           ),
                           selected: isSelected,
                           selectedColor: AppColors.primary,
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
                           checkmarkColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -202,11 +204,11 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                       }).toList(),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // Anonymous Checkbox
                     SwitchListTile(
-                      title: const Text('Sembunyikan nama saya (Hamba Allah)'),
+                      title: Text('Sembunyikan nama saya (Hamba Allah)'),
                       value: _isAnonymous,
                       contentPadding: EdgeInsets.zero,
                       onChanged: (val) {
@@ -218,12 +220,12 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
 
                     // Name Input (if not anonymous)
                     if (!_isAnonymous) ...[
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: 12),
+                      Text(
                         'Nama Donatur',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       TextField(
                         controller: _nameController,
                         decoration: InputDecoration(
@@ -235,14 +237,14 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                       ),
                     ],
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // Payment Method
-                    const Text(
+                    Text(
                       'Metode Pembayaran',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     Column(
                       children: _paymentMethods.map((method) {
                         return RadioListTile<String>(
@@ -254,7 +256,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                                     : Icons.credit_card,
                                 color: AppColors.primary,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12),
                               Text(method),
                             ],
                           ),
@@ -274,7 +276,9 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                             side: BorderSide(
                               color: _selectedPaymentMethod == method
                                   ? AppColors.primary
-                                  : Colors.grey[300]!,
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
                             ),
                           ),
                           tileColor: _selectedPaymentMethod == method
@@ -284,7 +288,7 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                       }).toList(),
                     ),
 
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -306,15 +310,15 @@ class _DonationPaymentSheetState extends State<DonationPaymentSheet> {
                       ),
                     ),
                     child: state is TransactionLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               strokeWidth: 2,
                             ),
                           )
-                        : const Text('Lanjut Pembayaran'),
+                        : Text('Lanjut Pembayaran'),
                   );
                 },
               ),

@@ -134,7 +134,7 @@ class _CreatePostViewState extends State<CreatePostView> {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: const Icon(Icons.person, color: Colors.grey),
                   ),
                   const SizedBox(width: 12),

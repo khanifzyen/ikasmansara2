@@ -62,7 +62,6 @@ dependencies:
   vsc_quill_delta_to_html: ^1.0.5
   flutter_quill_delta_from_html: ^1.5.3
   timeago: ^3.7.1
-  upgrader: ^12.5.0
   url_launcher: ^6.3.2
   share_plus: ^12.0.1
   screenshot: ^3.0.0
@@ -83,6 +82,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -91,6 +92,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   build_runner: ^2.10.5
+  mockito: ^5.4.4
+  mocktail: ^1.0.2
   freezed: ^3.2.4
   json_serializable: ^6.11.4
   injectable_generator: ^2.12.0

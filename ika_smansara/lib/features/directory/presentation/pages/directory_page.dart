@@ -7,10 +7,10 @@ class DirectoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      
       appBar: AppBar(
         title: const Text('Direktori Alumni'),
-        backgroundColor: Colors.white,
+        
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
@@ -112,7 +112,7 @@ class _AlumniCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -126,7 +126,7 @@ class _AlumniCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: const Icon(Icons.person, color: Colors.grey),
           ),
           const SizedBox(width: 16),

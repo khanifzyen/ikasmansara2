@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../../core/constants/app_colors.dart';
+import '../../../../../../core/utils/app_animation.dart';
 
 class WizardStepIndicator extends StatelessWidget {
   final int currentStep;
@@ -18,7 +19,7 @@ class WizardStepIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           // Progress Bar background
@@ -35,7 +36,8 @@ class WizardStepIndicator extends StatelessWidget {
               ),
               // Active Progress
               AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+                duration: AppAnimations.normal,
+                curve: AppAnimations.defaultCurve,
                 height: 4,
                 width:
                     MediaQuery.of(context).size.width *
@@ -57,7 +59,8 @@ class WizardStepIndicator extends StatelessWidget {
                     child: Column(
                       children: [
                         AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
+                          duration: AppAnimations.normal,
+                          curve: AppAnimations.defaultCurve,
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
@@ -72,7 +75,9 @@ class WizardStepIndicator extends StatelessWidget {
                             boxShadow: isActive
                                 ? [
                                     BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.3),
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -81,9 +86,11 @@ class WizardStepIndicator extends StatelessWidget {
                           ),
                           child: Center(
                             child: isCompleted
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
-                                    color: Colors.white,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     size: 20,
                                   )
                                 : Text(
@@ -97,7 +104,7 @@ class WizardStepIndicator extends StatelessWidget {
                                   ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           stepLabels[index],
                           textAlign: TextAlign.center,

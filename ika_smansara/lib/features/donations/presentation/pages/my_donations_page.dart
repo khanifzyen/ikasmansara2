@@ -13,10 +13,10 @@ class MyDonationsPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<MyDonationBloc>()..add(FetchMyDonations()),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        
         appBar: AppBar(
           title: const Text('Riwayat Donasi'),
-          backgroundColor: Colors.white,
+          
           elevation: 0,
         ),
         body: BlocBuilder<MyDonationBloc, MyDonationState>(

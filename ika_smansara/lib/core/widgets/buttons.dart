@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../utils/app_animation.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -30,7 +31,7 @@ class PrimaryButton extends StatelessWidget {
               width: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: AppLoadingIndicator.white,
               ),
             )
           : Row(

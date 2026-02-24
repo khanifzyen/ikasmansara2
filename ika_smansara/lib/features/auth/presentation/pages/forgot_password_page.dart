@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/adaptive/adaptive_container.dart';
+import '../../../../core/widgets/adaptive/adaptive_padding.dart';
+import '../../../../core/widgets/adaptive/adaptive_spacing.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -36,7 +39,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.failure!.message),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     } else {
@@ -44,8 +47,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title: const Text('Link Terkirim'),
-          content: const Text(
+          title: Text('Link Terkirim'),
+          content: Text(
             'Link untuk reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam.',
           ),
           actions: [
@@ -54,7 +57,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 Navigator.pop(context); // Close dialog
                 Navigator.pop(context); // Back to login
               },
-              child: const Text('OK'),
+              child: Text('OK'),
             ),
           ],
         ),
@@ -71,83 +74,92 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Lupa Password',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Masukkan email yang terdaftar untuk menerima link reset password.',
-                style: TextStyle(color: Colors.grey, fontSize: 14),
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+      body: AdaptiveContainer(
+        widthType: AdaptiveWidthType.form,
+        child: AdaptivePaddingAll(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Masukkan email yang terdaftar untuk menerima link reset password.',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Email tidak boleh kosong';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Email tidak valid';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  const AdaptiveSpacingV(multiplier: 4.5),
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email tidak boleh kosong';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Email tidak valid';
+                      }
+                      return null;
+                    },
+                  ),
+                  const AdaptiveSpacingV(multiplier: 6.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.surface,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              'Kirim Link Reset',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                            ),
                     ),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text(
-                          'Kirim Link Reset',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

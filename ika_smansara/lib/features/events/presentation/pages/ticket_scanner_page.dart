@@ -13,7 +13,7 @@ class TicketScannerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => TicketVerificationBloc(GetIt.I<EventRepository>()),
-      child: const _TicketScannerView(),
+      child: _TicketScannerView(),
     );
   }
 }
@@ -69,7 +69,7 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan Tiket'),
+        title: Text('Scan Tiket'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -80,20 +80,20 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
               builder: (context, state, child) {
                 switch (state.torchState) {
                   case TorchState.off:
-                    return const Icon(Icons.flash_off, color: Colors.grey);
+                    return Icon(Icons.flash_off, color: Colors.grey);
                   case TorchState.on:
-                    return const Icon(Icons.flash_on, color: Colors.yellow);
+                    return Icon(Icons.flash_on, color: Colors.yellow);
                   case TorchState.auto:
-                    return const Icon(Icons.flash_auto, color: Colors.white);
+                    return Icon(Icons.flash_auto, color: Colors.white);
                   case TorchState.unavailable:
-                    return const Icon(Icons.flash_off, color: Colors.grey);
+                    return Icon(Icons.flash_off, color: Colors.grey);
                 }
               },
             ),
             onPressed: () => controller.toggleTorch(),
           ),
           IconButton(
-            icon: const Icon(Icons.cameraswitch),
+            icon: Icon(Icons.cameraswitch),
             onPressed: () => controller.switchCamera(),
           ),
         ],
@@ -152,17 +152,17 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
                   bottom: 80,
                   left: 0,
                   right: 0,
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'Arahkan kamera ke QR Code tiket',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         shadows: [
                           Shadow(
                             blurRadius: 4,
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                             offset: Offset(0, 2),
                           ),
                         ],
@@ -175,7 +175,7 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
                     if (state is TicketVerificationLoading) {
                       return Container(
                         color: Colors.black54,
-                        child: const Center(child: CircularProgressIndicator()),
+                        child: Center(child: CircularProgressIndicator()),
                       );
                     }
                     return const SizedBox.shrink();
@@ -219,7 +219,7 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
                   size: 64,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 title,
                 style: TextStyle(
@@ -228,13 +228,13 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
                   color: isValid ? Colors.green : Colors.red,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -255,19 +255,19 @@ class _TicketScannerViewState extends State<_TicketScannerView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Scan Lagi',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               TextButton(
                 onPressed: () {
                   Navigator.pop(dialogContext); // Close dialog
                   Navigator.pop(context); // Close page
                 },
-                child: const Text(
+                child: Text(
                   'Tutup',
                   style: TextStyle(color: AppColors.textGrey),
                 ),

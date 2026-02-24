@@ -2,18 +2,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../core/network/pb_client.dart';
 import '../../../../core/services/printer_service.dart';
 import '../../../settings/domain/usecases/get_printer_settings.dart';
+import 'package:intl/intl.dart';
 import '../../domain/entities/event_booking.dart';
 import '../../domain/entities/event_booking_ticket.dart';
 import '../../domain/entities/event.dart';
+import '../widgets/event_ticket_card.dart';
 import '../../presentation/bloc/my_tickets_bloc.dart';
-import 'package:intl/intl.dart';
 
 class MyTicketDetailPage extends StatefulWidget {
   final String bookingId;
@@ -60,14 +60,14 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Detail Tiket'),
+              title: Text('Detail Tiket'),
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
               elevation: 0,
               actions: [
                 if (canShareAll)
                   IconButton(
-                    icon: const Icon(Icons.share),
+                    icon: Icon(Icons.share),
                     tooltip: 'Bagikan Semua Tiket',
                     onPressed: () => _shareAllTickets(context, tickets),
                   ),
@@ -76,14 +76,12 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             body: Builder(
               builder: (context) {
                 if (state is MyTicketsLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 } else if (state is MyTicketsFailure) {
                   return Center(child: Text('Error: ${state.message}'));
                 } else if (state is MyBookingTicketsLoaded) {
                   if (state.tickets.isEmpty) {
-                    return const Center(
-                      child: Text('Tidak ada tiket ditemukan'),
-                    );
+                    return Center(child: Text('Tidak ada tiket ditemukan'));
                   }
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
@@ -93,15 +91,15 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
                         // Event Info Card
                         if (widget.booking?.event != null) ...[
                           _buildEventInfoCard(widget.booking!.event!),
-                          const SizedBox(height: 24),
-                          const Text(
+                          SizedBox(height: 24),
+                          Text(
                             'Tiket Anda',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                         ],
 
                         // Tickets List
@@ -138,133 +136,16 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        children: [
-          Screenshot(
-            controller: screenshotController,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(color: Colors.grey[200]!),
-              ),
-              child: Column(
-                children: [
-                  // Ticket Header
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF006D4E),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ticket.ticketName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          ticket.ticketCode,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Ticket Body / QR
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        QrImageView(
-                          data:
-                              '${ticket.id}:${ticket.ticketCode}', // Combined for security
-                          version: QrVersions.auto,
-                          size: 200.0,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          ticket.ticketCode,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            fontFamily: 'monospace',
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          ticket.userName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          ticket.userEmail,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Action Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () =>
-                    _shareTicket(context, ticket, screenshotController),
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('Bagikan'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[600],
-                  foregroundColor: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 16),
-              ElevatedButton.icon(
-                onPressed: () => _printTicket(context, ticket),
-                icon: const Icon(Icons.print, size: 18),
-                label: const Text('Cetak'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[800],
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      child: widget.booking != null
+          ? EventTicketCard(
+              booking: widget.booking!,
+              ticket: ticket,
+              screenshotController: screenshotController,
+              onShare: () =>
+                  _shareTicket(context, ticket, screenshotController),
+              onPrint: () => _printTicket(context, ticket),
+            )
+          : const SizedBox.shrink(),
     );
   }
 
@@ -273,7 +154,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -282,39 +163,37 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             event.title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-              const SizedBox(width: 8),
+              Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+              SizedBox(width: 8),
               Text(
                 dateFormat.format(event.date.toLocal()),
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: TextStyle(fontSize: 14, color: Colors.black87),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             children: [
-              const Icon(
-                Icons.location_on_outlined,
-                size: 16,
-                color: Colors.grey,
-              ),
-              const SizedBox(width: 8),
+              Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   event.location,
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
                 ),
               ),
             ],
@@ -334,7 +213,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const Center(
+          builder: (context) => Center(
             child: Card(
               child: Padding(
                 padding: EdgeInsets.all(16),
@@ -456,7 +335,7 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const Center(
+        builder: (context) => Center(
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(16),

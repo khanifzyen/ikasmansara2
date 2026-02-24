@@ -11,11 +11,13 @@ import '../../features/auth/presentation/pages/role_selection_page.dart';
 import '../../features/auth/presentation/pages/register_alumni_page.dart';
 import '../../features/auth/presentation/pages/register_public_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
+import '../../features/auth/domain/entities/user_entity.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/main_shell.dart';
 
 import '../../features/loker/presentation/pages/loker_list_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/directory/presentation/pages/directory_page.dart';
 import '../../features/ekta/presentation/pages/ekta_page.dart';
 import '../../features/events/presentation/pages/event_detail_page.dart';
@@ -40,6 +42,10 @@ import '../../features/admin/users/presentation/pages/admin_users_page.dart';
 import '../../features/admin/users/presentation/pages/admin_user_detail_page.dart';
 import '../../features/admin/events/presentation/pages/admin_events_page.dart';
 import '../../features/admin/events/presentation/pages/admin_event_detail_page.dart';
+import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/settings/presentation/pages/printer_settings_page.dart';
+import '../../features/settings/presentation/pages/change_password_page.dart';
+import '../../features/settings/presentation/pages/about_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -56,49 +62,49 @@ class AppRouter {
       GoRoute(
         path: '/',
         name: 'splash',
-        builder: (context, state) => const SplashPage(),
+        builder: (context, state) => SplashPage(),
       ),
 
       // Onboarding
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, state) => OnboardingPage(),
       ),
 
       // Role Selection
       GoRoute(
         path: '/role-selection',
         name: 'role-selection',
-        builder: (context, state) => const RoleSelectionPage(),
+        builder: (context, state) => RoleSelectionPage(),
       ),
 
       // Login
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const LoginPage(),
+        builder: (context, state) => LoginPage(),
       ),
 
       // Forgot Password
       GoRoute(
         path: '/forgot-password',
         name: 'forgot-password',
-        builder: (context, state) => const ForgotPasswordPage(),
+        builder: (context, state) => ForgotPasswordPage(),
       ),
 
       // Register Alumni
       GoRoute(
         path: '/register/alumni',
         name: 'register-alumni',
-        builder: (context, state) => const RegisterAlumniPage(),
+        builder: (context, state) => RegisterAlumniPage(),
       ),
 
       // Register Public
       GoRoute(
         path: '/register/public',
         name: 'register-public',
-        builder: (context, state) => const RegisterPublicPage(),
+        builder: (context, state) => RegisterPublicPage(),
       ),
 
       // Main Shell (Bottom Nav)
@@ -113,7 +119,7 @@ class AppRouter {
               GoRoute(
                 path: '/home',
                 name: 'home',
-                builder: (context, state) => const HomePage(),
+                builder: (context, state) => HomePage(),
               ),
             ],
           ),
@@ -124,7 +130,7 @@ class AppRouter {
               GoRoute(
                 path: '/donations',
                 name: 'donations',
-                builder: (context, state) => const MyDonationsPage(),
+                builder: (context, state) => MyDonationsPage(),
               ),
             ],
           ),
@@ -150,7 +156,7 @@ class AppRouter {
               GoRoute(
                 path: '/loker',
                 name: 'loker',
-                builder: (context, state) => const LokerListPage(),
+                builder: (context, state) => LokerListPage(),
               ),
             ],
           ),
@@ -161,7 +167,7 @@ class AppRouter {
       GoRoute(
         path: '/events',
         name: 'events',
-        builder: (context, state) => const EventListPage(),
+        builder: (context, state) => EventListPage(),
       ),
 
       // Pages passing through Shell (or separate)
@@ -169,21 +175,51 @@ class AppRouter {
       GoRoute(
         path: '/profile',
         name: 'profile',
-        builder: (context, state) => const ProfilePage(),
+        builder: (context, state) => ProfilePage(),
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        name: 'edit-profile',
+        builder: (context, state) {
+          final user = state.extra as UserEntity;
+          return EditProfilePage(user: user);
+        },
+      ),
+
+      // Settings
+      GoRoute(
+        path: '/settings',
+        name: 'settings',
+        builder: (context, state) => SettingsPage(),
+      ),
+      GoRoute(
+        path: '/settings/printer',
+        name: 'printer-settings',
+        builder: (context, state) => const PrinterSettingsPage(),
+      ),
+      GoRoute(
+        path: '/settings/change-password',
+        name: 'change-password',
+        builder: (context, state) => const ChangePasswordPage(),
+      ),
+      GoRoute(
+        path: '/settings/about',
+        name: 'about',
+        builder: (context, state) => const AboutPage(),
       ),
 
       // Directory (Phase 4)
       GoRoute(
         path: '/directory',
         name: 'directory',
-        builder: (context, state) => const DirectoryPage(),
+        builder: (context, state) => DirectoryPage(),
       ),
 
       // E-KTA (Phase 4)
       GoRoute(
         path: '/ekta',
         name: 'ekta',
-        builder: (context, state) => const EKTAPage(),
+        builder: (context, state) => EKTAPage(),
       ),
 
       // Event Detail (Phase 5)
@@ -200,7 +236,7 @@ class AppRouter {
       GoRoute(
         path: '/ticket-detail',
         name: 'ticket-detail',
-        builder: (context, state) => const TicketDetailPage(),
+        builder: (context, state) => TicketDetailPage(),
       ),
 
       // Donation Detail (Phase 6)
@@ -217,21 +253,21 @@ class AppRouter {
       GoRoute(
         path: '/donation-list',
         name: 'donation-list',
-        builder: (context, state) => const DonationListPage(),
+        builder: (context, state) => DonationListPage(),
       ),
 
       // My Donations (History)
       GoRoute(
         path: '/my-donations',
         name: 'my-donations',
-        builder: (context, state) => const MyDonationsPage(),
+        builder: (context, state) => MyDonationsPage(),
       ),
 
       // News List
       GoRoute(
         path: '/news',
         name: 'news',
-        builder: (context, state) => const NewsListPage(),
+        builder: (context, state) => NewsListPage(),
       ),
 
       // News Detail
@@ -248,12 +284,12 @@ class AppRouter {
       GoRoute(
         path: '/forum',
         name: 'forum',
-        builder: (context, state) => const ForumPage(),
+        builder: (context, state) => ForumPage(),
       ),
       GoRoute(
         path: '/create-post',
         name: 'create-post',
-        builder: (context, state) => const CreatePostPage(),
+        builder: (context, state) => CreatePostPage(),
       ),
       GoRoute(
         path: '/forum-detail',
@@ -278,19 +314,19 @@ class AppRouter {
       GoRoute(
         path: '/ticket-scanner',
         name: 'ticket-scanner',
-        builder: (context, state) => const TicketScannerPage(),
+        builder: (context, state) => TicketScannerPage(),
       ),
 
       // Admin Routes
       GoRoute(
         path: '/admin',
         name: 'admin-dashboard',
-        builder: (context, state) => const AdminDashboardPage(),
+        builder: (context, state) => AdminDashboardPage(),
       ),
       GoRoute(
         path: '/admin/users',
         name: 'admin-users',
-        builder: (context, state) => const AdminUsersPage(),
+        builder: (context, state) => AdminUsersPage(),
       ),
       GoRoute(
         path: '/admin/users/:userId',
@@ -303,7 +339,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/events',
         name: 'admin-events',
-        builder: (context, state) => const AdminEventsPage(),
+        builder: (context, state) => AdminEventsPage(),
       ),
       GoRoute(
         path: '/admin/events/:eventId',
@@ -316,7 +352,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/donations',
         name: 'admin-donations',
-        builder: (context, state) => const AdminPlaceholderPage(
+        builder: (context, state) => AdminPlaceholderPage(
           title: 'Kelola Donasi',
           icon: '💰',
           description:
@@ -326,7 +362,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/news',
         name: 'admin-news',
-        builder: (context, state) => const AdminPlaceholderPage(
+        builder: (context, state) => AdminPlaceholderPage(
           title: 'Kelola Berita',
           icon: '📰',
           description:
@@ -336,7 +372,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/forum',
         name: 'admin-forum',
-        builder: (context, state) => const AdminPlaceholderPage(
+        builder: (context, state) => AdminPlaceholderPage(
           title: 'Moderasi Forum',
           icon: '💬',
           description:
@@ -346,7 +382,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/loker',
         name: 'admin-loker',
-        builder: (context, state) => const AdminPlaceholderPage(
+        builder: (context, state) => AdminPlaceholderPage(
           title: 'Approval Loker',
           icon: '💼',
           description: 'Fitur untuk approval lowongan kerja akan segera hadir.',
@@ -355,7 +391,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/market',
         name: 'admin-market',
-        builder: (context, state) => const AdminPlaceholderPage(
+        builder: (context, state) => AdminPlaceholderPage(
           title: 'Approval Market',
           icon: '🛒',
           description:
@@ -365,7 +401,7 @@ class AppRouter {
       GoRoute(
         path: '/admin/memory',
         name: 'admin-memory',
-        builder: (context, state) => const AdminPlaceholderPage(
+        builder: (context, state) => AdminPlaceholderPage(
           title: 'Approval Memory',
           icon: '📷',
           description:

@@ -1,3 +1,6 @@
+/// Event Donation Tab - Widget untuk donasi acara
+library;
+
 import 'package:flutter/material.dart';
 
 class EventDonationTab extends StatelessWidget {
@@ -8,9 +11,8 @@ class EventDonationTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ... (children will be preserved)
+        const SizedBox(height: 16),
 
-        // Summary
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -24,15 +26,15 @@ class EventDonationTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Total Donasi Terkumpul',
                 style: TextStyle(color: Colors.white70, fontSize: 13),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Rp 0',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
@@ -47,14 +49,21 @@ class EventDonationTab extends StatelessWidget {
                   color: Colors.white24,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.people, color: Colors.white, size: 14),
-                    SizedBox(width: 6),
+                    Icon(
+                      Icons.people,
+                      color: Theme.of(context).colorScheme.surface,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 6),
                     Text(
                       '0 Donatur',
-                      style: TextStyle(color: Colors.white, fontSize: 13),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.surface,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
@@ -75,7 +84,6 @@ class EventDonationTab extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-        // Form placeholder
         TextField(
           decoration: InputDecoration(
             labelText: 'Nominal Donasi',

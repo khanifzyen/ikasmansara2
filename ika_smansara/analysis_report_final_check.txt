@@ -1,8 +1,0 @@
-Analyzing ikasmansara2_app...                                   
-
-  error • Expected to find ')' • lib/features/events/presentation/pages/event_detail_page.dart:311:12 • expected_token
-   info • 'Share' is deprecated and shouldn't be used. Use SharePlus instead • lib/features/events/presentation/pages/my_ticket_detail_page.dart:217:15 • deprecated_member_use
-   info • 'shareXFiles' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead • lib/features/events/presentation/pages/my_ticket_detail_page.dart:217:21 • deprecated_member_use
-   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre • lib/features/events/presentation/widgets/ticket_tab.dart:256:45 • deprecated_member_use
-   info • 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre • lib/features/forum/presentation/pages/create_post_page.dart:211:17 • deprecated_member_use
-

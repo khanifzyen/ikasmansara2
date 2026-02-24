@@ -62,13 +62,29 @@ Sesi ini berfokus pada penyempurnaan fitur Manajemen Peserta dan Statistik Event
 15. **Penyelarasan Brand (SMANSARA)**
     - Memperbarui penyebutan nama organisasi dari "SMANSA" menjadi "SMANSARA" pada halaman pemilihan role dan registrasi alumni untuk konsistensi brand.
 
-## Operasi Git
-- Melakukan pendataan seluruh perubahan file (`git add .`).
-- Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
-- Melakukan push ke repository.
-
 16. **Responsive Alumni Dashboard**
     - Mengimplementasikan layout responsif pada `MainShell` dan `HomePage`.
     - **Desktop (Width ≥ 800px)**: Menggunakan `NavigationRail` (sidebar) di sebelah kiri dan layout multikolom untuk konten dashboard.
     - **Mobile**: Mempertahankan `BottomNavigationBar` dan layout single-column yang familiar.
     - Menyesuaikan `GridView` pada menu akses cepat agar tampilan desktop lebih proporsional (`childAspectRatio: 1.5`).
+
+17. **Penyempurnaan Halaman Detail Event Admin**
+    - **Statistik Accordion**: Membungkus deretan kartu statisik (Pendaftar, Pemasukan, dll.) ke dalam `ExpansionTile` sehingga menghemat ruang vertikal layar.
+    - **Filter Pencarian Peserta**: Menambahkan antarmuka *dropdown* dan teks pencarian (Berdasarkan: Nama, Kode Booking, Kode Tiket) pada tab Peserta.
+    - **Paginasi & Infinite Scroll**: Memperbarui Backend Data (`AdminEventsRepository`) dan antarmuka untuk mendukung pemuatan batch per 25 data peserta secara *infinite scroll*, sehingga meminimalisir beban request.
+    - **Nomor Urut Mobile**: Menambahkan *sequence number* (#) pada antarmuka *card* daftar peserta dalam mode responsif Mobile.
+
+18. **Penyelarasan Tampilan Tiket & Pembaruan Aplikasi**
+    - **Ekstraksi Komponen UI**: Memisahkan antarmuka tiket dari file admin menjadi widget independen `EventTicketCard`.
+    - **Integrasi ke Halaman Alumni**: Menerapkan `EventTicketCard` pada detail tiket alumni sehingga tampilan visual tiket (termasuk hasil cetak dan tangkapan layar) konsisten antara alumni dan admin.
+    - **Native Android In-App Updates**: Menghapus package `upgrader` dan menggantinya dengan implementasi *Native Android In-App Update* menggunakan `MethodChannel` via Kotlin API.
+
+19. **Implementasi Checkout Virtual Account (VA)**
+    - **Biaya Layanan Flat**: Menambahkan opsi pembayaran "Virtual Account (Semua Bank)" dengan biaya layanan (*service fee*) tetap sebesar Rp 5.500 pada antarmuka pemesanan tiket.
+    - **Filter Midtrans Snap**: Memodifikasi *webhook* PocketBase (`event_midtrans_payment.pb.js`) untuk hanya melampirkan parameter `enabled_payments` khusus VA, sehingga Midtrans Snap WebView bersih dari opsi E-Wallet/QRIS jika VA dipilih.
+    - **Resume Pembayaran**: Mengonfirmasi bahwa pembayaran VA berstatus *Pending* dapat di-*resume* melalui halaman tab "Tiketku" (memuat URL Snap yang telah disematkan sebelumnya).
+
+## Operasi Git
+- Melakukan pendataan seluruh perubahan file (`git add .`).
+- Melakukan commit dengan label "poin-poin" yang merangkum pekerjaan sesi ini.
+- Melakukan push ke repository.

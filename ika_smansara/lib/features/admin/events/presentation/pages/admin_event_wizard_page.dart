@@ -44,7 +44,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
 
   // Form Controllers - Step 3: Ticketing
   // Using a simple list of maps for local state before submission
-  List<Map<String, dynamic>> _ticketTypes = [];
+  final List<Map<String, dynamic>> _ticketTypes = [];
 
   // Form Controllers - Step 4: Features
   bool _enableSponsorship = false;
@@ -100,7 +100,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
       'title': _titleController.text,
       'code': _codeController.text.toUpperCase(),
       'date':
-          DateFormat('yyyy-MM-dd').format(_selectedDate!) + ' 00:00:00.000Z',
+          '${DateFormat('yyyy-MM-dd').format(_selectedDate!)} 00:00:00.000Z',
       'time': _selectedTime!.format(context),
       'location': _locationController.text,
       'description': _descriptionController.text,
@@ -311,7 +311,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+                icon: Icon(Icons.arrow_back, color: AppColors.textDark),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
@@ -348,8 +348,8 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                 ),
                 if (state is AdminEventsLoading)
                   Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: const Center(child: CircularProgressIndicator()),
+                    color: Colors.black.withValues(alpha: 0.5),
+                    child: Center(child: CircularProgressIndicator()),
                   ),
               ],
             ),
@@ -369,7 +369,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             '🛠️ Konfigurasi ID',
             'Tentukan format penomoran untuk invoice dan tiket agar sistematis.',
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           _buildTextField(
             label: 'Kode Event (Prefix)',
             controller: _codeController,
@@ -377,7 +377,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             helperText: 'Akan digunakan sebagai prefix global.',
             isUpperCase: true,
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           LayoutBuilder(
             builder: (context, constraints) {
               final isMobile = constraints.maxWidth < 600;
@@ -397,7 +397,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(child: kids[0]),
-                    const SizedBox(width: 24),
+                    SizedBox(width: 24),
                     Expanded(child: kids[2]),
                   ],
                 );
@@ -417,9 +417,9 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
           label: 'Format Booking ID',
           controller: _bookingFormatController,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         _buildTagsRow(_bookingFormatController, ['{CODE}', '{YEAR}', '{SEQ}']),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _buildPreviewBox(_bookingPreview),
       ],
     );
@@ -433,9 +433,9 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
           label: 'Format Ticket ID',
           controller: _ticketFormatController,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         _buildTagsRow(_ticketFormatController, ['{CODE}', '{SEQ}', '{RAND}']),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         _buildPreviewBox(_ticketPreview),
       ],
     );
@@ -456,7 +456,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             controller: _titleController,
             hint: 'Contoh: Jalan Sehat & Reuni Akbar 2026',
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           Row(
             children: [
               Expanded(
@@ -471,7 +471,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                         color: AppColors.textDark,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     InkWell(
                       onTap: _selectDate,
                       child: Container(
@@ -482,16 +482,16 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.border),
                           borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.calendar_today,
                               size: 18,
                               color: AppColors.textGrey,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               _selectedDate == null
                                   ? 'Pilih Tanggal'
@@ -511,7 +511,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -524,7 +524,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                         color: AppColors.textDark,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     InkWell(
                       onTap: _selectTime,
                       child: Container(
@@ -535,16 +535,16 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.border),
                           borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.access_time,
                               size: 18,
                               color: AppColors.textGrey,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               _selectedTime == null
                                   ? 'Pilih Waktu'
@@ -564,20 +564,20 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           _buildTextField(
             label: 'Lokasi',
             controller: _locationController,
             hint: 'Nama Tempat / Alamat Lengkap',
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           _buildTextField(
             label: 'Deskripsi Event',
             controller: _descriptionController,
             hint: 'Jelaskan detail acara menarik Anda di sini...',
             maxLines: 5,
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           Text(
             'Banner Event',
             style: GoogleFonts.plusJakartaSans(
@@ -586,14 +586,14 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               color: AppColors.textDark,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           GestureDetector(
             onTap: _pickImage,
             child: Container(
               width: double.infinity,
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: AppColors.border,
@@ -610,12 +610,12 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.image_outlined,
                           size: 48,
                           color: AppColors.textGrey,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           'Upload Banner Utama',
                           style: GoogleFonts.plusJakartaSans(
@@ -638,7 +638,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                           right: 8,
                           top: 8,
                           child: IconButton(
-                            icon: const CircleAvatar(
+                            icon: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: Icon(
                                 Icons.edit,
@@ -673,28 +673,28 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               padding: const EdgeInsets.all(40),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
               ),
               child: Column(
                 children: [
-                  const Text('🎫', style: TextStyle(fontSize: 32)),
-                  const SizedBox(height: 16),
+                  Text('🎫', style: TextStyle(fontSize: 32)),
+                  SizedBox(height: 16),
                   Text(
                     'Belum ada jenis tiket yang dibuat.',
                     style: GoogleFonts.plusJakartaSans(
                       color: AppColors.textGrey,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _addTicketType,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('+ Buat Tiket Pertama'),
+                    child: Text('+ Buat Tiket Pertama'),
                   ),
                 ],
               ),
@@ -704,13 +704,13 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _ticketTypes.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final ticket = _ticketTypes[index];
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.border),
                   ),
@@ -726,12 +726,12 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: Icon(Icons.delete, color: Colors.red),
                             onPressed: () => _removeTicketType(index),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       TextFormField(
                         initialValue: ticket['name'],
                         decoration: const InputDecoration(
@@ -741,7 +741,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                         onChanged: (val) =>
                             _updateTicketType(index, 'name', val),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
@@ -759,7 +759,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           Expanded(
                             child: TextFormField(
                               initialValue: ticket['quota'].toString(),
@@ -783,7 +783,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               },
             ),
           if (_ticketTypes.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             OutlinedButton(
               onPressed: _addTicketType,
               style: OutlinedButton.styleFrom(
@@ -792,7 +792,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('+ Tambah Jenis Tiket Baru'),
+              child: Text('+ Tambah Jenis Tiket Baru'),
             ),
           ],
         ],
@@ -815,7 +815,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               'Sponsorship',
               style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text(
+            subtitle: Text(
               'Buka kesempatan bagi sponsor untuk mendukung acara.',
             ),
             value: _enableSponsorship,
@@ -828,7 +828,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               'Open Donasi',
               style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
             ),
-            subtitle: const Text(
+            subtitle: Text(
               'Fitur penggalangan dana sukarela yang terintegrasi.',
             ),
             value: _enableDonation,
@@ -840,7 +840,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               margin: const EdgeInsets.only(top: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
               ),
@@ -851,7 +851,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                     controller: _donationDescriptionController,
                     hint: 'Tujuan donasi...',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   _buildTextField(
                     label: 'Target Donasi (Opsional)',
                     controller: _donationTargetController,
@@ -871,8 +871,8 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Text('🚀', style: TextStyle(fontSize: 48)),
-          const SizedBox(height: 16),
+          Text('🚀', style: TextStyle(fontSize: 48)),
+          SizedBox(height: 16),
           Text(
             'Siap untuk Publish?',
             style: GoogleFonts.plusJakartaSans(
@@ -886,11 +886,11 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(color: AppColors.textGrey),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.border),
             ),
@@ -912,7 +912,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                             : null,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -938,9 +938,9 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 const Divider(),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 _buildReviewItem('Kode Event', _codeController.text),
                 _buildReviewItem('Lokasi', _locationController.text),
                 _buildReviewItem('Tiket', '${_ticketTypes.length} Jenis Tiket'),
@@ -985,7 +985,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: Row(
@@ -996,7 +996,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
-            child: const Text('Kembali'),
+            child: Text('Kembali'),
           ),
           ElevatedButton(
             onPressed: isLoading
@@ -1017,11 +1017,11 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
               ),
             ),
             child: isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       strokeWidth: 2,
                     ),
                   )
@@ -1044,7 +1044,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             color: AppColors.textDark,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           subtitle,
           style: GoogleFonts.plusJakartaSans(
@@ -1052,7 +1052,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             color: AppColors.textGrey,
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         const Divider(),
       ],
     );
@@ -1078,7 +1078,7 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
             color: AppColors.textDark,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         TextFormField(
           controller: controller,
           maxLines: maxLines,
@@ -1148,11 +1148,11 @@ class _AdminEventWizardPageState extends State<AdminEventWizardPage> {
           Text(
             'OUTPUT:',
             style: GoogleFonts.robotoMono(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 13,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(
             text,
             style: GoogleFonts.robotoMono(

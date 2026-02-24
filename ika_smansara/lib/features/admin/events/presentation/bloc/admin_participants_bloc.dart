@@ -21,6 +21,27 @@ class LoadParticipants extends AdminParticipantsEvent {
   List<Object?> get props => [eventId];
 }
 
+class SearchParticipants extends AdminParticipantsEvent {
+  final String eventId;
+  final String searchField;
+  final String searchQuery;
+
+  const SearchParticipants({
+    required this.eventId,
+    required this.searchField,
+    required this.searchQuery,
+  });
+  @override
+  List<Object?> get props => [eventId, searchField, searchQuery];
+}
+
+class LoadMoreParticipants extends AdminParticipantsEvent {
+  final String eventId;
+  const LoadMoreParticipants(this.eventId);
+  @override
+  List<Object?> get props => [eventId];
+}
+
 class UpdateParticipantStatus extends AdminParticipantsEvent {
   final String eventId;
   final String bookingId;
@@ -72,12 +93,20 @@ class AdminParticipantsLoaded extends AdminParticipantsState {
   final List<EventBookingTicket>? selectedBookingTickets;
   final String? loadingBookingId;
   final List<EventTicket>? availableTickets;
+  final bool hasReachedMax;
+  final int currentPage;
+  final String searchField;
+  final String searchQuery;
 
   const AdminParticipantsLoaded({
     required this.bookings,
     this.selectedBookingTickets,
     this.loadingBookingId,
     this.availableTickets,
+    this.hasReachedMax = false,
+    this.currentPage = 1,
+    this.searchField = 'name',
+    this.searchQuery = '',
   });
 
   @override
@@ -86,6 +115,10 @@ class AdminParticipantsLoaded extends AdminParticipantsState {
     selectedBookingTickets,
     loadingBookingId,
     availableTickets,
+    hasReachedMax,
+    currentPage,
+    searchField,
+    searchQuery,
   ];
 
   AdminParticipantsLoaded copyWith({
@@ -93,6 +126,10 @@ class AdminParticipantsLoaded extends AdminParticipantsState {
     List<EventBookingTicket>? selectedBookingTickets,
     String? loadingBookingId,
     List<EventTicket>? availableTickets,
+    bool? hasReachedMax,
+    int? currentPage,
+    String? searchField,
+    String? searchQuery,
   }) {
     return AdminParticipantsLoaded(
       bookings: bookings ?? this.bookings,
@@ -100,6 +137,10 @@ class AdminParticipantsLoaded extends AdminParticipantsState {
           selectedBookingTickets ?? this.selectedBookingTickets,
       loadingBookingId: loadingBookingId ?? this.loadingBookingId,
       availableTickets: availableTickets ?? this.availableTickets,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      currentPage: currentPage ?? this.currentPage,
+      searchField: searchField ?? this.searchField,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 }
@@ -122,11 +163,14 @@ class AdminParticipantsActionSuccess extends AdminParticipantsState {
 class AdminParticipantsBloc
     extends Bloc<AdminParticipantsEvent, AdminParticipantsState> {
   final AdminEventsRepository _repository;
+  bool _isFetchingMore = false;
 
   AdminParticipantsBloc()
     : _repository = AdminEventsRepositoryImpl(AdminEventsRemoteDataSource()),
       super(AdminParticipantsInitial()) {
     on<LoadParticipants>(_onLoadParticipants);
+    on<SearchParticipants>(_onSearchParticipants);
+    on<LoadMoreParticipants>(_onLoadMoreParticipants);
     on<UpdateParticipantStatus>(_onUpdateParticipantStatus);
     on<CreateManualBookingAction>(_onCreateManualBooking);
     on<LoadBookingTickets>(_onLoadBookingTickets);
@@ -139,9 +183,88 @@ class AdminParticipantsBloc
   ) async {
     emit(AdminParticipantsLoading());
     try {
-      final bookings = await _repository.getEventBookings(event.eventId);
-      emit(AdminParticipantsLoaded(bookings: bookings));
+      final bookings = await _repository.getEventBookings(
+        event.eventId,
+        page: 1,
+        perPage: 25,
+      );
+      emit(
+        AdminParticipantsLoaded(
+          bookings: bookings,
+          hasReachedMax: bookings.length < 25,
+          currentPage: 1,
+        ),
+      );
     } catch (e) {
+      emit(AdminParticipantsError(e.toString()));
+    }
+  }
+
+  Future<void> _onSearchParticipants(
+    SearchParticipants event,
+    Emitter<AdminParticipantsState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! AdminParticipantsLoaded) return;
+
+    emit(AdminParticipantsLoading());
+    try {
+      final bookings = await _repository.getEventBookings(
+        event.eventId,
+        page: 1,
+        perPage: 25,
+        searchField: event.searchField,
+        searchQuery: event.searchQuery,
+      );
+      emit(
+        currentState.copyWith(
+          bookings: bookings,
+          hasReachedMax: bookings.length < 25,
+          currentPage: 1,
+          searchField: event.searchField,
+          searchQuery: event.searchQuery,
+        ),
+      );
+    } catch (e) {
+      emit(AdminParticipantsError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoadMoreParticipants(
+    LoadMoreParticipants event,
+    Emitter<AdminParticipantsState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! AdminParticipantsLoaded) return;
+    if (currentState.hasReachedMax) return;
+    if (_isFetchingMore) return;
+
+    _isFetchingMore = true;
+    try {
+      final nextPage = currentState.currentPage + 1;
+      final newBookings = await _repository.getEventBookings(
+        event.eventId,
+        page: nextPage,
+        perPage: 25,
+        searchField: currentState.searchField,
+        searchQuery: currentState.searchQuery,
+      );
+
+      _isFetchingMore = false;
+
+      if (newBookings.isEmpty) {
+        emit(currentState.copyWith(hasReachedMax: true));
+      } else {
+        emit(
+          currentState.copyWith(
+            bookings: List.of(currentState.bookings)..addAll(newBookings),
+            hasReachedMax: newBookings.length < 25,
+            currentPage: nextPage,
+          ),
+        );
+      }
+    } catch (e) {
+      _isFetchingMore = false;
       emit(AdminParticipantsError(e.toString()));
     }
   }

@@ -115,7 +115,11 @@ class _TicketTabState extends State<TicketTab> {
                 decoration: BoxDecoration(
                   color: Colors.grey[50],
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[200]!),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -172,9 +176,13 @@ class _TicketTabState extends State<TicketTab> {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey[300]!),
+                                  border: Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                 ),
                                 child: const Icon(Icons.remove, size: 16),
                               ),
@@ -194,9 +202,13 @@ class _TicketTabState extends State<TicketTab> {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey[300]!),
+                                  border: Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                 ),
                                 child: const Icon(Icons.add, size: 16),
                               ),
@@ -217,9 +229,13 @@ class _TicketTabState extends State<TicketTab> {
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey[200]!),
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                                ),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +289,9 @@ class _TicketTabState extends State<TicketTab> {
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                                 borderSide: BorderSide(
-                                                  color: Colors.grey[300]!,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainerHighest,
                                                 ),
                                               ),
                                             ),
@@ -329,7 +347,9 @@ class _TicketTabState extends State<TicketTab> {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: RadioGroup<String>(
@@ -367,20 +387,17 @@ class _TicketTabState extends State<TicketTab> {
                   ),
                 ),
                 const Divider(height: 1),
-                // RadioListTile<String>(
-                //   value: 'bni_va',
-                //   title: Row(
-                //     children: [
-                //       // You might want to use an asset image for BNI logo if available,
-                //       // otherwise use a generic bank icon or text.
-                //       // Assuming no assets, using Icon and Text.
-                //       const Icon(Icons.account_balance, color: Colors.black),
-                //       const SizedBox(width: 12),
-                //       const Text('BNI Virtual Account'),
-                //       const Spacer(),
-                //     ],
-                //   ),
-                // ),
+                RadioListTile<String>(
+                  value: 'virtual_account',
+                  title: Row(
+                    children: [
+                      const Icon(Icons.account_balance, color: Colors.black),
+                      const SizedBox(width: 12),
+                      const Text('Virtual Account'),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -580,7 +597,10 @@ class _TicketTabState extends State<TicketTab> {
   }
 
   int _calculateServiceFee() {
-    // 1.5% service fee
+    if (_selectedPaymentMethod == 'virtual_account') {
+      return 5500; // Flat service fee for VA
+    }
+    // 1.5% service fee for QRIS and other methods
     return (_calculateTicketTotal() * 0.015).ceil();
   }
 
