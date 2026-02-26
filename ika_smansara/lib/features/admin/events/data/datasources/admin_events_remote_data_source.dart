@@ -14,7 +14,8 @@ import '../../../../events/domain/entities/event_ticket.dart';
 class AdminEventsRemoteDataSource {
   final PocketBase _pb;
 
-  AdminEventsRemoteDataSource() : _pb = PBClient.instance.pb;
+  AdminEventsRemoteDataSource({PocketBase? pb})
+    : _pb = pb ?? PBClient.instance.pb;
 
   /// Get all events with optional filter
   Future<List<Event>> getEvents({
@@ -205,6 +206,13 @@ class AdminEventsRemoteDataSource {
               'payment_date': DateTime.now().toIso8601String(),
           },
         );
+  }
+
+  /// Soft delete event booking
+  Future<void> softDeleteBooking(String bookingId) async {
+    await _pb
+        .collection('event_bookings')
+        .update(bookingId, body: {'is_deleted': 1});
   }
 
   /// Create manual booking

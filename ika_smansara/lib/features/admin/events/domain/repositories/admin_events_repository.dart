@@ -45,6 +45,9 @@ abstract class AdminEventsRepository {
   /// Update booking status
   Future<void> updateBookingStatus(String bookingId, String status);
 
+  /// Soft delete event booking
+  Future<void> softDeleteBooking(String bookingId);
+
   /// Create manual booking
   Future<void> createManualBooking(Map<String, dynamic> data);
 

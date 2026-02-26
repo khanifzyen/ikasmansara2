@@ -77,6 +77,11 @@ class AdminEventsRepositoryImpl implements AdminEventsRepository {
   }
 
   @override
+  Future<void> softDeleteBooking(String bookingId) {
+    return _dataSource.softDeleteBooking(bookingId);
+  }
+
+  @override
   Future<void> createManualBooking(Map<String, dynamic> data) {
     return _dataSource.createManualBooking(data);
   }

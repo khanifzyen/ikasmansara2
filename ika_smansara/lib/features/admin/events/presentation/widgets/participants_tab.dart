@@ -370,6 +370,11 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
                   ),
                   onPressed: () => _confirmPayment(context, booking),
                 ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                tooltip: 'Hapus',
+                onPressed: () => _confirmDelete(context, booking),
+              ),
             ],
           ),
         ),
@@ -481,6 +486,11 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
                   onPressed: () => _confirmPayment(context, booking),
                 ),
               ],
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: AppColors.error),
+                onPressed: () => _confirmDelete(context, booking),
+              ),
             ],
           ),
         ],
@@ -583,6 +593,37 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
             child: const Text('Ya, Validasi'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, EventBooking booking) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Hapus Peserta'),
+        content: Text(
+          'Apakah Anda yakin ingin menghapus data booking ${booking.bookingId}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<AdminParticipantsBloc>().add(
+                SoftDeleteBooking(
+                  eventId: widget.eventId,
+                  bookingId: booking.id,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+            child: const Text('Ya, Hapus'),
           ),
         ],
       ),

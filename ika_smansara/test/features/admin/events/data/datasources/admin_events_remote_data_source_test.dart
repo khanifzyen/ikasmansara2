@@ -12,6 +12,11 @@ import 'package:ika_smansara/features/events/data/models/event_model.dart';
 import 'package:ika_smansara/features/events/data/models/event_booking_model.dart';
 import 'package:ika_smansara/features/events/data/models/event_ticket_model.dart';
 import 'package:ika_smansara/features/events/data/models/event_booking_ticket_model.dart';
+import 'package:ika_smansara/features/events/domain/entities/event.dart';
+import 'package:ika_smansara/features/events/domain/entities/event_booking.dart';
+import 'package:ika_smansara/features/events/domain/entities/event_ticket.dart';
+import 'package:ika_smansara/features/events/domain/entities/event_booking_ticket.dart';
+
 
 @GenerateNiceMocks([
   MockSpec<PocketBase>(),
@@ -26,22 +31,20 @@ void main() {
   late MockPocketBase mockPb;
   late MockRecordService mockCollection;
   late MockAuthStore mockAuthStore;
+  late MockRecordModel mockRecord;
 
   setUp(() {
     mockPb = MockPocketBase();
     mockCollection = MockRecordService();
     mockAuthStore = MockAuthStore();
+    mockRecord = MockRecordModel();
 
-    // Setup PBClient mock
-    PBClient.instance = MockPBClient(mockPb, mockAuthStore);
-
-    dataSource = AdminEventsRemoteDataSource();
+    dataSource = AdminEventsRemoteDataSource(pb: mockPb);
   });
 
   group('AdminEventsRemoteDataSource - getEvents', () {
     test('should return list of events when successful', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('events')).thenReturn(mockCollection);
       when(mockCollection.getList(
         page: anyNamed('page'),
@@ -64,7 +67,6 @@ void main() {
 
     test('should apply filter parameter correctly', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('events')).thenReturn(mockCollection);
       when(mockCollection.getList(
         page: anyNamed('page'),
@@ -109,7 +111,6 @@ void main() {
   group('AdminEventsRemoteDataSource - getEventById', () {
     test('should return event when successful', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('events')).thenReturn(mockCollection);
       when(mockCollection.getOne('event123'))
           .thenAnswer((_) async => mockRecord);
@@ -146,10 +147,9 @@ void main() {
   group('AdminEventsRemoteDataSource - createEvent', () {
     test('should create event successfully with banner file', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('events')).thenReturn(mockCollection);
       when(mockAuthStore.isValid).thenReturn(true);
-      when(mockAuthStore.record).thenReturn(mockAuthRecord);
+      when(mockAuthStore.record).thenReturn(mockRecord);
 
       when(mockCollection.create(
         body: anyNamed('body'),
@@ -180,11 +180,10 @@ void main() {
 
     test('should add created_by when auth store is valid', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('events')).thenReturn(mockCollection);
       when(mockAuthStore.isValid).thenReturn(true);
-      when(mockAuthStore.record).thenReturn(mockAuthRecord);
-      when(mockAuthRecord.id).thenReturn('user123');
+      when(mockAuthStore.record).thenReturn(mockRecord);
+      when(mockRecord.id).thenReturn('user123');
 
       when(mockCollection.create(
         body: anyNamed('body'),
@@ -209,7 +208,6 @@ void main() {
 
     test('should create event without banner file', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('events')).thenReturn(mockCollection);
       when(mockCollection.create(
         body: anyNamed('body'),
@@ -352,7 +350,6 @@ void main() {
   group('AdminEventsRemoteDataSource - getEventBookings', () {
     test('should return list of bookings for event', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('event_bookings')).thenReturn(mockCollection);
       when(mockCollection.getList(
         page: anyNamed('page'),
@@ -448,7 +445,6 @@ void main() {
   group('AdminEventsRemoteDataSource - getEventTickets', () {
     test('should return list of tickets for event', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('event_tickets')).thenReturn(mockCollection);
       when(mockCollection.getList(filter: anyNamed('filter')))
           .thenAnswer((_) async => mockResultList([mockRecord]));
@@ -495,7 +491,6 @@ void main() {
   group('AdminEventsRemoteDataSource - getEventBookingTickets', () {
     test('should return tickets for booking', () async {
       // Arrange
-      final mockRecord = MockRecordModel();
       when(mockPb.collection('event_booking_tickets')).thenReturn(mockCollection);
       when(mockCollection.getList(
         page: anyNamed('page'),

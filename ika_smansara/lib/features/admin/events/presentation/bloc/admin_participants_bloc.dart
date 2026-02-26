@@ -55,6 +55,14 @@ class UpdateParticipantStatus extends AdminParticipantsEvent {
   List<Object?> get props => [eventId, bookingId, status];
 }
 
+class SoftDeleteBooking extends AdminParticipantsEvent {
+  final String eventId;
+  final String bookingId;
+  const SoftDeleteBooking({required this.eventId, required this.bookingId});
+  @override
+  List<Object?> get props => [eventId, bookingId];
+}
+
 class CreateManualBookingAction extends AdminParticipantsEvent {
   final String eventId;
   final Map<String, dynamic> data;
@@ -172,6 +180,7 @@ class AdminParticipantsBloc
     on<SearchParticipants>(_onSearchParticipants);
     on<LoadMoreParticipants>(_onLoadMoreParticipants);
     on<UpdateParticipantStatus>(_onUpdateParticipantStatus);
+    on<SoftDeleteBooking>(_onSoftDeleteBooking);
     on<CreateManualBookingAction>(_onCreateManualBooking);
     on<LoadBookingTickets>(_onLoadBookingTickets);
     on<LoadTickets>(_onLoadTickets);
@@ -284,6 +293,36 @@ class AdminParticipantsBloc
         AdminParticipantsActionSuccess('Status pembayaran berhasil diperbarui'),
       );
       add(LoadParticipants(event.eventId));
+    } catch (e) {
+      emit(AdminParticipantsError(e.toString()));
+    }
+  }
+
+  Future<void> _onSoftDeleteBooking(
+    SoftDeleteBooking event,
+    Emitter<AdminParticipantsState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is AdminParticipantsLoaded) {
+      emit(currentState.copyWith(loadingBookingId: event.bookingId));
+    }
+
+    try {
+      await _repository.softDeleteBooking(event.bookingId);
+      emit(const AdminParticipantsActionSuccess('Peserta berhasil dihapus'));
+      // Reload participants with same filter state if applicable
+      if (currentState is AdminParticipantsLoaded &&
+          currentState.searchQuery.isNotEmpty) {
+        add(
+          SearchParticipants(
+            eventId: event.eventId,
+            searchField: currentState.searchField,
+            searchQuery: currentState.searchQuery,
+          ),
+        );
+      } else {
+        add(LoadParticipants(event.eventId));
+      }
     } catch (e) {
       emit(AdminParticipantsError(e.toString()));
     }
