@@ -4,14 +4,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/network/pb_client.dart';
 import '../../../../events/domain/entities/event.dart';
 import '../../../core/presentation/widgets/admin_responsive_scaffold.dart';
 import '../../../core/presentation/widgets/admin_stat_card.dart';
 import '../bloc/admin_events_bloc.dart';
+import '../bloc/admin_doorprize_cubit.dart';
+import '../../data/data_sources/event_doorprize_remote_data_source.dart';
 import '../widgets/event_edit_form_tab.dart';
 import '../widgets/participants_tab.dart';
 import '../widgets/finance_placeholder_tab.dart';
 import '../widgets/tickets_placeholder_tab.dart';
+import '../widgets/doorprize_tab.dart';
 
 class AdminEventDetailPage extends StatefulWidget {
   final String eventId;
@@ -30,7 +34,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _currentTabIndex = _tabController.index;
@@ -46,9 +50,19 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          AdminEventsBloc()..add(LoadEventDetail(widget.eventId)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              AdminEventsBloc()..add(LoadEventDetail(widget.eventId)),
+        ),
+        BlocProvider(
+          create: (context) => AdminDoorprizeCubit(
+            dataSource: EventDoorprizeRemoteDataSource(PBClient.instance.pb),
+            eventId: widget.eventId,
+          ),
+        ),
+      ],
       child: AdminResponsiveScaffold(
         title: 'Event Dashboard',
 
@@ -208,6 +222,8 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
                 _buildTabPill(2, 'Keuangan'),
                 const SizedBox(width: 8),
                 _buildTabPill(3, 'Tiket'),
+                const SizedBox(width: 8),
+                _buildTabPill(4, '🎁 Undian'),
               ],
             ),
           ),
@@ -224,6 +240,7 @@ class _AdminEventDetailPageState extends State<AdminEventDetailPage>
                 ParticipantsTab(eventId: widget.eventId),
                 const FinancePlaceholderTab(),
                 const TicketsPlaceholderTab(),
+                DoorprizeTab(eventId: widget.eventId),
               ],
             ),
           ),

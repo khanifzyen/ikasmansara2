@@ -198,6 +198,15 @@ class MockAdminEventsRemoteDataSource extends _i1.Mock
           as _i4.Future<void>);
 
   @override
+  _i4.Future<void> softDeleteBooking(String? bookingId) =>
+      (super.noSuchMethod(
+            Invocation.method(#softDeleteBooking, [bookingId]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
   _i4.Future<void> createManualBooking(Map<String, dynamic>? data) =>
       (super.noSuchMethod(
             Invocation.method(#createManualBooking, [data]),
