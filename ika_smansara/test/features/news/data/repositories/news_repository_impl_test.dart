@@ -278,19 +278,6 @@ void main() {
 
       test('should handle different news IDs', () async {
         // Arrange
-        final news2 = NewsModel(
-          id: 'news2',
-          title: 'Another News',
-          slug: 'another-news',
-          category: 'Business',
-          thumbnail: null,
-          summary: 'Summary',
-          content: 'Content',
-          authorId: 'author2',
-          expand: null,
-          publishDate: DateTime(2025, 2, 18),
-          viewCount: 0,
-        );
         when(mockRemoteDataSource.getNewsDetail(any))
             .thenAnswer((_) async => tNewsModel);
 

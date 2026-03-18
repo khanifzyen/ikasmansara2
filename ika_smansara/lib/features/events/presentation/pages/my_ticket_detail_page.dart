@@ -249,35 +249,31 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
       }
 
       // Close loading dialog
-      if (mounted) {
-        Navigator.pop(context);
-      }
+      if (!context.mounted) return;
+      Navigator.pop(context);
 
-      if (mounted) {
-        if (filesToShare.isNotEmpty) {
-          await SharePlus.instance.share(
-            ShareParams(
-              files: filesToShare,
-              text: 'Ini tiket-tiket saya untuk booking ini.',
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Gagal mengambil gambar tiket.')),
-          );
-        }
+      if (filesToShare.isNotEmpty) {
+        await SharePlus.instance.share(
+          ShareParams(
+            files: filesToShare,
+            text: 'Ini tiket-tiket saya untuk booking ini.',
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Gagal mengambil gambar tiket.')),
+        );
       }
     } catch (e) {
       debugPrint('Error sharing all tickets: $e');
-      if (mounted) {
-        // Ensure dialog is closed if open
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Gagal membagikan tiket: $e')));
+      if (!context.mounted) return;
+      // Ensure dialog is closed if open
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
       }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal membagikan tiket: $e')));
     }
   }
 
@@ -296,22 +292,20 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
       ).create();
       await imagePath.writeAsBytes(image);
 
-      if (mounted) {
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [XFile(imagePath.path)],
-            text:
-                'Ini tiket saya untuk event ini: ${ticket.ticketName} (${ticket.ticketCode})',
-          ),
-        );
-      }
+      if (!context.mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(imagePath.path)],
+          text:
+              'Ini tiket saya untuk event ini: ${ticket.ticketName} (${ticket.ticketCode})',
+        ),
+      );
     } catch (e) {
       debugPrint('Error sharing ticket: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Gagal membagikan tiket: $e')));
-      }
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Gagal membagikan tiket: $e')));
     }
   }
 
@@ -322,20 +316,19 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
     // Check if event data is available
     final event = widget.booking?.event;
     if (event == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Data event tidak tersedia')),
-        );
-      }
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data event tidak tersedia')),
+      );
       return;
     }
 
     // Show loading
-    if (mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
+    if (!context.mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(16),
@@ -351,7 +344,6 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
           ),
         ),
       );
-    }
 
     try {
       // Get printer settings for paper size
@@ -376,27 +368,25 @@ class _MyTicketDetailPageState extends State<MyTicketDetailPage> {
       );
 
       // Close loading dialog
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tiket berhasil dicetak!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tiket berhasil dicetak!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
       debugPrint('Error printing ticket: $e');
       // Close loading dialog
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mencetak: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal mencetak: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

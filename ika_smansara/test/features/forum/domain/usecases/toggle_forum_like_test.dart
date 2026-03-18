@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ika_smansara/features/forum/domain/entities/forum_post.dart';
+
 import 'package:ika_smansara/features/forum/domain/repositories/forum_repository.dart';
 import 'package:ika_smansara/features/forum/domain/usecases/toggle_forum_like.dart';
 import 'package:mockito/annotations.dart';

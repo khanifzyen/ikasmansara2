@@ -1191,14 +1191,13 @@ class _TicketPreviewModalState extends State<_TicketPreviewModal> {
         paperSize: printerSettings.paperSize,
       );
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mencetak: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal mencetak: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
     }
   }
 

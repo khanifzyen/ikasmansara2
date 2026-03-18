@@ -8,9 +8,7 @@ import 'package:ika_smansara/features/events/data/models/event_sponsor_model.dar
 import 'package:ika_smansara/features/events/data/repositories/event_repository_impl.dart';
 import 'package:ika_smansara/features/events/domain/entities/event.dart';
 import 'package:ika_smansara/features/events/domain/entities/event_booking.dart';
-import 'package:ika_smansara/features/events/domain/entities/event_ticket.dart';
-import 'package:ika_smansara/features/events/domain/entities/event_sub_event.dart';
-import 'package:ika_smansara/features/events/domain/entities/event_sponsor.dart';
+
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 

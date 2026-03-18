@@ -123,6 +123,7 @@ class SettingsPage extends StatelessWidget {
                           AppConstants.privacyPolicyUrl,
                         );
                         if (!await launchUrl(url)) {
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text("Tidak dapat membuka link"),
@@ -140,6 +141,7 @@ class SettingsPage extends StatelessWidget {
                           AppConstants.termsConditionsUrl,
                         );
                         if (!await launchUrl(url)) {
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text("Tidak dapat membuka link"),

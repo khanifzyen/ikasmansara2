@@ -52,7 +52,7 @@ void main() {
           page: anyNamed('page'),
           perPage: anyNamed('perPage'),
         ),
-      ).thenAnswer((_) async => tEvents as List<Event>);
+      ).thenAnswer((_) async => tEvents);
 
       // Act
       final result = await repository.getEvents(
@@ -80,7 +80,7 @@ void main() {
           page: anyNamed('page'),
           perPage: anyNamed('perPage'),
         ),
-      ).thenAnswer((_) async => tEvents as List<Event>);
+      ).thenAnswer((_) async => tEvents);
 
       // Act
       await repository.getEvents();
@@ -339,7 +339,7 @@ void main() {
           searchField: anyNamed('searchField'),
           searchQuery: anyNamed('searchQuery'),
         ),
-      ).thenAnswer((_) async => tBookings as List<EventBooking>);
+      ).thenAnswer((_) async => tBookings);
 
       // Act
       final result = await repository.getEventBookings('event123');
@@ -392,7 +392,7 @@ void main() {
       // Arrange
       when(
         mockDataSource.getEventBookingTickets('booking123'),
-      ).thenAnswer((_) async => tTickets as List<EventBookingTicket>);
+      ).thenAnswer((_) async => tTickets);
 
       // Act
       final result = await repository.getEventBookingTickets('booking123');
@@ -494,7 +494,7 @@ void main() {
       // Arrange
       when(
         mockDataSource.getEventTickets('event123'),
-      ).thenAnswer((_) async => tTickets as List<EventTicket>);
+      ).thenAnswer((_) async => tTickets);
 
       // Act
       final result = await repository.getEventTickets('event123');

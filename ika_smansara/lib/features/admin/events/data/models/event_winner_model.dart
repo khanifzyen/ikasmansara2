@@ -13,8 +13,9 @@ abstract class EventWinnerModel with _$EventWinnerModel {
   const factory EventWinnerModel({
     required String id,
     required String event,
-    required String prize,
-    required String booking_ticket,
+    @JsonKey(name: 'prize_name') required String prizeName,
+    @JsonKey(name: 'booking_ticket') required String bookingTicketId,
+    required String status,
     String? ticketCode,
     String? userName,
     String? created,
@@ -55,7 +56,7 @@ abstract class EventWinnerModel with _$EventWinnerModel {
               'coordinator_name',
             );
             if (coordinatorName.isNotEmpty) {
-              userName = coordinatorName;
+              userName = '(Koor) $coordinatorName';
             }
           }
         }
@@ -65,8 +66,9 @@ abstract class EventWinnerModel with _$EventWinnerModel {
     return EventWinnerModel(
       id: record.id,
       event: record.getStringValue('event'),
-      prize: record.getStringValue('prize'),
-      booking_ticket: record.getStringValue('booking_ticket'),
+      prizeName: record.getStringValue('prize_name'),
+      bookingTicketId: record.getStringValue('booking_ticket'),
+      status: record.getStringValue('status'),
       ticketCode: ticketCode,
       userName: userName ?? 'Tanpa Nama',
       created: record.created,
@@ -80,8 +82,9 @@ abstract class EventWinnerModel with _$EventWinnerModel {
     return EventWinnerEntity(
       id: id,
       eventId: event,
-      prizeId: prize,
-      bookingTicketId: booking_ticket,
+      prizeName: prizeName,
+      bookingTicketId: bookingTicketId,
+      status: status,
       ticketCode: ticketCode,
       userName: userName,
     );
@@ -91,8 +94,9 @@ abstract class EventWinnerModel with _$EventWinnerModel {
     return EventWinnerModel(
       id: entity.id,
       event: entity.eventId,
-      prize: entity.prizeId,
-      booking_ticket: entity.bookingTicketId,
+      prizeName: entity.prizeName,
+      bookingTicketId: entity.bookingTicketId,
+      status: entity.status,
       ticketCode: entity.ticketCode,
       userName: entity.userName,
     );

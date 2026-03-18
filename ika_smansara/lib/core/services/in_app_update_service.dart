@@ -17,7 +17,7 @@ class InAppUpdateService {
         debugPrint('No update available or conditions not met.');
       }
     } on PlatformException catch (e) {
-      debugPrint('Failed to check for update: \${e.message}');
+      debugPrint('Failed to check for update: ${e.message}');
     }
   }
 }
