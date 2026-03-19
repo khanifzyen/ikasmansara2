@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:collection/collection.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../domain/entities/event_winner_entity.dart';
+import '../../domain/entities/event_prize_entity.dart';
 import '../bloc/admin_doorprize_cubit.dart';
 import '../pages/admin_event_raffle_page.dart';
 
@@ -19,7 +20,7 @@ class DoorprizeTab extends StatelessWidget {
         return state.when(
           initial: () => _buildInitial(context),
           loading: () => const Center(child: CircularProgressIndicator()),
-          loaded: (winners) => _buildLoaded(context, winners),
+          loaded: (winners, prizes) => _buildLoaded(context, winners, prizes),
           error: (message) => _buildError(context, message),
         );
       },
@@ -54,8 +55,9 @@ class DoorprizeTab extends StatelessWidget {
   Widget _buildLoaded(
     BuildContext context,
     List<EventWinnerEntity> winners,
+    List<EventPrizeEntity> prizes,
   ) {
-    final groupedWinners = groupBy(winners, (EventWinnerEntity e) => e.prizeName);
+    final groupedWinners = groupBy(winners, (EventWinnerEntity e) => e.prizeName ?? 'Tanpa Hadiah');
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -75,30 +77,68 @@ class DoorprizeTab extends StatelessWidget {
                   color: AppColors.textDark,
                 ),
               ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider.value(
-                      value: context.read<AdminDoorprizeCubit>(),
-                      child: AdminEventRafflePage(eventId: eventId),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => BlocProvider.value(
+                          value: context.read<AdminDoorprizeCubit>(),
+                          child: const _PrizeManagementDialog(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.card_giftcard, size: 18),
+                    label: const Text('Daftar Hadiah'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                ),
-                icon: const Icon(Icons.celebration, size: 18),
-                label: const Text('Buka Halaman Undian'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFE91E63),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  FilledButton.icon(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<AdminDoorprizeCubit>(),
+                          child: AdminEventRafflePage(eventId: eventId),
+                        ),
+                      ),
+                    ),
+                    icon: const Icon(Icons.celebration, size: 18),
+                    label: const Text('Buka Halaman Undian'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFE91E63),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
+          const SizedBox(height: 32),
+          Text(
+            'Riwayat Pengundian',
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textDark,
+            ),
+          ),
+          const SizedBox(height: 16),
           if (winners.isEmpty) _buildEmptyState(),
           if (winners.isNotEmpty) ...[
-            ...groupedWinners.entries.map((entry) => _buildPrizeGroup(context, entry.key, entry.value)),
+            ...groupedWinners.entries.map(
+              (entry) => _buildPrizeGroup(context, entry.key, entry.value),
+            ),
           ],
         ],
       ),
@@ -280,4 +320,190 @@ class DoorprizeTab extends StatelessWidget {
       ),
     );
   }
+
 }
+
+class _PrizeManagementDialog extends StatefulWidget {
+  const _PrizeManagementDialog();
+
+  @override
+  State<_PrizeManagementDialog> createState() => _PrizeManagementDialogState();
+}
+
+class _PrizeManagementDialogState extends State<_PrizeManagementDialog> {
+  final _nameController = TextEditingController();
+  final _quantityController = TextEditingController();
+  String? _editingPrizeId;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _quantityController.dispose();
+    super.dispose();
+  }
+
+  void _clearForm() {
+    _nameController.clear();
+    _quantityController.clear();
+    _editingPrizeId = null;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Daftar Hadiah Undian', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: BlocBuilder<AdminDoorprizeCubit, AdminDoorprizeState>(
+          builder: (context, state) {
+            if (state is! AdminDoorprizeLoaded) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final prizes = state.prizes;
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nama Hadiah',
+                          hintText: 'Cth: Sepeda Motor',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 1,
+                      child: TextFormField(
+                        controller: _quantityController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Jumlah',
+                          hintText: '1',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    FilledButton(
+                      onPressed: () {
+                        final name = _nameController.text.trim();
+                        final qty = int.tryParse(_quantityController.text.trim()) ?? 0;
+                        if (name.isNotEmpty && qty > 0) {
+                          if (_editingPrizeId != null) {
+                            context.read<AdminDoorprizeCubit>().updatePrize(
+                              id: _editingPrizeId!,
+                              name: name,
+                              quantity: qty,
+                            );
+                          } else {
+                            context.read<AdminDoorprizeCubit>().addPrize(
+                              name: name,
+                              quantity: qty,
+                            );
+                          }
+                          _clearForm();
+                        }
+                      },
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(80, 48),
+                        backgroundColor: _editingPrizeId != null ? Colors.orange : AppColors.primary,
+                      ),
+                      child: Text(_editingPrizeId != null ? 'Simpan' : 'Tambah', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                if (_editingPrizeId != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: _clearForm,
+                        child: const Text('Batal Edit'),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                const Divider(),
+                if (prizes.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Center(
+                      child: Text(
+                        'Belum ada hadiah yang ditambahkan.',
+                        style: GoogleFonts.inter(color: AppColors.textGrey),
+                      ),
+                    ),
+                  ),
+                if (prizes.isNotEmpty)
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: prizes.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final prize = prizes[index];
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(prize.name, style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+                          subtitle: Builder(
+                            builder: (context) {
+                              int claimed = state.winners.where((w) => w.prizeId == prize.id && w.status == 'won').length;
+                              int remaining = prize.quantity - claimed;
+                              return Text(
+                                'Sisa: $remaining / ${prize.quantity}', 
+                                style: GoogleFonts.inter(color: AppColors.textGrey, fontSize: 13)
+                              );
+                            }
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit_outlined, color: Colors.orange),
+                                onPressed: () {
+                                  setState(() {
+                                    _editingPrizeId = prize.id;
+                                    _nameController.text = prize.name;
+                                    _quantityController.text = prize.quantity.toString();
+                                  });
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                onPressed: () => context.read<AdminDoorprizeCubit>().deletePrize(prize.id),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Tutup'),
+        ),
+      ],
+    );
+  }
+}
+

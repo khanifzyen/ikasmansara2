@@ -13,7 +13,8 @@ abstract class EventWinnerModel with _$EventWinnerModel {
   const factory EventWinnerModel({
     required String id,
     required String event,
-    @JsonKey(name: 'prize_name') required String prizeName,
+    @JsonKey(name: 'prize') required String prizeId,
+    String? prizeName,
     @JsonKey(name: 'booking_ticket') required String bookingTicketId,
     required String status,
     String? ticketCode,
@@ -26,8 +27,16 @@ abstract class EventWinnerModel with _$EventWinnerModel {
       _$EventWinnerModelFromJson(json);
 
   factory EventWinnerModel.fromRecord(RecordModel record) {
+    String? prizeName;
     String? ticketCode;
     String? userName;
+
+    try {
+      final expandedPrizeList = record.get<List<RecordModel>>('expand.prize');
+      if (expandedPrizeList.isNotEmpty) {
+        prizeName = expandedPrizeList.first.getStringValue('name');
+      }
+    } catch (_) {}
 
     try {
       final expandedTicketList = record.get<List<RecordModel>>(
@@ -66,9 +75,10 @@ abstract class EventWinnerModel with _$EventWinnerModel {
     return EventWinnerModel(
       id: record.id,
       event: record.getStringValue('event'),
-      prizeName: record.getStringValue('prize_name'),
+      prizeId: record.getStringValue('prize'),
       bookingTicketId: record.getStringValue('booking_ticket'),
       status: record.getStringValue('status'),
+      prizeName: prizeName ?? 'Unknown Prize',
       ticketCode: ticketCode,
       userName: userName ?? 'Tanpa Nama',
       created: record.created,
@@ -82,7 +92,8 @@ abstract class EventWinnerModel with _$EventWinnerModel {
     return EventWinnerEntity(
       id: id,
       eventId: event,
-      prizeName: prizeName,
+      prizeId: prizeId,
+      prizeName: prizeName ?? 'Unknown Prize',
       bookingTicketId: bookingTicketId,
       status: status,
       ticketCode: ticketCode,
@@ -94,6 +105,7 @@ abstract class EventWinnerModel with _$EventWinnerModel {
     return EventWinnerModel(
       id: entity.id,
       event: entity.eventId,
+      prizeId: entity.prizeId,
       prizeName: entity.prizeName,
       bookingTicketId: entity.bookingTicketId,
       status: entity.status,

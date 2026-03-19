@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/event_winner_entity.dart';
+import '../../domain/entities/event_prize_entity.dart';
 import '../../data/data_sources/event_doorprize_remote_data_source.dart';
 import '../../data/models/event_winner_model.dart';
+import '../../data/models/event_prize_model.dart';
 
 part 'admin_doorprize_cubit.freezed.dart';
 
@@ -14,6 +16,7 @@ sealed class AdminDoorprizeState with _$AdminDoorprizeState {
   const factory AdminDoorprizeState.loading() = _Loading;
   const factory AdminDoorprizeState.loaded({
     required List<EventWinnerEntity> winners,
+    required List<EventPrizeEntity> prizes,
   }) = AdminDoorprizeLoaded;
   const factory AdminDoorprizeState.error(String message) = _Error;
 }
@@ -34,9 +37,11 @@ class AdminDoorprizeCubit extends Cubit<AdminDoorprizeState> {
     emit(const AdminDoorprizeState.loading());
     try {
       final winners = await _dataSource.getWinnersByEvent(eventId);
+      final prizes = await _dataSource.getPrizes(eventId);
       emit(
         AdminDoorprizeState.loaded(
           winners: winners.map((m) => m.toEntity()).toList(),
+          prizes: prizes.map((m) => m.toEntity()).toList(),
         ),
       );
     } catch (e) {
@@ -45,14 +50,14 @@ class AdminDoorprizeCubit extends Cubit<AdminDoorprizeState> {
   }
 
   Future<void> recordWinner({
-    required String prizeName,
+    required String prizeId,
     required String bookingTicketId,
   }) async {
     try {
       final model = EventWinnerModel(
         id: '',
         event: eventId,
-        prizeName: prizeName,
+        prizeId: prizeId,
         bookingTicketId: bookingTicketId,
         status: 'won',
       );
@@ -78,6 +83,52 @@ class AdminDoorprizeCubit extends Cubit<AdminDoorprizeState> {
       await loadData();
     } catch (e) {
       emit(AdminDoorprizeState.error('Gagal menghapus pemenang: $e'));
+    }
+  }
+
+  Future<void> addPrize({
+    required String name,
+    required int quantity,
+  }) async {
+    try {
+      final model = EventPrizeModel(
+        id: '',
+        event: eventId,
+        name: name,
+        quantity: quantity,
+      );
+      await _dataSource.createPrize(model);
+      await loadData();
+    } catch (e) {
+      emit(AdminDoorprizeState.error('Gagal menambah hadiah: $e'));
+    }
+  }
+
+  Future<void> updatePrize({
+    required String id,
+    required String name,
+    required int quantity,
+  }) async {
+    try {
+      final model = EventPrizeModel(
+        id: id,
+        event: eventId,
+        name: name,
+        quantity: quantity,
+      );
+      await _dataSource.updatePrize(id, model);
+      await loadData();
+    } catch (e) {
+      emit(AdminDoorprizeState.error('Gagal mengubah hadiah: $e'));
+    }
+  }
+
+  Future<void> deletePrize(String prizeId) async {
+    try {
+      await _dataSource.deletePrize(prizeId);
+      await loadData();
+    } catch (e) {
+      emit(AdminDoorprizeState.error('Gagal menghapus hadiah: $e'));
     }
   }
 }

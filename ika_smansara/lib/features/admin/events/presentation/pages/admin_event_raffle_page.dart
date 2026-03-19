@@ -10,8 +10,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 import '../../../../../core/network/pb_client.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../domain/entities/event_prize_entity.dart';
 import '../../data/data_sources/event_doorprize_remote_data_source.dart';
 import '../../data/models/event_winner_model.dart';
+import '../../domain/entities/event_winner_entity.dart';
 import '../bloc/admin_doorprize_cubit.dart';
 
 class RaffleTicket {
@@ -41,9 +44,20 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
   late final EventDoorprizeRemoteDataSource _dataSource;
 
   // Settings state
-  final _prizeNameController = TextEditingController();
+  List<EventPrizeEntity> _selectedPrizes = [];
   final _durationController = TextEditingController(text: '5');
-  int _winnerCount = 1;
+
+  int get _winnerCount {
+    final state = context.read<AdminDoorprizeCubit>().state;
+    int total = _selectedPrizes.fold(0, (sum, p) {
+      int claimed = 0;
+      if (state is AdminDoorprizeLoaded) {
+        claimed = state.winners.where((w) => w.prizeId == p.id && w.status == 'won').length;
+      }
+      return sum + max(0, p.quantity - claimed);
+    });
+    return min(10, total); // Cap at 10 max per roll
+  }
 
   // Data state
   List<RaffleTicket> _eligibleTickets = [];
@@ -55,6 +69,7 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
   bool _showWinners = false;
   List<RaffleTicket?> _currentWinners = [];
   List<String> _rollingTexts = [];
+  List<EventPrizeEntity> _currentPrizesToDraw = [];
   Timer? _rollingTimer;
 
   // Error/Save state for winners
@@ -92,7 +107,6 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
     _rollingTimer?.cancel();
     _confettiController.dispose();
     _glowController.dispose();
-    _prizeNameController.dispose();
     _durationController.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
@@ -181,10 +195,9 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
       .toList();
 
   void _startRolling() {
-    final prizeName = _prizeNameController.text.trim();
-    if (prizeName.isEmpty) {
+    if (_selectedPrizes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Harap masukkan nama hadiah!')),
+        const SnackBar(content: Text('Harap pilih minimal satu hadiah!')),
       );
       return;
     }
@@ -195,6 +208,81 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
         const SnackBar(content: Text('Durasi harus lebih dari 0 detik.')),
       );
       return;
+    }
+
+    final bool isPartial = _showWinners &&
+        _currentWinners.any((w) => w != null && _disqualifiedStatus[w.bookingTicketId] == true);
+
+    if (isPartial) {
+      List<int> rerollIndices = [];
+      for (int i = 0; i < _currentWinners.length; i++) {
+        final w = _currentWinners[i];
+        if (w != null && _disqualifiedStatus[w.bookingTicketId] == true) {
+          rerollIndices.add(i);
+        }
+      }
+
+      int actualWinnerCount = min(rerollIndices.length, _availableTickets.length);
+      if (actualWinnerCount == 0 || _availableTickets.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tidak ada tiket yang tersisa untuk undian ulang.')),
+        );
+        return;
+      }
+
+      rerollIndices = rerollIndices.take(actualWinnerCount).toList();
+
+      setState(() {
+        _isRolling = true;
+        _showWinners = false;
+        for (var idx in rerollIndices) {
+          _currentWinners[idx] = null;
+        }
+      });
+
+      final random = Random();
+      List<RaffleTicket> availableCopy = List.from(_availableTickets);
+      availableCopy.shuffle(random);
+      List<RaffleTicket> selectedWinners = availableCopy.take(actualWinnerCount).toList();
+
+      int totalDurationMs = rollDuration * 1000;
+      int elapsedMs = 0;
+      int rollSpeed = 50;
+
+      _rollingTimer?.cancel();
+      _rollingTimer = Timer.periodic(Duration(milliseconds: rollSpeed), (timer) {
+        elapsedMs += rollSpeed;
+
+        if (elapsedMs >= totalDurationMs) {
+          timer.cancel();
+          _revealPartialWinners(selectedWinners, rerollIndices);
+          return;
+        }
+
+        setState(() {
+          for (int i = 0; i < actualWinnerCount; i++) {
+            int idx = rerollIndices[i];
+            final randomTicket = _availableTickets[random.nextInt(_availableTickets.length)];
+            _rollingTexts[idx] = randomTicket.ticketId;
+          }
+        });
+      });
+      return;
+    }
+
+    _currentPrizesToDraw.clear();
+    final state = context.read<AdminDoorprizeCubit>().state;
+    for (var p in _selectedPrizes) {
+      int claimed = 0;
+      if (state is AdminDoorprizeLoaded) {
+        claimed = state.winners.where((w) => w.prizeId == p.id && w.status == 'won').length;
+      }
+      int remaining = max(0, p.quantity - claimed);
+      for (int i = 0; i < remaining; i++) {
+        _currentPrizesToDraw.add(p);
+        if (_currentPrizesToDraw.length == 10) break;
+      }
+      if (_currentPrizesToDraw.length == 10) break;
     }
 
     final available = _availableTickets;
@@ -208,11 +296,11 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
     }
 
     // Prepare state
-    int actualWinnerCount = min(_winnerCount, available.length);
+    int actualWinnerCount = min(_currentPrizesToDraw.length, available.length);
     setState(() {
       _isRolling = true;
       _showWinners = false;
-      _currentWinners = List.filled(actualWinnerCount, null);
+      _currentWinners = List<RaffleTicket?>.filled(actualWinnerCount, null);
       _rollingTexts = List.filled(actualWinnerCount, '---');
       _savedWinnerStatus.clear();
       _disqualifiedStatus.clear();
@@ -229,12 +317,13 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
     int elapsedMs = 0;
     int rollSpeed = 50;
 
+    _rollingTimer?.cancel();
     _rollingTimer = Timer.periodic(Duration(milliseconds: rollSpeed), (timer) {
       elapsedMs += rollSpeed;
 
       if (elapsedMs >= totalDurationMs) {
         timer.cancel();
-        _revealWinners(selectedWinners, prizeName);
+        _revealWinners(selectedWinners);
         return;
       }
 
@@ -248,11 +337,11 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
     });
   }
 
-  void _revealWinners(List<RaffleTicket> winners, String prizeName) async {
+  void _revealWinners(List<RaffleTicket> winners) async {
     setState(() {
       _isRolling = false;
       _showWinners = true;
-      _currentWinners = winners;
+      _currentWinners = List<RaffleTicket?>.from(winners);
       for (int i = 0; i < winners.length; i++) {
         _rollingTexts[i] = winners[i].ticketId;
       }
@@ -267,7 +356,8 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
         final model = EventWinnerModel(
           id: '',
           event: widget.eventId,
-          prizeName: prizeName,
+          prizeId: _currentPrizesToDraw[i].id,
+          prizeName: _currentPrizesToDraw[i].name,
           bookingTicketId: w.bookingTicketId,
           status: 'won', // default won
         );
@@ -283,6 +373,61 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
             // Since we don't store the full object in state, we might need a workaround.
             // Actually, we'll just fetch again or rely on the cubit to refresh lists.
             // For simple disqualify logic, we can also use filter query by bookingTicketId.
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error menyimpan pemenang ${w.userName}: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+
+    // Refresh the tab cubit implicitly in the background to update the overall list
+    if (mounted) {
+      try {
+        context.read<AdminDoorprizeCubit>().loadData();
+      } catch (_) {}
+    }
+  }
+
+  void _revealPartialWinners(List<RaffleTicket> winners, List<int> indices) async {
+    setState(() {
+      _isRolling = false;
+      _showWinners = true;
+      for (int i = 0; i < winners.length; i++) {
+        int idx = indices[i];
+        _currentWinners[idx] = winners[i];
+        _rollingTexts[idx] = winners[i].ticketId;
+      }
+    });
+
+    _confettiController.play();
+
+    // Save winners asynchronously to database
+    for (int i = 0; i < winners.length; i++) {
+      int idx = indices[i];
+      final w = winners[i];
+      try {
+        final model = EventWinnerModel(
+          id: '',
+          event: widget.eventId,
+          prizeId: _currentPrizesToDraw[idx].id,
+          prizeName: _currentPrizesToDraw[idx].name,
+          bookingTicketId: w.bookingTicketId,
+          status: 'won', // default won
+        );
+
+        await _dataSource.createWinner(model);
+
+        if (mounted) {
+          setState(() {
+            _savedWinnerStatus[w.bookingTicketId] = true;
+            _usedTicketIds.add(w.bookingTicketId); // Local cache update
           });
         }
       } catch (e) {
@@ -434,109 +579,311 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
   }
 
   Widget _buildSettingsBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: Wrap(
-        spacing: 16,
-        runSpacing: 16,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          // Prize Name Input
-          SizedBox(
-            width: 250,
-            child: TextField(
-              controller: _prizeNameController,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                labelText: 'Nama Hadiah',
-                labelStyle: const TextStyle(color: Colors.white54),
-                filled: true,
-                fillColor: Colors.black26,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-            ),
+    return BlocBuilder<AdminDoorprizeCubit, AdminDoorprizeState>(
+      builder: (context, state) {
+        if (state is! AdminDoorprizeLoaded) return const SizedBox.shrink();
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white12),
           ),
-          // Winner Count Dropdown
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                'Peserta/Pemenang',
-                style: GoogleFonts.inter(color: Colors.white54, fontSize: 12),
-              ),
-              const SizedBox(height: 4),
-              Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: _winnerCount,
-                    dropdownColor: const Color(0xFF1A1A2E),
-                    style: GoogleFonts.inter(color: Colors.white),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white70,
+              // Prize Name Multi-Select (Custom)
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pilih Hadiah',
+                      style: GoogleFonts.inter(
+                        color: Colors.white54,
+                        fontSize: 12,
+                      ),
                     ),
-                    items: List.generate(10, (index) {
-                      return DropdownMenuItem(
-                        value: index + 1,
-                        child: Text('${index + 1} Orang'),
-                      );
-                    }),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _winnerCount = val);
-                      }
-                    },
+                    const SizedBox(height: 4),
+                    InkWell(
+                      onTap: () =>
+                          _showCustomMultiSelect(context, state.prizes),
+                      child: Container(
+                        height: 48,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white12),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _selectedPrizes.isEmpty
+                                    ? 'Pilih Hadiah'
+                                    : '${_selectedPrizes.length} Hadiah Dipilih',
+                                style: const TextStyle(color: Colors.white54),
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.white70,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Winner Count (Read-Only)
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pemenang ditarik',
+                      style: GoogleFonts.inter(
+                        color: Colors.white54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      height: 48,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '$_winnerCount Orang',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Duration Input
+              Expanded(
+                flex: 1,
+                child: TextField(
+                  controller: _durationController,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Durasi',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    filled: true,
+                    fillColor: Colors.black26,
+                    suffixText: 'detik',
+                    suffixStyle: const TextStyle(color: Colors.white54),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          // Duration Input
-          SizedBox(
-            width: 120,
-            child: TextField(
-              controller: _durationController,
-              keyboardType: TextInputType.number,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                labelText: 'Durasi (detik)',
-                labelStyle: const TextStyle(color: Colors.white54),
-                filled: true,
-                fillColor: Colors.black26,
-                suffixText: 's',
-                suffixStyle: const TextStyle(color: Colors.white54),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+        );
+      },
+    );
+  }
+
+  Future<void> _showCustomMultiSelect(
+    BuildContext context,
+    List<EventPrizeEntity> prizes,
+  ) async {
+    final state = context.read<AdminDoorprizeCubit>().state;
+    List<EventWinnerEntity> winners = [];
+    if (state is AdminDoorprizeLoaded) {
+      winners = state.winners;
+    }
+
+    // Filter available prizes
+    final availablePrizes = prizes.where((p) {
+      int claimed = winners.where((w) => w.prizeId == p.id && w.status == 'won').length;
+      return (p.quantity - claimed) > 0;
+    }).toList();
+
+    List<EventPrizeEntity> tempSelected = List.from(_selectedPrizes);
+    // Cleanup any selected prizes that reached 0 qty while modal is open
+    tempSelected.removeWhere((p) {
+      int claimed = winners.where((w) => w.prizeId == p.id && w.status == 'won').length;
+      return (p.quantity - claimed) <= 0;
+    });
+
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            int totalWinners = min(
+              10,
+              tempSelected.fold(0, (sum, p) {
+                int claimed = winners.where((w) => w.prizeId == p.id && w.status == 'won').length;
+                return sum + max(0, p.quantity - claimed);
+              }),
+            );
+
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1A1A2E),
+              title: Text(
+                'Pilih Hadiah',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (availablePrizes.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Text(
+                          'Semua hadiah telah diklaim. Tidak ada sisa hadiah.',
+                          style: TextStyle(color: Colors.white54),
+                        ),
+                      )
+                    else
+                      Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: availablePrizes.length,
+                          itemBuilder: (context, index) {
+                            final p = availablePrizes[index];
+                            final isSelected = tempSelected.any(
+                              (s) => s.id == p.id,
+                            );
+                            int claimed = winners
+                                .where((w) => w.prizeId == p.id && w.status == 'won')
+                                .length;
+                            int remaining = p.quantity - claimed;
+
+                            return CheckboxListTile(
+                              title: Text(
+                                p.name,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              subtitle: Text(
+                                'Sisa: $remaining / ${p.quantity}',
+                                style: const TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              value: isSelected,
+                              activeColor: AppColors.primary,
+                              checkColor: Colors.white,
+                              side: const BorderSide(color: Colors.white54),
+                              onChanged: (val) {
+                                if (val == true) {
+                                  int currentTotal = tempSelected.fold(0, (sum, selectedP) {
+                                    int c = winners.where((w) => w.prizeId == selectedP.id && w.status == 'won').length;
+                                    return sum + max(0, selectedP.quantity - c);
+                                  });
+
+                                  if (currentTotal >= 10) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Maksimal pemenang tercapai (10). Tidak dapat memilih hadiah lagi.'),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  setState(() {
+                                    tempSelected.add(p);
+                                  });
+                                } else {
+                                  setState(() {
+                                    tempSelected.removeWhere(
+                                      (s) => s.id == p.id,
+                                    );
+                                  });
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.5),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total Pemenang',
+                            style: GoogleFonts.inter(color: Colors.white70),
+                          ),
+                          Text(
+                            '$totalWinners',
+                            style: GoogleFonts.inter(
+                              color: Colors.amberAccent,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text(
+                    'Batal',
+                    style: TextStyle(color: Colors.white54),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    this.setState(() {
+                      _selectedPrizes = tempSelected;
+                    });
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                  ),
+                  child: const Text('Pilih'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -556,6 +903,19 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
     final actualCount = _isRolling || _showWinners
         ? _rollingTexts.length
         : _winnerCount;
+
+    if (actualCount == 0) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: Text(
+            'Silakan pilih hadiah terlebih dahulu',
+            style: TextStyle(color: Colors.white54, fontSize: 18),
+          ),
+        ),
+      );
+    }
+
     final cols = _calculatedColumns;
 
     // We want the grid objects to scale beautifully depending on how much space we have.
@@ -586,12 +946,20 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
               spacing: spacing,
               runSpacing: runSpacing,
               children: List.generate(actualCount, (index) {
-                final isWinnerShowed =
-                    _showWinners && _currentWinners[index] != null;
-                final ticketText = _isRolling || _showWinners
-                    ? _rollingTexts[index]
-                    : '---';
-                RaffleTicket? wonTicket = isWinnerShowed
+                // A box shows winner info if it has a non-null ticket, and it's NOT actively rolling.
+                final bool hasWinner = _currentWinners.length > index && _currentWinners[index] != null;
+                
+                // We are actively rolling THIS box if _isRolling is true AND it doesn't have a winner (it's null).
+                final bool isRollingBox = _isRolling && !hasWinner;
+                
+                // The box shows a winner specifically if hasWinner is true. `_showWinners` applies globally.
+                final bool isWinnerBox = hasWinner;
+
+                final String ticketText = isRollingBox
+                    ? (_rollingTexts.length > index ? _rollingTexts[index] : '---')
+                    : (isWinnerBox ? _currentWinners[index]!.ticketId : '---');
+
+                RaffleTicket? wonTicket = isWinnerBox
                     ? _currentWinners[index]
                     : null;
 
@@ -601,8 +969,12 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
                   height: finalCellHeight,
                   ticketCode: ticketText,
                   ticketData: wonTicket,
-                  isRolling: _isRolling,
-                  isWinner: isWinnerShowed,
+                  isRolling: isRollingBox,
+                  isWinner: isWinnerBox,
+                  prizeName:
+                      (isWinnerBox || isRollingBox) && _currentPrizesToDraw.length > index
+                      ? _currentPrizesToDraw[index].name
+                      : null,
                 );
               }),
             ),
@@ -620,6 +992,7 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
     RaffleTicket? ticketData,
     required bool isRolling,
     required bool isWinner,
+    String? prizeName,
   }) {
     final bool isDisqualified =
         ticketData != null &&
@@ -721,6 +1094,26 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  if (prizeName != null && prizeName.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      prizeName,
+                      style: GoogleFonts.inter(
+                        fontSize: width * 0.04,
+                        fontWeight: FontWeight.w500,
+                        color: isDisqualified
+                            ? Colors.grey.shade500
+                            : const Color.fromARGB(255, 0, 0, 0),
+                        decoration: isDisqualified
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
               ],
             ),
@@ -776,7 +1169,7 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
                         _isRolling = false;
                         _currentWinners = [];
                         _rollingTexts = [];
-                        _prizeNameController.clear();
+                        _currentPrizesToDraw = [];
                       });
                     },
                     icon: const Icon(Icons.add_box, size: 28),
@@ -806,7 +1199,10 @@ class _AdminEventRafflePageState extends State<AdminEventRafflePage>
                 width: double.infinity,
                 height: 80,
                 child: FilledButton.icon(
-                  onPressed: _availableTickets.isEmpty ? null : _startRolling,
+                  onPressed: _availableTickets.isEmpty || 
+                             (_showWinners && !_currentWinners.any((w) => w != null && _disqualifiedStatus[w.bookingTicketId] == true)) 
+                      ? null 
+                      : _startRolling,
                   icon: Icon(
                     _showWinners ? Icons.refresh : Icons.play_arrow,
                     size: 28,

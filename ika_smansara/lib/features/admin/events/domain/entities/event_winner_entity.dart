@@ -7,7 +7,8 @@ sealed class EventWinnerEntity with _$EventWinnerEntity {
   const factory EventWinnerEntity({
     required String id,
     required String eventId,
-    required String prizeName,
+    required String prizeId,
+    String? prizeName,
     required String bookingTicketId,
     required String status,
     String? ticketCode,
